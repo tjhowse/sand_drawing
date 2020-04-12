@@ -104,7 +104,11 @@ module bearing_holder()
 
 module shaft_1_drive_pulley()
 {
-    translate([0,0,shaft_1_drive_pulley_z_top_belt_guide]) pulley ( "GT2 2mm" , GT2_2mm_pulley_dia , 0.764 , 1.494, belt_z, shaft_1_drive_pulley_z_bottom_belt_guide, shaft_1_drive_pulley_z_top_belt_guide);
+    difference()
+    {
+        translate([0,0,shaft_1_drive_pulley_z_top_belt_guide]) pulley ( "GT2 2mm" , GT2_2mm_pulley_dia , 0.764 , 1.494, belt_z, shaft_1_drive_pulley_z_bottom_belt_guide, shaft_1_drive_pulley_z_top_belt_guide);
+        translate([0,0,shaft_1_drive_pulley_z/2])rotate([90,0,0]) translate([0,0,-50]) #cylinder(r=1,h=100);
+    }
     %cylinder(r=shaft_1_drive_pulley_dia/2, h = shaft_1_drive_pulley_z);
 }
 
@@ -140,8 +144,9 @@ module top_holder()
     translate([0,0,-shaft_1_drive_pulley_z-washer_z+bearing_retain_lip]) shaft_1_drive_pulley();
     translate([0,0,-shaft_1_drive_pulley_z-shaft_2_drive_pulley_z-washer_z]) shaft_2_drive_pulley();
 }
-top_holder();
-// shaft_2_drive_pulley();
+// echo (holder_z);
+// top_holder();
+shaft_2_drive_pulley();
 // translate([0,0,-3]) %cube([100,30,4], center=true);
 // translate([0,0,-9]) %cube([100,30,4], center=true);
 // shaft_1_drive_pulley();
