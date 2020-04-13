@@ -33,7 +33,7 @@ belt2_z = 6;
 
 shaft_1_drive_pulley_dia = 27;
 shaft_1_drive_pulley_z_top_belt_guide = 0.5;
-shaft_1_drive_pulley_z_bottom_belt_guide = 0;
+shaft_1_drive_pulley_z_bottom_belt_guide = 0.5;
 shaft_1_drive_pulley_z = belt_z+shaft_1_drive_pulley_z_top_belt_guide + shaft_1_drive_pulley_z_bottom_belt_guide;
 
 shaft_2_drive_pulley_z_top_belt_guide = 0.5;
