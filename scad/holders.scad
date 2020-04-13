@@ -45,6 +45,15 @@ shaft_2_drive_pulley_z = belt_z+belt2_z+shaft_2_drive_pulley_z_top_belt_guide+sh
 washer_z = 1.5;
 washer_d = 18.8;
 
+// Slightly undersized for two 27mm pulleys and a 278mm belt, but the tensioner
+// will let us expand it to perfection.
+arm1_axis_offset = 96;
+arm1_z = 608_z*2+bearing_retain_lip;
+arm1_x = 2*wt+608_od+arm1_axis_offset+608_id;
+arm1_y = 2*wt+608_od;
+
+pin_r = 1;
+
 module n17_holes(slot = 0)
 {
     translate([-slot/2,0,0])
@@ -107,7 +116,7 @@ module shaft_1_drive_pulley()
     difference()
     {
         translate([0,0,shaft_1_drive_pulley_z_top_belt_guide]) pulley ( "GT2 2mm" , GT2_2mm_pulley_dia , 0.764 , 1.494, belt_z, shaft_1_drive_pulley_z_bottom_belt_guide, shaft_1_drive_pulley_z_top_belt_guide);
-        translate([0,0,shaft_1_drive_pulley_z/2])rotate([90,0,0]) translate([0,0,-50]) #cylinder(r=1,h=100);
+        translate([0,0,shaft_1_drive_pulley_z/2])rotate([90,0,0]) translate([0,0,-50]) #cylinder(r=pin_r,h=100);
     }
     %cylinder(r=shaft_1_drive_pulley_dia/2, h = shaft_1_drive_pulley_z);
 }
@@ -144,9 +153,67 @@ module top_holder()
     translate([0,0,-shaft_1_drive_pulley_z-washer_z+bearing_retain_lip]) shaft_1_drive_pulley();
     translate([0,0,-shaft_1_drive_pulley_z-shaft_2_drive_pulley_z-washer_z]) shaft_2_drive_pulley();
 }
+
+module arm1()
+{
+    // translate([0,0,arm1_z/2]) %cube([arm1_x, arm1_y, arm1_z], center=true);
+    difference()
+    {
+        union()
+        {
+            translate([arm1_axis_offset/2,0,0]) cylinder(r=608_od/2+wt,h=arm1_z);
+            hull()
+            {
+                translate([arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm1_z);
+                translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm1_z);
+            }
+        }
+        translate([arm1_axis_offset/2,0,bearing_retain_lip]) cylinder(r=608_od/2,h=2*608_z);
+        translate([arm1_axis_offset/2,0,0]) cylinder(r=608_od/2-wt,h=arm1_z);
+        translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm1_z);
+        #translate([-30,0,arm1_z/2]) rotate([0,-90,0]) cylinder(r=pin_r,h=30);
+    }
+
+}
+arm1_split_overlap = 30;
+module slot(slot_r = 1.5, slot_h = 3)
+{
+    rotate([90,0,0]) translate([-slot_h/2,0,-50]) hull()
+    {
+        cylinder(r=slot_r, h=100);
+        translate([slot_h,0,0]) cylinder(r=slot_r, h=100);
+    }
+}
+
+module arm1_split()
+{
+    // This is arm1, but split into two parts for belt tensioning purposes.
+    // Base
+    translate([0, -arm1_y,0]) difference()
+    {
+        arm1();
+        translate([0,-50,0]) cube([100,100,100]);
+        translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
+        translate([-8, 0, arm1_z/2]) slot();
+        translate([-24, 0, arm1_z/2]) slot();
+    }
+
+    difference()
+    {
+        rotate([0,0,180]) arm1();
+        translate([0,-50,0]) cube([100,100,100]);
+        translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
+        translate([-8, 0, arm1_z/2]) slot();
+        translate([-24, 0, arm1_z/2]) slot();
+    }
+}
+
 // echo (holder_z);
 // top_holder();
-shaft_2_drive_pulley();
+// shaft_2_drive_pulley();
 // translate([0,0,-3]) %cube([100,30,4], center=true);
 // translate([0,0,-9]) %cube([100,30,4], center=true);
 // shaft_1_drive_pulley();
+// arm1();
+arm1_split();
+// slot();
