@@ -47,6 +47,7 @@ washer_d = 18.8;
 
 // Slightly undersized for two 27mm pulleys and a 278mm belt, but the tensioner
 // will let us expand it to perfection.
+// https://www.omnicalculator.com/physics/belt-length
 arm1_axis_offset = 96;
 arm1_z = 608_z*2+bearing_retain_lip;
 arm1_x = 2*wt+608_od+arm1_axis_offset+608_id;
