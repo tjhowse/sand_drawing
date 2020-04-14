@@ -1,0 +1,7 @@
+wifi_ssid = 'my_ssid'
+wifi_password = '123456'
+mqtt_host = '192.168.1.50'
+mqtt_clientid = 'sand_drawing'
+mqtt_username = 'username'
+mqtt_password = 'password'
+mqtt_root = 'house'
