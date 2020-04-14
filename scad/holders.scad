@@ -231,6 +231,44 @@ module arm1_split_end()
     }
 }
 
+bottom_holder_z = bearing_retain_lip+608_z+wt;
+
+module bottom_hardware()
+{
+    union()
+    {
+        translate([0,0,bearing_retain_lip]) bearing(0);
+        //hull()
+        {
+            translate([608_id/2+(n17_xy+stepper_slot)/2,0,608_z+n17_xy/2]) cube([n17_xy+stepper_slot,n17_xy,n17_xy], center=true);
+            translate([-(608_id/2+(n17_xy+stepper_slot)/2),0,608_z+n17_xy/2]) cube([n17_xy+stepper_slot,n17_xy,n17_xy], center=true);
+        }
+        cylinder(r=608_od/2-wt, h=100);
+    }
+}
+
+module bottom_bearing_holder()
+{
+    clampy_z = n17_xy/1.5;
+    wedge_ratio = 1.5;
+    difference()
+    {
+        union()
+        {
+            cylinder(r=608_od/2+wt, h = 608_z+bearing_retain_lip);
+            translate([0,0,clampy_z/2]) cube([608_id, n17_xy,clampy_z], center=true);
+        }
+        translate([0,0,bearing_retain_lip]) cylinder(r=608_od/2, h=100);
+        cylinder(r=608_od/2-wt, h=100);
+        translate([0,n17_xy/2,50]) scale([1,wedge_ratio,1]) rotate([0,0,45]) cube([608_id/sqrt(2),608_id/sqrt(2),100], center=true);
+        translate([0,-n17_xy/2,50]) scale([1,wedge_ratio,1]) rotate([0,0,45]) cube([608_id/sqrt(2),608_id/sqrt(2),100], center=true);
+    }
+}
+// %bottom_hardware();
+bottom_bearing_holder();
+
+// bottom_holder();
+
 // echo (holder_z);
 // top_holder();
 // shaft_2_drive_pulley();
