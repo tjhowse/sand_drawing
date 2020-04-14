@@ -52,7 +52,7 @@ washer_d = 18.8;
 // Slightly undersized for two 27mm pulleys and a 278mm belt, but the tensioner
 // will let us expand it to perfection.
 // https://www.omnicalculator.com/physics/belt-length
-arm1_axis_offset = 96;
+arm1_axis_offset = 95;
 arm1_z = 608_z*2+bearing_retain_lip;
 arm1_x = 2*wt+608_od+arm1_axis_offset+608_id;
 arm1_y = 2*wt+608_od;
@@ -191,8 +191,11 @@ module arm1()
 }
 arm1_split_overlap = 30;
 split_point_offset_from_centre = -30;
+arm_slot_r = 1.5;
+arm_slot_width = 3;
+arm_slot_width_total = arm_slot_width + 2*arm_slot_r;
 
-module slot(slot_r = 1.5, slot_h = 3)
+module slot(slot_r = arm_slot_r, slot_h = arm_slot_width)
 {
     rotate([90,0,0]) translate([-slot_h/2,0,-50]) hull()
     {
@@ -210,8 +213,8 @@ module arm1_split_base()
         translate([-arm1_split_overlap,0,0]) arm1();
         translate([0,-50,0]) cube([100,100,100]);
         translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
-        translate([-8, 0, arm1_z/2]) slot();
-        translate([-24, 0, arm1_z/2]) slot();
+        translate([-arm_slot_width_total/2-wt, 0, arm1_z/2]) slot();
+        translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, arm1_z/2]) slot();
     }
 }
 
@@ -223,8 +226,8 @@ module arm1_split_end()
         rotate([0,0,180]) arm1();
         translate([0,-50,0]) cube([100,100,100]);
         translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
-        translate([-8, 0, arm1_z/2]) slot();
-        translate([-24, 0, arm1_z/2]) slot();
+        translate([-arm_slot_width_total/2-wt, 0, arm1_z/2]) slot();
+        translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, arm1_z/2]) slot();
     }
 }
 
@@ -272,8 +275,9 @@ bottom_bearing_holder();
 // translate([0,0,-3]) %cube([100,30,4], center=true);
 // translate([0,0,-9]) %cube([100,30,4], center=true);
 // shaft_1_drive_pulley();
-// translate([0,30,0]) arm1();
-// translate([-10,-10,0]) arm1_split_base();
-// rotate([0,0,180]) arm1_split_end();
+translate([0,30,0]) arm1();
+// translate([-arm_slot_width_total,-5,0]) arm1_split_base();
+translate([-0,-5,0]) arm1_split_base();
+rotate([0,0,180]) arm1_split_end();
 // shaft_2_driven_pulley();
 // slot();
