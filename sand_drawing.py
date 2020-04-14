@@ -1,6 +1,6 @@
 from umqtt.simple import MQTTClient
 import time
-from utime import ticks_ms, sleep_ms, ticks_diff
+from utime import ticks_us, ticks_ms, sleep_ms, sleep_us, ticks_diff
 import machine
 import network
 import secrets
@@ -27,10 +27,10 @@ class pattern:
         self.id = id
         self.pattern = pattern
 
-A1S_PIN = 10
-A1D_PIN = 11
-A2S_PIN = 12
-A2D_PIN = 13
+A1S_PIN = 16
+A1D_PIN = 5
+A2S_PIN = 4
+A2D_PIN = 0
 
 WIFI_CONNECT_WAIT_MAX_S = 10
 
@@ -39,9 +39,9 @@ SPEED_TOPIC = SAND_DRAWING_TOPIC+"/speed"
 A1DIR_TOPIC = SAND_DRAWING_TOPIC+"/1dir"
 A2DIR_TOPIC = SAND_DRAWING_TOPIC+"/2dir"
 
-G_SPEED = 5
-G_1DIR = 0
-G_2DIR = 0
+G_SPEED = 1
+G_1DIR = 1
+G_2DIR = 1
 
 def main():
     print("Starting up.")
@@ -50,6 +50,57 @@ def main():
     a1d = machine.Pin(A1D_PIN, machine.Pin.OUT)
     a2s = machine.Pin(A2S_PIN, machine.Pin.OUT)
     a2d = machine.Pin(A2D_PIN, machine.Pin.OUT)
+    # while True:
+    #     print('Hi!')
+    #     sleep_ms(1000)
+    a1d.value(G_1DIR)
+    a2d.value(G_2DIR)
+    i = 0
+    on_1 = True
+    dir_1 = 1
+    on_2 = True
+    dir_2 = 1
+    step = 0
+    ticks_step = ticks_ms()
+    ticks_step_interval = 2000
+    while True:
+        if ticks_diff(ticks_ms(), ticks_step) > ticks_step_interval:
+            ticks_step = ticks_ms()
+            step += 1
+            print("Step {}".format(step))
+            if step == 1:
+                on_1 = False
+            elif step == 2:
+                dir_2 = 0
+            elif step == 3:
+                on_1 = True
+                dir_1 = 0
+            elif step == 4:
+                on_2 = False
+            elif step == 5:
+                on_2 = True
+                dir_2 = 1
+            elif step == 6:
+                dir_1 = 1
+            elif step == 7:
+                on_1 = False
+                on_2 = False
+            elif step >= 8:
+                on_1 = True
+                on_2 = True
+                step = 0
+        a1s.value(0)
+        a2s.value(0)
+        sleep_ms(G_SPEED)
+        if on_1:
+            a1s.value(1)
+        if on_2:
+            a2s.value(1)
+        if a1d.value() != dir_1:
+            a1d.value(dir_1)
+        if a2d.value() != dir_2:
+            a2d.value(dir_2)
+        sleep_ms(G_SPEED)
 
     c = None
     while True:
@@ -71,7 +122,7 @@ def main():
         a2d.value(G_2DIR)
         a1s.value(0)
         a2s.value(0)
-        usleep(G_SPEED)
+        sleep_ms(G_SPEED)
         a1s.value(1)
         a2s.value(1)
         sleep_ms(G_SPEED)
