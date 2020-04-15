@@ -44,6 +44,7 @@ A2DIR_TOPIC = SAND_DRAWING_TOPIC+"/2dir"
 G_SPEED = 1
 G_1DIR = 1
 G_2DIR = 1
+MICROSTEPPING = 16
 
 def main():
     print("Starting up.")
