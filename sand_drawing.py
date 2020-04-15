@@ -4,6 +4,8 @@ from utime import ticks_us, ticks_ms, sleep_ms, sleep_us, ticks_diff
 import machine
 import network
 import secrets
+if secrets.wifi_ssid == 'my_ssid':
+    import secrets_real as secrets
 
 class pattern:
     # Patterns contain a list of coordinates and a delay
