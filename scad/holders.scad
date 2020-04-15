@@ -46,7 +46,7 @@ shaft_2_driven_pulley_z_bottom_belt_guide = 1;
 shaft_2_driven_pulley_z = belt2_z + shaft_2_driven_pulley_z_top_belt_guide + shaft_2_driven_pulley_z_bottom_belt_guide;
 
 shaft_2_drive_pulley_z = belt_z+belt2_z+shaft_2_drive_pulley_z_top_belt_guide+shaft_2_drive_pulley_z_bottom_belt_guide+n17_belt_guide_z+shaft_2_drive_pulley_z_extra_z;
-washer_z = 1.5;
+washer_z = 1.3;
 washer_d = 18.8;
 
 // Slightly undersized for two 27mm pulleys and a 278mm belt, but the tensioner
@@ -58,6 +58,7 @@ arm1_x = 2*wt+608_od+arm1_axis_offset+608_id;
 arm1_y = 2*wt+608_od;
 
 pin_r = 1;
+
 
 module n17_holes(slot = 0)
 {
@@ -187,6 +188,7 @@ module arm1()
         translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm1_z);
         #translate([-30,0,arm1_z/2]) rotate([0,-90,0]) cylinder(r=pin_r,h=30);
     }
+    translate([arm1_axis_offset/2+608_od/2+wt,0,0]) optoflag();
 }
 arm1_split_overlap = 30;
 split_point_offset_from_centre = -30;
@@ -281,9 +283,83 @@ module arm2()
             translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm2_z);
         }
         translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm2_z);
-        translate([-arm1_axis_offset/2,0,arm2_z/2]) rotate([0,-90,90]) translate([0,0,-15]) #cylinder(r=pin_r,h=30);
+        translate([-arm1_axis_offset/2,0,arm2_z/2]) rotate([0,-90,90]) translate([0,0,-15]) cylinder(r=pin_r,h=30);
+    }
+    translate([arm1_axis_offset/2+608_id/2+wt,0,0]) optoflag();
+}
+
+
+optoflag_x = 10;
+optoflag_y = 5;
+optoflag_z = 1;
+
+module optoflag()
+{
+    hull()
+    {
+        cylinder(r=optoflag_y/2, h = optoflag_z);
+        translate([optoflag_x-optoflag_y/2,0,0]) cylinder(r=optoflag_y/2, h = optoflag_z);
     }
 }
+
+optoholder_y = 15;
+optoholder_gusset_z = optoholder_y/2;
+optoholder_wt = 2;
+
+// This is the distance between the optoswitch mounting surface and where the flag passes.
+optoswitch_x = 4;
+// This is the length of the optoswitch. The flag should pass through the centre of this volume
+optoswitch_z = 15;
+arm1_optoflag_holder_z = shaft_1_drive_pulley_z+washer_z-bearing_retain_lip+shaft_2_drive_pulley_z+washer_z+optoflag_z/2+optoswitch_z/2;
+arm1_optoflag_holder_offset = arm1_axis_offset-holder_x/2+608_od/2+wt+optoholder_wt/2+optoflag_x + optoswitch_x;
+
+arm2_optoflag_holder_z = shaft_1_drive_pulley_z+washer_z-bearing_retain_lip+shaft_2_drive_pulley_z+washer_z-optoflag_z/2+608_z*2+bearing_retain_lip+arm2_z+optoswitch_z/2;
+
+arm2_optoflag_holder_offset = arm1_axis_offset*2-holder_x/2+608_id/2+wt+optoholder_wt/2+optoflag_x + optoswitch_x;
+
+optoholder_mounting_overlap = 2*wt+stepper_slot*2;
+optoholder_x = arm2_optoflag_holder_offset+optoholder_mounting_overlap;
+
+module optoswitch_holder()
+{
+    translate([optoholder_x/2-optoholder_mounting_overlap,0,optoholder_wt/2]) cube([optoholder_x,optoholder_y, optoholder_wt], center=true);
+    translate([-optoholder_mounting_overlap, -optoholder_y/2,optoholder_gusset_z/2]) rotate([-90,0,0]) translate([optoholder_x/2,0,optoholder_wt/2]) cube([optoholder_x,optoholder_gusset_z, optoholder_wt], center=true);
+    difference()
+    {
+        translate([-optoholder_mounting_overlap, 0 ,0]) cube([optoholder_mounting_overlap, holder_y/2, optoholder_wt]);
+        translate([-stepper_slot-wt,holder_y/2-wt-arm_slot_r,0]) rotate([90,0,0]) slot();
+    }
+
+    translate([arm1_optoflag_holder_offset,0,arm1_optoflag_holder_z/2]) cube([optoholder_wt,optoholder_y, arm1_optoflag_holder_z], center=true);
+    translate([arm2_optoflag_holder_offset,0,arm2_optoflag_holder_z/2]) cube([optoholder_wt,optoholder_y, arm2_optoflag_holder_z], center=true);
+
+    lip_z = holder_z;
+    translate([0,-optoholder_y/2,-lip_z+optoholder_wt]) cube([optoholder_wt,optoholder_y/2+holder_y/2, lip_z]);
+}
+
+module assembled()
+{
+    rotate([180,0,0]) top_holder();
+    shaft_1_drive_pulley();
+    color("red") translate([holder_x/2,0,0]) optoswitch_holder();
+    translate([0,0,shaft_1_drive_pulley_z+washer_z-bearing_retain_lip])
+    {
+        shaft_2_drive_pulley();
+        translate([arm1_axis_offset/2,0,shaft_2_drive_pulley_z+washer_z])
+        {
+            arm1();
+            translate([arm1_axis_offset/2,0,-shaft_2_driven_pulley_z-washer_z]) shaft_2_driven_pulley();
+            translate([arm1_axis_offset,0,arm1_z+arm2_z]) rotate([180,0,0]) arm2();
+        }
+    }
+}
+
+translate([0,-60,0]) assembled();
+// rotate([90,0,0]) optoswitch_holder();
+
+// optoflag();
+// translate([0,30,0]) arm2();
+// arm1();
 
 // %bottom_hardware();
 // bottom_bearing_holder();
@@ -303,4 +379,3 @@ module arm2()
 // shaft_2_driven_pulley();
 // slot();
 
-arm2();
