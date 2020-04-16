@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name Custom)(type KiCad)(uri D:/devstuff/sand_drawing/pcb/sand_drawing/modules)(options "")(descr ""))
+)
