@@ -354,8 +354,8 @@ module assembled()
     }
 }
 
-translate([0,-60,0]) assembled();
-// rotate([90,0,0]) optoswitch_holder();
+// translate([0,-60,0]) assembled();
+rotate([90,0,0]) optoswitch_holder();
 
 // optoflag();
 // translate([0,30,0]) arm2();
