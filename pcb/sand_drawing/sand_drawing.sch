@@ -192,43 +192,43 @@ Connection ~ 5100 3800
 $Comp
 L Connector:Conn_01x03_Male J3
 U 1 1 5E9E0F06
-P 4200 6500
-F 0 "J3" H 4172 6432 50  0000 R CNN
-F 1 "Arm 1 Opto" H 4172 6523 50  0000 R CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 4200 6500 50  0001 C CNN
-F 3 "~" H 4200 6500 50  0001 C CNN
-	1    4200 6500
+P 1750 5250
+F 0 "J3" H 1722 5182 50  0000 R CNN
+F 1 "Arm 1 Opto" H 1722 5273 50  0000 R CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 1750 5250 50  0001 C CNN
+F 3 "~" H 1750 5250 50  0001 C CNN
+	1    1750 5250
 	-1   0    0    1   
 $EndComp
 $Comp
 L Connector:Conn_01x03_Male J4
 U 1 1 5E9E28A1
-P 4200 6800
-F 0 "J4" H 4172 6732 50  0000 R CNN
-F 1 "Arm 2 Opto" H 4172 6823 50  0000 R CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 4200 6800 50  0001 C CNN
-F 3 "~" H 4200 6800 50  0001 C CNN
-	1    4200 6800
+P 1750 5550
+F 0 "J4" H 1722 5482 50  0000 R CNN
+F 1 "Arm 2 Opto" H 1722 5573 50  0000 R CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 1750 5550 50  0001 C CNN
+F 3 "~" H 1750 5550 50  0001 C CNN
+	1    1750 5550
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR0105
 U 1 1 5E9E4C25
-P 3750 7050
-F 0 "#PWR0105" H 3750 6800 50  0001 C CNN
-F 1 "GND" H 3755 6877 50  0000 C CNN
-F 2 "" H 3750 7050 50  0001 C CNN
-F 3 "" H 3750 7050 50  0001 C CNN
-	1    3750 7050
+P 1300 5800
+F 0 "#PWR0105" H 1300 5550 50  0001 C CNN
+F 1 "GND" H 1305 5627 50  0000 C CNN
+F 2 "" H 1300 5800 50  0001 C CNN
+F 3 "" H 1300 5800 50  0001 C CNN
+	1    1300 5800
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3750 7050 3750 6900
-Connection ~ 3750 6900
+	1300 5800 1300 5650
+Connection ~ 1300 5650
 Wire Wire Line
-	3750 6900 3750 6600
+	1300 5650 1300 5350
 Wire Wire Line
-	4000 6500 3950 6500
+	1550 5250 1500 5250
 $Comp
 L power:+3.3V #PWR0106
 U 1 1 5E9FBEF7
@@ -265,27 +265,27 @@ $EndComp
 $Comp
 L power:+3.3V #PWR0109
 U 1 1 5E9FE0CA
-P 3350 6150
-F 0 "#PWR0109" H 3350 6000 50  0001 C CNN
-F 1 "+3.3V" H 3365 6323 50  0000 C CNN
-F 2 "" H 3350 6150 50  0001 C CNN
-F 3 "" H 3350 6150 50  0001 C CNN
-	1    3350 6150
+P 900 4900
+F 0 "#PWR0109" H 900 4750 50  0001 C CNN
+F 1 "+3.3V" H 915 5073 50  0000 C CNN
+F 2 "" H 900 4900 50  0001 C CNN
+F 3 "" H 900 4900 50  0001 C CNN
+	1    900  4900
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3850 6800 4000 6800
+	1400 5550 1550 5550
 Wire Wire Line
-	3650 6700 4000 6700
+	1200 5450 1550 5450
 Wire Wire Line
-	4000 6400 3650 6400
-Connection ~ 3650 6400
+	1550 5150 1200 5150
+Connection ~ 1200 5150
 Wire Wire Line
-	3650 6400 3650 6700
+	1200 5150 1200 5450
 Wire Wire Line
-	3750 6600 4000 6600
+	1300 5350 1550 5350
 Wire Wire Line
-	3750 6900 4000 6900
+	1300 5650 1550 5650
 Wire Wire Line
 	3700 2500 4250 2500
 Wire Wire Line
@@ -575,10 +575,10 @@ Wire Wire Line
 Wire Wire Line
 	2650 3650 2400 3650
 $Comp
-L Connector:Conn_01x02_Male J?
+L Connector:Conn_01x02_Male J7
 U 1 1 5E99CB34
 P 4400 5250
-F 0 "J?" H 4250 5150 50  0000 C CNN
+F 0 "J7" H 4250 5150 50  0000 C CNN
 F 1 "Driver 2 M0" H 4250 5250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4400 5250 50  0001 C CNN
 F 3 "~" H 4400 5250 50  0001 C CNN
@@ -586,10 +586,10 @@ F 3 "~" H 4400 5250 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J?
+L Connector:Conn_01x02_Male J8
 U 1 1 5E9C5CF2
 P 4600 5250
-F 0 "J?" H 4450 5150 50  0000 C CNN
+F 0 "J8" H 4450 5150 50  0000 C CNN
 F 1 "Driver 2 M1" H 4450 5250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4600 5250 50  0001 C CNN
 F 3 "~" H 4600 5250 50  0001 C CNN
@@ -597,10 +597,10 @@ F 3 "~" H 4600 5250 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J?
+L Connector:Conn_01x02_Male J9
 U 1 1 5E9C5F13
 P 4800 5250
-F 0 "J?" H 4650 5150 50  0000 C CNN
+F 0 "J9" H 4650 5150 50  0000 C CNN
 F 1 "Driver 2 M2" H 4650 5250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4800 5250 50  0001 C CNN
 F 3 "~" H 4800 5250 50  0001 C CNN
@@ -611,18 +611,18 @@ Text GLabel 3700 2700 2    50   Input ~ 0
 Opto1
 Text GLabel 3700 2800 2    50   Input ~ 0
 Opto2
-Text GLabel 3850 6050 0    50   Input ~ 0
+Text GLabel 1400 4800 0    50   Input ~ 0
 Opto2
-Text GLabel 3950 6050 2    50   Input ~ 0
+Text GLabel 1500 4800 2    50   Input ~ 0
 Opto1
 Wire Wire Line
-	3950 6050 3950 6500
+	1500 4800 1500 5250
 Wire Wire Line
-	3650 6400 3350 6400
+	1200 5150 900  5150
 Wire Wire Line
-	3350 6400 3350 6150
+	900  5150 900  4900
 Wire Wire Line
-	3850 6800 3850 6050
+	1400 5550 1400 4800
 Wire Wire Line
 	4200 2600 4200 4400
 Wire Wire Line
@@ -644,10 +644,10 @@ Wire Wire Line
 Wire Wire Line
 	4800 4800 4800 5050
 $Comp
-L power:+3.3V #PWR?
+L power:+3.3V #PWR0116
 U 1 1 5EA0D498
 P 4200 4850
-F 0 "#PWR?" H 4200 4700 50  0001 C CNN
+F 0 "#PWR0116" H 4200 4700 50  0001 C CNN
 F 1 "+3.3V" H 4215 5023 50  0000 C CNN
 F 2 "" H 4200 4850 50  0001 C CNN
 F 3 "" H 4200 4850 50  0001 C CNN
@@ -677,33 +677,33 @@ Wire Wire Line
 Wire Wire Line
 	5600 3600 5600 3450
 $Comp
-L Connector:Conn_01x02_Male J?
+L Connector:Conn_01x02_Male J10
 U 1 1 5EA4E3CF
 P 4900 3250
-F 0 "J?" H 4750 3150 50  0000 C CNN
-F 1 "Driver 2 M0" H 4750 3250 50  0000 C CNN
+F 0 "J10" H 4750 3150 50  0000 C CNN
+F 1 "Driver 1 M0" H 4750 3250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4900 3250 50  0001 C CNN
 F 3 "~" H 4900 3250 50  0001 C CNN
 	1    4900 3250
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J?
+L Connector:Conn_01x02_Male J11
 U 1 1 5EA4E3D5
 P 5100 3250
-F 0 "J?" H 4950 3150 50  0000 C CNN
-F 1 "Driver 2 M1" H 4950 3250 50  0000 C CNN
+F 0 "J11" H 4950 3150 50  0000 C CNN
+F 1 "Driver 1 M1" H 4950 3250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 5100 3250 50  0001 C CNN
 F 3 "~" H 5100 3250 50  0001 C CNN
 	1    5100 3250
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J?
+L Connector:Conn_01x02_Male J12
 U 1 1 5EA4E3DB
 P 5300 3250
-F 0 "J?" H 5150 3150 50  0000 C CNN
-F 1 "Driver 2 M2" H 5150 3250 50  0000 C CNN
+F 0 "J12" H 5150 3150 50  0000 C CNN
+F 1 "Driver 1 M2" H 5150 3250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 5300 3250 50  0001 C CNN
 F 3 "~" H 5300 3250 50  0001 C CNN
 	1    5300 3250
@@ -716,10 +716,10 @@ Wire Wire Line
 Wire Wire Line
 	5300 2800 5300 3050
 $Comp
-L power:+3.3V #PWR?
+L power:+3.3V #PWR0117
 U 1 1 5EA4E3E7
 P 4700 2850
-F 0 "#PWR?" H 4700 2700 50  0001 C CNN
+F 0 "#PWR0117" H 4700 2700 50  0001 C CNN
 F 1 "+3.3V" H 4715 3023 50  0000 C CNN
 F 2 "" H 4700 2850 50  0001 C CNN
 F 3 "" H 4700 2850 50  0001 C CNN
