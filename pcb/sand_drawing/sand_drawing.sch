@@ -194,7 +194,7 @@ L Connector:Conn_01x03_Male J3
 U 1 1 5E9E0F06
 P 1750 5250
 F 0 "J3" H 1722 5182 50  0000 R CNN
-F 1 "Arm 1 Opto" H 1722 5273 50  0000 R CNN
+F 1 "Opto 1" H 1722 5273 50  0000 R CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 1750 5250 50  0001 C CNN
 F 3 "~" H 1750 5250 50  0001 C CNN
 	1    1750 5250
@@ -205,7 +205,7 @@ L Connector:Conn_01x03_Male J4
 U 1 1 5E9E28A1
 P 1750 5550
 F 0 "J4" H 1722 5482 50  0000 R CNN
-F 1 "Arm 2 Opto" H 1722 5573 50  0000 R CNN
+F 1 "Opto 2" H 1722 5573 50  0000 R CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 1750 5550 50  0001 C CNN
 F 3 "~" H 1750 5550 50  0001 C CNN
 	1    1750 5550
@@ -295,7 +295,7 @@ L Regulator_Linear:LD1117S33TR_SOT223 U2
 U 1 1 5EA1C344
 P 1200 1350
 F 0 "U2" H 1200 1592 50  0000 C CNN
-F 1 "LD1117_TO220" H 1200 1501 50  0000 C CNN
+F 1 "LD1117" H 1200 1501 50  0000 C CNN
 F 2 "Power_Integrations:TO-220" H 1200 1575 50  0001 C CIN
 F 3 "http://www.fairchildsemi.com/ds/LM/LM7805.pdf" H 1200 1300 50  0001 C CNN
 	1    1200 1350
@@ -414,7 +414,7 @@ L Connector:Conn_01x02_Male J0
 U 1 1 5EA53D0B
 P 650 2500
 F 0 "J0" H 758 2681 50  0000 C CNN
-F 1 "12VDC" H 758 2590 50  0000 C CNN
+F 1 "12V GND" H 758 2590 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 650 2500 50  0001 C CNN
 F 3 "~" H 650 2500 50  0001 C CNN
 	1    650  2500
@@ -501,15 +501,11 @@ Wire Wire Line
 Wire Wire Line
 	2350 2800 1550 2800
 Wire Wire Line
-	1550 2800 1550 3650
-Wire Wire Line
-	1550 3650 1900 3650
+	1550 2800 1550 3450
 Wire Wire Line
 	2900 2200 2400 2200
 Wire Wire Line
 	2400 2200 2400 2850
-Wire Wire Line
-	2400 2850 1600 2850
 Wire Wire Line
 	1600 2850 1600 3550
 Wire Wire Line
@@ -521,19 +517,11 @@ Wire Wire Line
 Wire Wire Line
 	2450 2900 1650 2900
 Wire Wire Line
-	1650 2900 1650 3450
-Wire Wire Line
-	1650 3450 1900 3450
-Wire Wire Line
 	2900 2600 2500 2600
 Wire Wire Line
 	2500 2600 2500 2950
 Wire Wire Line
 	2500 2950 1700 2950
-Wire Wire Line
-	1700 2950 1700 3350
-Wire Wire Line
-	1700 3350 1900 3350
 Wire Wire Line
 	3700 3000 4000 3000
 Wire Wire Line
@@ -541,19 +529,11 @@ Wire Wire Line
 Wire Wire Line
 	4000 3850 2800 3850
 Wire Wire Line
-	2800 3850 2800 3350
-Wire Wire Line
-	2800 3350 2400 3350
+	2800 3850 2800 3550
 Wire Wire Line
 	3700 2900 4050 2900
 Wire Wire Line
 	4050 2900 4050 3900
-Wire Wire Line
-	4050 3900 2750 3900
-Wire Wire Line
-	2750 3900 2750 3450
-Wire Wire Line
-	2750 3450 2400 3450
 Wire Wire Line
 	3700 2200 4100 2200
 Wire Wire Line
@@ -561,35 +541,16 @@ Wire Wire Line
 Wire Wire Line
 	4100 3950 2700 3950
 Wire Wire Line
-	2700 3950 2700 3550
-Wire Wire Line
-	2700 3550 2400 3550
-Wire Wire Line
 	3700 2100 4150 2100
 Wire Wire Line
 	4150 2100 4150 4000
 Wire Wire Line
 	4150 4000 2650 4000
-Wire Wire Line
-	2650 4000 2650 3650
-Wire Wire Line
-	2650 3650 2400 3650
 $Comp
-L Connector:Conn_01x02_Male J7
-U 1 1 5E99CB34
-P 4400 5250
-F 0 "J7" H 4250 5150 50  0000 C CNN
-F 1 "Driver 2 M0" H 4250 5250 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4400 5250 50  0001 C CNN
-F 3 "~" H 4400 5250 50  0001 C CNN
-	1    4400 5250
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:Conn_01x02_Male J8
+L Connector:Conn_01x02_Male D2M1
 U 1 1 5E9C5CF2
 P 4600 5250
-F 0 "J8" H 4450 5150 50  0000 C CNN
+F 0 "D2M1" H 4450 5150 50  0000 C CNN
 F 1 "Driver 2 M1" H 4450 5250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4600 5250 50  0001 C CNN
 F 3 "~" H 4600 5250 50  0001 C CNN
@@ -597,10 +558,10 @@ F 3 "~" H 4600 5250 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J9
+L Connector:Conn_01x02_Male D2M2
 U 1 1 5E9C5F13
 P 4800 5250
-F 0 "J9" H 4650 5150 50  0000 C CNN
+F 0 "D2M2" H 4650 5150 50  0000 C CNN
 F 1 "Driver 2 M2" H 4650 5250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4800 5250 50  0001 C CNN
 F 3 "~" H 4800 5250 50  0001 C CNN
@@ -627,10 +588,6 @@ Wire Wire Line
 	4200 2600 4200 4400
 Wire Wire Line
 	4250 4300 4250 2500
-Wire Wire Line
-	4250 4300 5200 4300
-Wire Wire Line
-	4200 4400 5200 4400
 Wire Wire Line
 	5200 4600 4400 4600
 Wire Wire Line
@@ -669,18 +626,14 @@ Wire Wire Line
 Wire Wire Line
 	4200 4850 4500 4850
 Wire Wire Line
-	3700 2300 5700 2300
-Wire Wire Line
-	3700 2400 5700 2400
-Wire Wire Line
 	6100 1450 6100 1600
 Wire Wire Line
 	5600 3600 5600 3450
 $Comp
-L Connector:Conn_01x02_Male J10
+L Connector:Conn_01x02_Male D1M0
 U 1 1 5EA4E3CF
 P 4900 3250
-F 0 "J10" H 4750 3150 50  0000 C CNN
+F 0 "D1M0" H 4750 3150 50  0000 C CNN
 F 1 "Driver 1 M0" H 4750 3250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4900 3250 50  0001 C CNN
 F 3 "~" H 4900 3250 50  0001 C CNN
@@ -688,10 +641,10 @@ F 3 "~" H 4900 3250 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J11
+L Connector:Conn_01x02_Male D1M1
 U 1 1 5EA4E3D5
 P 5100 3250
-F 0 "J11" H 4950 3150 50  0000 C CNN
+F 0 "D1M1" H 4950 3150 50  0000 C CNN
 F 1 "Driver 1 M1" H 4950 3250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 5100 3250 50  0001 C CNN
 F 3 "~" H 5100 3250 50  0001 C CNN
@@ -699,10 +652,10 @@ F 3 "~" H 5100 3250 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J12
+L Connector:Conn_01x02_Male D1M2
 U 1 1 5EA4E3DB
 P 5300 3250
-F 0 "J12" H 5150 3150 50  0000 C CNN
+F 0 "D1M2" H 5150 3150 50  0000 C CNN
 F 1 "Driver 1 M2" H 5150 3250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 5300 3250 50  0001 C CNN
 F 3 "~" H 5300 3250 50  0001 C CNN
@@ -746,4 +699,75 @@ Wire Wire Line
 	4900 2600 5700 2600
 Wire Wire Line
 	5100 2700 5700 2700
+Wire Wire Line
+	5700 2400 4950 2400
+Wire Wire Line
+	4950 2400 4950 2300
+Wire Wire Line
+	4950 2300 3700 2300
+Wire Wire Line
+	5700 2300 5000 2300
+Wire Wire Line
+	5000 2300 5000 2450
+Wire Wire Line
+	5000 2450 4900 2450
+Wire Wire Line
+	4900 2450 4900 2400
+Wire Wire Line
+	4900 2400 3700 2400
+Wire Wire Line
+	4800 4400 5200 4400
+Wire Wire Line
+	4750 4300 4750 4400
+Wire Wire Line
+	4200 4400 4750 4400
+Wire Wire Line
+	4750 4300 5200 4300
+Wire Wire Line
+	4700 4300 4700 4450
+Wire Wire Line
+	4700 4450 4800 4450
+Wire Wire Line
+	4800 4450 4800 4400
+Wire Wire Line
+	4250 4300 4700 4300
+$Comp
+L Connector:Conn_01x02_Male D2M0
+U 1 1 5E99CB34
+P 4400 5250
+F 0 "D2M0" H 4250 5150 50  0000 C CNN
+F 1 "Driver 2 M0" H 4250 5250 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 4400 5250 50  0001 C CNN
+F 3 "~" H 4400 5250 50  0001 C CNN
+	1    4400 5250
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4050 3900 2750 3900
+Wire Wire Line
+	2650 3450 2650 4000
+Wire Wire Line
+	2650 3450 2400 3450
+Wire Wire Line
+	2750 3650 2750 3900
+Wire Wire Line
+	2400 3650 2750 3650
+Wire Wire Line
+	2400 3550 2800 3550
+Wire Wire Line
+	2700 3950 2700 3350
+Wire Wire Line
+	2700 3350 2400 3350
+Wire Wire Line
+	1650 2900 1650 3350
+Wire Wire Line
+	1650 3350 1900 3350
+Wire Wire Line
+	2400 2850 1600 2850
+Wire Wire Line
+	1700 2950 1700 3650
+Wire Wire Line
+	1700 3650 1900 3650
+Wire Wire Line
+	1900 3450 1550 3450
 $EndSCHEMATC
