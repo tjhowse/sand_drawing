@@ -33,6 +33,8 @@ A1S_PIN = 16
 A1D_PIN = 5
 A2S_PIN = 4
 A2D_PIN = 0
+A1O_PIN = 12
+A2O_PIN = 14
 
 WIFI_CONNECT_WAIT_MAX_S = 10
 
@@ -45,65 +47,18 @@ G_SPEED = 1
 G_1DIR = 1
 G_2DIR = 1
 MICROSTEPPING = 16
+GEAR_RATIO = 44/20
 
 def main():
-    print("Starting up.")
-    global G_SPEED, G_1DIR, G_2DIR
-    a1s = machine.Pin(A1S_PIN, machine.Pin.OUT)
-    a1d = machine.Pin(A1D_PIN, machine.Pin.OUT)
-    a2s = machine.Pin(A2S_PIN, machine.Pin.OUT)
-    a2d = machine.Pin(A2D_PIN, machine.Pin.OUT)
-    # while True:
-    #     print('Hi!')
-    #     sleep_ms(1000)
-    a1d.value(G_1DIR)
-    a2d.value(G_2DIR)
-    i = 0
-    on_1 = True
-    dir_1 = 1
-    on_2 = True
-    dir_2 = 1
-    step = 0
-    ticks_step = ticks_ms()
-    ticks_step_interval = 2000
+    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN)
+    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN)
+    s2.set_speed(200*MICROSTEPPING*GEAR_RATIO)
+    s1.set_speed(200*MICROSTEPPING*GEAR_RATIO)
+
     while True:
-        if ticks_diff(ticks_ms(), ticks_step) > ticks_step_interval:
-            ticks_step = ticks_ms()
-            step += 1
-            print("Step {}".format(step))
-            if step == 1:
-                on_1 = False
-            elif step == 2:
-                dir_2 = 0
-            elif step == 3:
-                on_1 = True
-                dir_1 = 0
-            elif step == 4:
-                on_2 = False
-            elif step == 5:
-                on_2 = True
-                dir_2 = 1
-            elif step == 6:
-                dir_1 = 1
-            elif step == 7:
-                on_1 = False
-                on_2 = False
-            elif step >= 8:
-                on_1 = True
-                on_2 = True
-                step = 0
-        a1s.value(0)
-        a2s.value(0)
-        sleep_ms(G_SPEED)
-        if on_1:
-            a1s.value(1)
-        if on_2:
-            a2s.value(1)
-        if a1d.value() != dir_1:
-            a1d.value(dir_1)
-        if a2d.value() != dir_2:
-            a2d.value(dir_2)
-        sleep_ms(G_SPEED)
+        s2.go()
+        s1.go()
+        sleep_us(1)
 
     c = None
     while True:
@@ -129,6 +84,62 @@ def main():
         a1s.value(1)
         a2s.value(1)
         sleep_ms(G_SPEED)
+
+class stepper():
+    # This manages the interface to a stepper
+    s = None # The step output Pin object
+    d = None # The direction output Pin object
+    o = None # The optoswitch input Pin object
+    dir = 0 # 0: Clockwise, 1: Counterclockwise
+    step_interval = 0 # The number of ticks_us between rising or falling edges of the step pin
+    last_step = 0 # The last ticks_us of a rising or falling edge
+    index = 0 # 0-199 the number of steps
+    last_o = False # Used for detecting the rising edge of the opto pin
+
+    def __init__(self, s_pin, d_pin, o_pin):
+        self.s = machine.Pin(s_pin, machine.Pin.OUT)
+        self.d = machine.Pin(d_pin, machine.Pin.OUT)
+        # This is declared an output so we can use the internal pull-up.
+        self.o = machine.Pin(o_pin, machine.Pin.OUT)
+        self.o.value(1)
+        self.set_dir(0)
+
+    def set_speed(self, new_speed):
+        # Sets the speed in steps per second
+        self.step_interval = (1e6*(1.0/new_speed))/2
+
+    def set_dir(self, new_dir):
+        self.dir = new_dir
+        self.d.value(1-self.dir)
+
+    def go(self):
+        if self.last_step == 0:
+            self.last_step = ticks_us()
+        if ticks_diff(ticks_us(), self.last_step) <= self.step_interval:
+            return
+        if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
+            # Rising edge opto when rotating clockwise. We're at zero.
+            print("home")
+            self.index = 0
+        self.last_o = self.o.value()
+
+        self.s.value(1 - self.s.value())
+        self.last_step = ticks_us()
+
+
+def do_step(speed, a1s, ):
+    a1s.value(0)
+    a2s.value(0)
+    sleep_ms(speed)
+    if on_1:
+        a1s.value(1)
+    if on_2:
+        a2s.value(1)
+    if a1d.value() != dir_1:
+        a1d.value(dir_1)
+    if a2d.value() != dir_2:
+        a2d.value(dir_2)
+    sleep_ms(speed)
 
 def robust_publish(broker, topic, message):
     if broker == None:
