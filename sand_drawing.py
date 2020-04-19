@@ -1,3 +1,5 @@
+# pylint: disable=E0401
+
 from umqtt.simple import MQTTClient
 import time
 from utime import ticks_us, ticks_ms, sleep_ms, sleep_us, ticks_diff
@@ -50,18 +52,26 @@ STEPS_PER_REV = 200
 MICROSTEPPING = 16
 GEAR_RATIO = 44/20
 STEPS_PER_DEGREE = (STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)/360
-
 def main():
-    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN)
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN)
-    s2.set_speed(360)
-    s1.set_speed(360)
+    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN)
+    my_cnc = cnc(s1, s2)
+
+    pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
+    # pattern = ["G28 X", "G28 Y", "G1 Y-180"]
+    pattern_step = 0
 
     while True:
-        ticks = ticks_us()
-        s2.go(ticks)
-        s1.go(ticks)
-        sleep_us(1)
+        my_cnc.gcode(pattern[pattern_step])
+        while not my_cnc.tick():
+            pass
+        pattern_step += 1
+        if pattern_step == len(pattern):
+            # We're done!
+            print("Done")
+            while True:
+                sleep_ms(1000)
+
 
     c = None
     while True:
@@ -79,14 +89,49 @@ def main():
             except:
                 c = None
 
-        a1d.value(G_1DIR)
-        a2d.value(G_2DIR)
-        a1s.value(0)
-        a2s.value(0)
-        sleep_ms(G_SPEED)
-        a1s.value(1)
-        a2s.value(1)
-        sleep_ms(G_SPEED)
+class cnc():
+
+    def __init__(self, s1, s2):
+        self.s1 = s1
+        self.s2 = s2
+
+    def gcode(self, gcode):
+        self.code = gcode.split(' ')
+        print(self.code)
+        if self.code[0] == "G28":
+            self.s1.set_speed(0)
+            self.s2.set_speed(0)
+            if len(self.code) == 1:
+                return
+            if self.code[1] == 'Y':
+                print("Homing Y axis")
+                self.s2.home()
+            elif self.code[1] == 'X':
+                print("Homing X axis")
+                self.s1.home()
+            return
+
+        elif self.code[0] == "G1":
+            if len(self.code) == 1:
+                return
+            for coord in self.code[1:]:
+                print("Coord: {}".format(coord))
+                if coord.startswith('X'):
+                    self.s1.set_speed(float(coord[1:]))
+                elif coord.startswith('Y'):
+                    self.s2.set_speed(float(coord[1:]))
+            return
+
+    def tick(self):
+        ticks = ticks_us()
+        # Shortcut lazy-evaluation
+        done = self.s1.go(ticks)
+        done = done and self.s2.go(ticks)
+        # Not very happy about this. Revisit it.
+        if self.code[0] == "G28" and done:
+            self.s1.homing = False
+            self.s2.homing = False
+        return done
 
 class stepper():
     # This manages the interface to a stepper
@@ -96,11 +141,13 @@ class stepper():
     dir = 0 # 0: Clockwise, 1: Counterclockwise
     step_interval = 0 # The number of ticks_us between rising or falling edges of the step pin
     last_step = 0 # The last ticks_us of a rising or falling edge
-    index = 0 # 0-199 the number of steps
-    last_o = False # Used for detecting the rising edge of the opto pin
+    index = -1 # 0-x the number of steps
+    last_o = 1 # Used for detecting the rising edge of the opto pin
     high_low = 0 # The state of the step pin. 0: low, 1: high
     homing = True
+    homed = False
     stepping = True
+    debug = False
 
     def __init__(self, s_pin, d_pin, o_pin):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
@@ -115,44 +162,57 @@ class stepper():
         if new_speed == 0:
             self.stepping = False
             return
+        if new_speed < 0:
+            new_speed *= -1
+            self.set_dir(1)
+        else:
+            self.set_dir(0)
         self.stepping = True
         self.step_interval = 1e6*(1/(new_speed*STEPS_PER_DEGREE))/2
+        if self.debug:
+            print("New speed: {}".format(new_speed))
+            print("Stepping: {}".format(self.stepping))
+            print("homing: {}".format(self.homing))
+            print("homed: {}".format(self.homed))
 
     def set_dir(self, new_dir):
         self.dir = new_dir
         self.d.value(1-self.dir)
 
+    def set_angle(self, angle, speed):
+        pass
+
+    def home(self):
+        self.homing = True
+        self.set_speed(360)
+
     def go(self, ticks):
-        if not self.stepping or ticks_diff(ticks, self.last_step) <= self.step_interval:
-            return
+        done_flag = False
+        if not self.stepping:
+            return True
+        if ticks_diff(ticks, self.last_step) <= self.step_interval:
+            return False
         if self.homing:
             if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
                 # Rising edge opto when rotating clockwise. We're at zero.
-                self.homing = False
+                self.homed = True
                 self.index = 0
+                done_flag = True
+                self.set_speed(0)
+                return done_flag
+                print("homed")
+            elif self.homed:
+                done_flag = True
             self.last_o = self.o.value()
+
         self.high_low = 1 - self.high_low
         self.s.value(self.high_low)
         self.last_step = ticks
-        if self.high_low == 1:
+        if self.homed and self.high_low == 1:
             # On a rising edge increase the index by 1 if going clockwise,
             # or decrement by 1 if going anti-clockwise.
             self.index += 1 + self.dir*-2
-
-
-def do_step(speed, a1s, ):
-    a1s.value(0)
-    a2s.value(0)
-    sleep_ms(speed)
-    if on_1:
-        a1s.value(1)
-    if on_2:
-        a2s.value(1)
-    if a1d.value() != dir_1:
-        a1d.value(dir_1)
-    if a2d.value() != dir_2:
-        a2d.value(dir_2)
-    sleep_ms(speed)
+        return done_flag
 
 def robust_publish(broker, topic, message):
     if broker == None:
