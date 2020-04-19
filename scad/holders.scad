@@ -186,7 +186,7 @@ module arm1()
         translate([arm1_axis_offset/2,0,bearing_retain_lip]) cylinder(r=608_od/2,h=2*608_z);
         translate([arm1_axis_offset/2,0,0]) cylinder(r=608_od/2-wt,h=arm1_z);
         translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm1_z);
-        #translate([-30,0,arm1_z/2]) rotate([0,-90,0]) cylinder(r=pin_r,h=30);
+        translate([-arm1_axis_offset/2,0,arm1_z/2]) rotate([90,0,0]) translate([0,0,-50]) cylinder(r=pin_r,h=100);
     }
     translate([arm1_axis_offset/2+608_od/2+wt,0,0]) optoflag();
 }
@@ -355,11 +355,11 @@ module assembled()
 }
 
 // translate([0,-60,0]) assembled();
-rotate([90,0,0]) optoswitch_holder();
+// rotate([90,0,0]) optoswitch_holder();
 
 // optoflag();
 // translate([0,30,0]) arm2();
-// arm1();
+arm1();
 
 // %bottom_hardware();
 // bottom_bearing_holder();
