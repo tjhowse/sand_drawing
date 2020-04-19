@@ -213,9 +213,11 @@ module arm1_split_base()
     {
         translate([-arm1_split_overlap,0,0]) arm1();
         translate([0,-50,0]) cube([100,100,100]);
-        translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
-        translate([-arm_slot_width_total/2-wt, 0, arm1_z/2]) slot();
-        translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, arm1_z/2]) slot();
+        translate([-arm1_split_overlap,-50,arm1_z/2]) cube([100,100,100]);
+        rotate([90,0,0]) {
+            translate([-arm_slot_width_total/2-wt, 0, 0]) slot();
+            translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, 0]) slot();
+        }
     }
 }
 
@@ -226,9 +228,16 @@ module arm1_split_end()
     {
         rotate([0,0,180]) arm1();
         translate([0,-50,0]) cube([100,100,100]);
-        translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
-        translate([-arm_slot_width_total/2-wt, 0, arm1_z/2]) slot();
-        translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, arm1_z/2]) slot();
+        translate([-arm1_split_overlap,-50,arm1_z/2]) cube([100,100,100]);
+        rotate([90,0,0]) {
+            translate([-arm_slot_width_total/2-wt, 0, 0]) slot();
+            translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, 0]) slot();
+        }
+
+        // translate([0,-50,0]) cube([100,100,100]);
+        // translate([-arm1_split_overlap,0,0]) cube([100,100,100]);
+        // translate([-arm_slot_width_total/2-wt, 0, arm1_z/2]) slot();
+        // translate([split_point_offset_from_centre+arm_slot_width_total/2+wt+arm_slot_width_total/2, 0, arm1_z/2]) slot();
     }
 }
 
@@ -359,7 +368,7 @@ module assembled()
 
 // optoflag();
 // translate([0,30,0]) arm2();
-arm1();
+// arm1();
 
 // %bottom_hardware();
 // bottom_bearing_holder();
@@ -374,8 +383,8 @@ arm1();
 // shaft_1_drive_pulley();
 // translate([0,30,0]) arm1();
 // translate([-arm_slot_width_total,-5,0]) arm1_split_base();
-// translate([-10,-5,0]) arm1_split_base();
-// rotate([0,0,180]) arm1_split_end();
+translate([0,-20,0]) arm1_split_base();
+rotate([0,0,180]) arm1_split_end();
 // shaft_2_driven_pulley();
 // slot();
 
