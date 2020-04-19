@@ -356,14 +356,16 @@ module assembled()
         shaft_2_drive_pulley();
         translate([arm1_axis_offset/2,0,shaft_2_drive_pulley_z+washer_z])
         {
-            arm1();
+            // arm1();
+            translate([0,0,arm1_z]) rotate([180,0,0]) arm1_split_base();
+            rotate([0,0,180]) arm1_split_end();
             translate([arm1_axis_offset/2,0,-shaft_2_driven_pulley_z-washer_z]) shaft_2_driven_pulley();
             translate([arm1_axis_offset,0,arm1_z+arm2_z]) rotate([180,0,0]) arm2();
         }
     }
 }
 
-// translate([0,-60,0]) assembled();
+translate([0,-60,0]) assembled();
 // rotate([90,0,0]) optoswitch_holder();
 
 // optoflag();
@@ -383,8 +385,12 @@ module assembled()
 // shaft_1_drive_pulley();
 // translate([0,30,0]) arm1();
 // translate([-arm_slot_width_total,-5,0]) arm1_split_base();
-translate([0,-20,0]) arm1_split_base();
-rotate([0,0,180]) arm1_split_end();
+// #arm1();
+
+// translate([0,0,arm1_z]) rotate([180,0,0]) arm1_split_base();
+// rotate([0,0,180]) arm1_split_end();
+// translate([0,-20,0]) arm1_split_base();
+// rotate([0,0,180]) arm1_split_end();
 // shaft_2_driven_pulley();
 // slot();
 
