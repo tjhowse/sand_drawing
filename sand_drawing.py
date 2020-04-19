@@ -123,6 +123,7 @@ class cnc():
 
     move_mode = 0
     coord_mode = 0
+    debug = False
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -130,17 +131,20 @@ class cnc():
 
     def gcode(self, gcode):
         self.code = gcode.split(' ')
-        print(self.code)
+        if self.debug:
+            print(self.code)
         if self.code[0] == "G28":
             self.s1.set_speed(0)
             self.s2.set_speed(0)
             if len(self.code) == 1:
                 return
             if self.code[1] == 'Y':
-                print("Homing Y axis")
+                if self.debug:
+                    print("Homing Y axis")
                 self.s2.home()
             elif self.code[1] == 'X':
-                print("Homing X axis")
+                if self.debug:
+                    print("Homing X axis")
                 self.s1.home()
             return
 
@@ -243,7 +247,9 @@ class stepper():
         if not self.homed:
             return
         # TODO set the speed such that it turns the shortest direction to the target.
-        print("Set angle: {}".format(angle))
+
+        if self.debug:
+            print("Set angle: {}".format(angle))
         self.target_angle = angle
         self.seeking = True
         self.set_speed(speed)
@@ -265,7 +271,8 @@ class stepper():
                 self.homed = True
                 self.index = 0
                 self.set_speed(0)
-                print("homed")
+                if self.debug:
+                    print("homed")
                 return True
             elif self.homed:
                 done_flag = True
