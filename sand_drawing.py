@@ -49,12 +49,18 @@ G_SPEED = 1
 G_1DIR = 1
 G_2DIR = 1
 STEPS_PER_REV = 200
-MICROSTEPPING = 16
+WILD_MODE = True
+if WILD_MODE:
+    MICROSTEPPING = 1
+    DEFAULT_MOVE_SPEED = 180
+else:
+    MICROSTEPPING = 16
+    DEFAULT_MOVE_SPEED = 360
+
 GEAR_RATIO = 44/20
 STEPS_PER_DEGREE = (STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)/360
 
-CLOSE_ENOUGH_ANGLE = STEPS_PER_DEGREE*1
-DEFAULT_MOVE_SPEED = 360
+CLOSE_ENOUGH_ANGLE = 1
 HOME_SPEED = DEFAULT_MOVE_SPEED
 
 def main():
@@ -176,8 +182,9 @@ class cnc():
     def tick(self):
         ticks = ticks_us()
         # Shortcut lazy-evaluation
-        done = self.s1.go(ticks)
-        done = done and self.s2.go(ticks)
+        done1 = self.s1.go(ticks)
+        done2 = self.s2.go(ticks)
+        done = done1 and done2
         # Not very happy about this. Revisit it.
         if self.code[0] == "G28" and done:
             self.s1.homing = False
@@ -236,6 +243,7 @@ class stepper():
         if not self.homed:
             return
         # TODO set the speed such that it turns the shortest direction to the target.
+        print("Set angle: {}".format(angle))
         self.target_angle = angle
         self.seeking = True
         self.set_speed(speed)
