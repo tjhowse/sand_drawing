@@ -46,18 +46,21 @@ A2DIR_TOPIC = SAND_DRAWING_TOPIC+"/2dir"
 G_SPEED = 1
 G_1DIR = 1
 G_2DIR = 1
+STEPS_PER_REV = 200
 MICROSTEPPING = 16
 GEAR_RATIO = 44/20
+STEPS_PER_DEGREE = (STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)/360
 
 def main():
     s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN)
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN)
-    s2.set_speed(200*MICROSTEPPING*GEAR_RATIO)
-    s1.set_speed(200*MICROSTEPPING*GEAR_RATIO)
+    s2.set_speed(360)
+    s1.set_speed(360)
 
     while True:
-        s2.go()
-        s1.go()
+        ticks = ticks_us()
+        s2.go(ticks)
+        s1.go(ticks)
         sleep_us(1)
 
     c = None
@@ -95,6 +98,9 @@ class stepper():
     last_step = 0 # The last ticks_us of a rising or falling edge
     index = 0 # 0-199 the number of steps
     last_o = False # Used for detecting the rising edge of the opto pin
+    high_low = 0 # The state of the step pin. 0: low, 1: high
+    homing = True
+    stepping = True
 
     def __init__(self, s_pin, d_pin, o_pin):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
@@ -105,26 +111,33 @@ class stepper():
         self.set_dir(0)
 
     def set_speed(self, new_speed):
-        # Sets the speed in steps per second
-        self.step_interval = (1e6*(1.0/new_speed))/2
+        # Sets the speed in degrees per second
+        if new_speed == 0:
+            self.stepping = False
+            return
+        self.stepping = True
+        self.step_interval = 1e6*(1/(new_speed*STEPS_PER_DEGREE))/2
 
     def set_dir(self, new_dir):
         self.dir = new_dir
         self.d.value(1-self.dir)
 
-    def go(self):
-        if self.last_step == 0:
-            self.last_step = ticks_us()
-        if ticks_diff(ticks_us(), self.last_step) <= self.step_interval:
+    def go(self, ticks):
+        if not self.stepping or ticks_diff(ticks, self.last_step) <= self.step_interval:
             return
-        if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
-            # Rising edge opto when rotating clockwise. We're at zero.
-            print("home")
-            self.index = 0
-        self.last_o = self.o.value()
-
-        self.s.value(1 - self.s.value())
-        self.last_step = ticks_us()
+        if self.homing:
+            if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
+                # Rising edge opto when rotating clockwise. We're at zero.
+                self.homing = False
+                self.index = 0
+            self.last_o = self.o.value()
+        self.high_low = 1 - self.high_low
+        self.s.value(self.high_low)
+        self.last_step = ticks
+        if self.high_low == 1:
+            # On a rising edge increase the index by 1 if going clockwise,
+            # or decrement by 1 if going anti-clockwise.
+            self.index += 1 + self.dir*-2
 
 
 def do_step(speed, a1s, ):
