@@ -52,13 +52,32 @@ STEPS_PER_REV = 200
 MICROSTEPPING = 16
 GEAR_RATIO = 44/20
 STEPS_PER_DEGREE = (STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)/360
+
+CLOSE_ENOUGH_ANGLE = STEPS_PER_DEGREE*1
+DEFAULT_MOVE_SPEED = 360
+HOME_SPEED = DEFAULT_MOVE_SPEED
+
 def main():
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN)
     s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN)
     my_cnc = cnc(s1, s2)
 
-    pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
-    # pattern = ["G28 X", "G28 Y", "G1 Y-180"]
+    # pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
+    pattern = [ "G28 X",
+                "G28 Y",
+                "G16 1",
+                "G1 X90 Y0",
+                "G1 Y180",
+                "G1 Y270",
+                "G1 Y360",
+                "G1 X180 Y90",
+                "G1 Y180",
+                "G1 Y270",
+                "G1 Y360",
+                "G1 X270 Y180",
+                "G1 Y180",
+                "G1 Y270",
+                ]
     pattern_step = 0
 
     while True:
@@ -69,8 +88,9 @@ def main():
         if pattern_step == len(pattern):
             # We're done!
             print("Done")
-            while True:
-                sleep_ms(1000)
+            pattern_step = 0
+            # while True:
+                # sleep_ms(1000)
 
 
     c = None
@@ -90,6 +110,13 @@ def main():
                 c = None
 
 class cnc():
+    # Coordinate modes:
+    #   0: raw:        Default mode. Raw deg/second speed or degrees for each stepper. X is shaft 1, Y is shaft 2
+    #   1: cartesian:  X is horizontal, Y is vertical.
+    #   2: polar:      X is angle, Y is distance from centre.
+
+    move_mode = 0
+    coord_mode = 0
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -115,11 +142,35 @@ class cnc():
             if len(self.code) == 1:
                 return
             for coord in self.code[1:]:
-                print("Coord: {}".format(coord))
-                if coord.startswith('X'):
-                    self.s1.set_speed(float(coord[1:]))
-                elif coord.startswith('Y'):
-                    self.s2.set_speed(float(coord[1:]))
+                if self.coord_mode == 0:
+                    if self.move_mode == 0:
+                        # Continuous raw movement
+                        if coord.startswith('X'):
+                            self.s1.set_speed(float(coord[1:]))
+                        elif coord.startswith('Y'):
+                            self.s2.set_speed(float(coord[1:]))
+                    elif self.move_mode == 1:
+                        # Discrete raw movement
+                        if coord.startswith('X'):
+                            self.s1.set_angle(float(coord[1:]))
+                        elif coord.startswith('Y'):
+                            self.s2.set_angle(float(coord[1:]))
+                        elif coord.startswith('S'):
+                            # This is where the speed of the movement is set.
+                            pass
+
+            return
+        elif self.code[0] == "G15":
+            # Set coordinate mode
+            if len(self.code) == 1:
+                return
+            self.coord_mode = int(self.code[1])
+            return
+        elif self.code[0] == "G16":
+            # Set movement mode
+            if len(self.code) == 1:
+                return
+            self.move_mode = int(self.code[1])
             return
 
     def tick(self):
@@ -148,6 +199,8 @@ class stepper():
     homed = False
     stepping = True
     debug = False
+    seeking = False # Moving towards target_angle
+    target_angle = -1
 
     def __init__(self, s_pin, d_pin, o_pin):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
@@ -179,12 +232,18 @@ class stepper():
         self.dir = new_dir
         self.d.value(1-self.dir)
 
-    def set_angle(self, angle, speed):
-        pass
+    def set_angle(self, angle, speed = DEFAULT_MOVE_SPEED):
+        if not self.homed:
+            return
+        # TODO set the speed such that it turns the shortest direction to the target.
+        self.target_angle = angle
+        self.seeking = True
+        self.set_speed(speed)
 
     def home(self):
+        self.homed = False
         self.homing = True
-        self.set_speed(360)
+        self.set_speed(HOME_SPEED)
 
     def go(self, ticks):
         done_flag = False
@@ -197,14 +256,13 @@ class stepper():
                 # Rising edge opto when rotating clockwise. We're at zero.
                 self.homed = True
                 self.index = 0
-                done_flag = True
                 self.set_speed(0)
-                return done_flag
                 print("homed")
+                return True
             elif self.homed:
                 done_flag = True
+                return True
             self.last_o = self.o.value()
-
         self.high_low = 1 - self.high_low
         self.s.value(self.high_low)
         self.last_step = ticks
@@ -212,6 +270,16 @@ class stepper():
             # On a rising edge increase the index by 1 if going clockwise,
             # or decrement by 1 if going anti-clockwise.
             self.index += 1 + self.dir*-2
+        if self.index < 0:
+            # TODO Eugh oh gross.
+            self.index = int((360 * STEPS_PER_DEGREE) - 1/STEPS_PER_DEGREE)
+        if self.index >= 360*STEPS_PER_DEGREE:
+            self.index = 0
+        if self.seeking and self.homed:
+            if abs(self.index/STEPS_PER_DEGREE-self.target_angle) < CLOSE_ENOUGH_ANGLE:
+                self.set_speed(0)
+                done_flag = True
+                self.seeking = False
         return done_flag
 
 def robust_publish(broker, topic, message):
