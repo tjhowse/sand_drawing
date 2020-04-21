@@ -58,14 +58,16 @@ else:
     DEFAULT_MOVE_SPEED = 360
 
 GEAR_RATIO = 44/20
-STEPS_PER_DEGREE = (STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)/360
+REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
+REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
+print(REAL_STEPS_PER_DEGREE)
 
-CLOSE_ENOUGH_ANGLE = 1
+INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = DEFAULT_MOVE_SPEED
 
 def main():
-    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN)
-    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN)
+    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,False, "X")
+    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,False, "Y")
     my_cnc = cnc(s1, s2)
 
     # pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
@@ -123,7 +125,7 @@ class cnc():
 
     move_mode = 0
     coord_mode = 0
-    debug = False
+    debug = True
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -209,17 +211,19 @@ class stepper():
     homing = True
     homed = False
     stepping = True
-    debug = False
-    seeking = False # Moving towards target_angle
-    target_angle = -1
+    debug = True
+    seeking = False # Moving towards target_index
+    target_index = -1
 
-    def __init__(self, s_pin, d_pin, o_pin):
+    def __init__(self, s_pin, d_pin, o_pin, debug=False, name=''):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
         self.d = machine.Pin(d_pin, machine.Pin.OUT)
         # This is declared an output so we can use the internal pull-up.
         self.o = machine.Pin(o_pin, machine.Pin.OUT)
         self.o.value(1)
         self.set_dir(0)
+        self.debug = debug
+        self.name = name
 
     def set_speed(self, new_speed):
         # Sets the speed in degrees per second
@@ -227,17 +231,23 @@ class stepper():
             self.stepping = False
             return
         if new_speed < 0:
-            new_speed *= -1
             self.set_dir(1)
         else:
             self.set_dir(0)
         self.stepping = True
-        self.step_interval = 1e6*(1/(new_speed*STEPS_PER_DEGREE))/2
+        # Int for speed of calculation inside the tight loop fite me.
+        self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
         if self.debug:
+            if self.name: print("Name: {}".format(self.name))
             print("New speed: {}".format(new_speed))
+            print("step_interval: {}".format(self.step_interval))
             print("Stepping: {}".format(self.stepping))
             print("homing: {}".format(self.homing))
             print("homed: {}".format(self.homed))
+            print("seeking: {}".format(self.seeking))
+            print("Index: {}".format(self.index))
+            print("target index: {}".format(self.target_index))
+            print("--------------------")
 
     def set_dir(self, new_dir):
         self.dir = new_dir
@@ -246,13 +256,30 @@ class stepper():
     def set_angle(self, angle, speed = DEFAULT_MOVE_SPEED):
         if not self.homed:
             return
-        # TODO set the speed such that it turns the shortest direction to the target.
-
+        self.target_index = int(angle*REAL_STEPS_PER_DEGREE)
+        diff = self.target_index - self.index
         if self.debug:
             print("Set angle: {}".format(angle))
-        self.target_angle = angle
-        self.seeking = True
-        self.set_speed(speed)
+            print("Index diff: {}".format(diff))
+        if abs(diff) < INDEX_CLOSE_ENOUGH:
+            self.seeking = False
+            self.set_speed(0)
+            return
+        else:
+            self.seeking = True
+        # If you can think of a cleaner, more readable version of this please let me know.
+        if abs(diff) < REAL_STEPS_PER_REV/2:
+            # Going straight there is faster.
+            if diff < 0:
+                self.set_speed(-speed)
+            else:
+                self.set_speed(speed)
+        else:
+            # Cross zero to get there
+            if diff > 0:
+                self.set_speed(-speed)
+            else:
+                self.set_speed(speed)
 
     def home(self):
         self.homed = False
@@ -264,6 +291,11 @@ class stepper():
         if not self.stepping:
             return True
         if ticks_diff(ticks, self.last_step) <= self.step_interval:
+            return False
+        self.high_low = 1 - self.high_low
+        self.s.value(self.high_low)
+        self.last_step = ticks
+        if not self.high_low:
             return False
         if self.homing:
             if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
@@ -278,20 +310,20 @@ class stepper():
                 done_flag = True
                 return True
             self.last_o = self.o.value()
-        self.high_low = 1 - self.high_low
-        self.s.value(self.high_low)
-        self.last_step = ticks
         if self.homed and self.high_low == 1:
             # On a rising edge increase the index by 1 if going clockwise,
             # or decrement by 1 if going anti-clockwise.
             self.index += 1 + self.dir*-2
         if self.index < 0:
             # TODO Eugh oh gross.
-            self.index = int((360 * STEPS_PER_DEGREE) - 1/STEPS_PER_DEGREE)
-        if self.index >= 360*STEPS_PER_DEGREE:
-            self.index = 0
+            self.index += REAL_STEPS_PER_REV
+        if self.index >= REAL_STEPS_PER_REV:
+            self.index -= REAL_STEPS_PER_REV
+        if self.debug:
+            if self.seeking:
+                print("Index: {} Target index: {}".format(self.index, self.target_index))
         if self.seeking and self.homed:
-            if abs(self.index/STEPS_PER_DEGREE-self.target_angle) < CLOSE_ENOUGH_ANGLE:
+            if abs(self.index - self.target_index) < INDEX_CLOSE_ENOUGH:
                 self.set_speed(0)
                 done_flag = True
                 self.seeking = False
