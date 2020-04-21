@@ -9,28 +9,6 @@ import secrets
 if secrets.wifi_ssid == 'my_ssid':
     import secrets_real as secrets
 
-class pattern:
-    # Patterns contain a list of coordinates and a delay
-    # x, y, sleep
-
-    # Patterns can also include mode flags:
-    # AbsCart, RelCart, AbsPolar, RelPolar, AbsRaw, RelRaw, etc.
-    # Cartesian - X and Y in mm. The centre is 0,0.
-    # Polar - Angle and Radius.
-    # Raw - The angles of each arm.
-    # Absolute - An absolute angle or dimension
-    # Relative - A change relative to the last dimension
-    # Continuous - Relative continuous motion
-    # For now I'm only implementing RelRaw, since I have no way to
-    # zero the axes.
-
-    # Patterns have an ID to allow them to be set/cleared.
-    id = 0
-    pattern = ""
-    def __init__(self, id, pattern):
-        self.id = id
-        self.pattern = pattern
-
 A1S_PIN = 16
 A1D_PIN = 5
 A2S_PIN = 4
@@ -41,15 +19,12 @@ A2O_PIN = 14
 WIFI_CONNECT_WAIT_MAX_S = 10
 
 SAND_DRAWING_TOPIC = secrets.mqtt_root+"/sand_drawing"
-SPEED_TOPIC = SAND_DRAWING_TOPIC+"/speed"
-A1DIR_TOPIC = SAND_DRAWING_TOPIC+"/1dir"
-A2DIR_TOPIC = SAND_DRAWING_TOPIC+"/2dir"
+PATTERN_TOPIC = bytes(SAND_DRAWING_TOPIC+"/pattern", "utf-8")
 
-G_SPEED = 1
-G_1DIR = 1
-G_2DIR = 1
+G_PATTERN = ""
+
 STEPS_PER_REV = 200
-WILD_MODE = True
+WILD_MODE = False
 if WILD_MODE:
     MICROSTEPPING = 1
     DEFAULT_MOVE_SPEED = 180
@@ -60,12 +35,13 @@ else:
 GEAR_RATIO = 44/20
 REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
 REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
-print(REAL_STEPS_PER_DEGREE)
 
 INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = DEFAULT_MOVE_SPEED
 
 def main():
+    global G_PATTERN
+    mqtt = None
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,False, "X")
     s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,False, "Y")
     my_cnc = cnc(s1, s2)
@@ -88,7 +64,15 @@ def main():
                 ]
     pattern_step = 0
 
+    print("about to loop")
     while True:
+        mqtt = mqtt_check(mqtt)
+        if G_PATTERN != "":
+            print(G_PATTERN)
+            pattern = G_PATTERN.split(',')
+            pattern_step = 0
+            G_PATTERN = ""
+        print("Looping")
         my_cnc.gcode(pattern[pattern_step])
         while not my_cnc.tick():
             pass
@@ -100,22 +84,22 @@ def main():
             # while True:
                 # sleep_ms(1000)
 
-
-    c = None
-    while True:
-        wifi_connect()
-        if c == None:
-            try:
-                c = mqtt_connect()
-                print("Successfully connected to broker")
-            except Exception as e :
-                print("Couldn't connect to broker. Try again later: {}".format(e))
-                c = None
-        else:
-            try:
-                c.check_msg()
-            except:
-                c = None
+def mqtt_check(mqtt):
+    wifi_connect()
+    if mqtt == None:
+        try:
+            mqtt = mqtt_connect()
+            mqtt.check_msg()
+            print("Successfully connected to broker")
+        except Exception as e :
+            print("Couldn't connect to broker. Try again later: {}".format(e))
+            mqtt = None
+    else:
+        try:
+            mqtt.check_msg()
+        except:
+            mqtt = None
+    return mqtt
 
 class cnc():
     # Coordinate modes:
@@ -346,27 +330,27 @@ def mqtt_connect():
                     secrets.mqtt_password, 0, ssl=False)
     c.set_callback(mqtt_callback)
     c.connect(clean_session=False)
-    c.subscribe(SPEED_TOPIC)
+    c.subscribe(PATTERN_TOPIC)
     c.check_msg()
     return c
 
 def mqtt_callback(topic, msg):
-    global G_SPEED, G_1DIR, G_2DIR
+    global G_PATTERN
     print("Got callback: {} {}".format(topic, msg))
-    if topic == SPEED_TOPIC:
-        G_SPEED = int(str(bytearray(msg), "utf-8"))
+    if topic == PATTERN_TOPIC:
+        print("New pattern!")
+        G_PATTERN = str(bytearray(msg), "utf-8")
 
-
-def save_pattern(pattern):
-    with open("pattern_"+str(pattern.id), 'w') as f:
-        f.write(pattern.gcode)
+def save_pattern(id, pattern):
+    with open("pattern_"+str(id), 'w') as f:
+        f.write(pattern)
 
 def load_pattern(id):
     try:
         with open("pattern_"+str(id), 'r') as f:
-            return pattern(id, f.read())
+            return f.read()
     except:
-        return pattern(0,"G15 G1 X0 Y0")
+        return ""
 
 def wifi_connect():
     sta_if = network.WLAN(network.STA_IF)
