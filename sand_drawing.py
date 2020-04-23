@@ -9,12 +9,23 @@ import secrets
 if secrets.wifi_ssid == 'my_ssid':
     import secrets_real as secrets
 
-A1S_PIN = 16
-A1D_PIN = 5
-A2S_PIN = 4
-A2D_PIN = 0
-A1O_PIN = 12
-A2O_PIN = 14
+MICROCONTROLLER = "d1mini"
+if MICROCONTROLLER == "d1mini":
+    A1S_PIN = 16
+    A1D_PIN = 5
+    A2S_PIN = 4
+    A2D_PIN = 0
+    A1O_PIN = 12
+    A2O_PIN = 14
+elif MICROCONTROLLER == "atom":
+    A1S_PIN = 33
+    A1D_PIN = 23
+    A2S_PIN = 19
+    A2D_PIN = 22
+    A1O_PIN = 21
+    A2O_PIN = 25
+
+MQTT_ENABLED = False
 
 WIFI_CONNECT_WAIT_MAX_S = 10
 
@@ -30,7 +41,10 @@ if WILD_MODE:
     DEFAULT_MOVE_SPEED = 180
 else:
     MICROSTEPPING = 16
-    DEFAULT_MOVE_SPEED = 360
+    if MICROCONTROLLER == "atom":
+        DEFAULT_MOVE_SPEED = 30
+    else:
+        DEFAULT_MOVE_SPEED = 360
 
 GEAR_RATIO = 44/20
 REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
@@ -208,10 +222,14 @@ class stepper():
         self.set_dir(0)
         self.debug = debug
         self.name = name
+        if MICROCONTROLLER == "atom":
+            self.pwm = machine.PWM(self.s)
 
     def set_speed(self, new_speed):
         # Sets the speed in degrees per second
         if new_speed == 0:
+            if MICROCONTROLLER == "atom":
+                self.pwm.duty(0)
             self.stepping = False
             return
         if new_speed < 0:
@@ -221,6 +239,11 @@ class stepper():
         self.stepping = True
         # Int for speed of calculation inside the tight loop fite me.
         self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
+        if MICROCONTROLLER == "atom":
+            self.freq = int(abs(new_speed)*REAL_STEPS_PER_DEGREE)
+            self.pwm.freq(self.freq)
+            self.pwm.duty(int(self.freq/2))
+
         if self.debug:
             if self.name: print("Name: {}".format(self.name))
             print("New speed: {}".format(new_speed))
@@ -231,6 +254,7 @@ class stepper():
             print("seeking: {}".format(self.seeking))
             print("Index: {}".format(self.index))
             print("target index: {}".format(self.target_index))
+            if MICROCONTROLLER == "atom": print("Freq: {}".format(self.freq))
             print("--------------------")
 
     def set_dir(self, new_dir):
@@ -276,8 +300,10 @@ class stepper():
             return True
         if ticks_diff(ticks, self.last_step) <= self.step_interval:
             return False
+        print(ticks_diff(ticks, self.last_step))
         self.high_low = 1 - self.high_low
-        self.s.value(self.high_low)
+        if MICROCONTROLLER == "d1mini":
+            self.s.value(self.high_low)
         self.last_step = ticks
         if not self.high_low:
             return False
@@ -303,9 +329,6 @@ class stepper():
             self.index += REAL_STEPS_PER_REV
         if self.index >= REAL_STEPS_PER_REV:
             self.index -= REAL_STEPS_PER_REV
-        if self.debug:
-            if self.seeking:
-                print("Index: {} Target index: {}".format(self.index, self.target_index))
         if self.seeking and self.homed:
             if abs(self.index - self.target_index) < INDEX_CLOSE_ENOUGH:
                 self.set_speed(0)
