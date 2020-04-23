@@ -51,7 +51,9 @@ REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
 REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
 
 INDEX_CLOSE_ENOUGH = 3
-HOME_SPEED = DEFAULT_MOVE_SPEED
+HOME_SPEED = 180
+NEW_PATTERN_CHECK_INTERVAL_MS = 2000
+
 
 def main():
     global G_PATTERN
@@ -78,9 +80,11 @@ def main():
                 ]
     pattern_step = 0
 
+    last_pattern_check_ticks_ms = ticks_ms()
     print("about to loop")
     while True:
         mqtt = mqtt_check(mqtt)
+        last_pattern_check_ticks_ms = ticks_ms()
         if G_PATTERN != "":
             print(G_PATTERN)
             pattern = G_PATTERN.split(',')
@@ -89,7 +93,9 @@ def main():
         print("Looping")
         my_cnc.gcode(pattern[pattern_step])
         while not my_cnc.tick():
-            pass
+            if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
+                mqtt = mqtt_check(mqtt)
+                last_pattern_check_ticks_ms = ticks_ms()
         pattern_step += 1
         if pattern_step == len(pattern):
             # We're done!
@@ -99,6 +105,8 @@ def main():
                 # sleep_ms(1000)
 
 def mqtt_check(mqtt):
+    if not MQTT_ENABLED:
+        return None
     wifi_connect()
     if mqtt == None:
         try:
