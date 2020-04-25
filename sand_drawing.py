@@ -79,6 +79,10 @@ def main():
                 "G0 Y0",
                 "G0 Y90",
                 "G0 Y180",
+                "G0 Y90",
+                "G0 Y0",
+                "G0 Y270",
+                "G0 Y180",
                 "J0 3",
                 ]
     last_pattern_check_ticks_ms = ticks_ms()
@@ -262,6 +266,7 @@ class stepper():
             if self.pwm:
                 self.pwm.duty(0)
             self.stepping = False
+            self.seeking = False
         else:
             if new_speed < 0:
                 self.set_dir(1)
@@ -303,8 +308,7 @@ class stepper():
         if self.debug:
             print("Set angle: {}".format(angle))
             print("Index diff: {}".format(diff))
-        if abs(diff) < G0_INDEX_CLOSE_ENOUGH:
-            self.seeking = False
+        if abs(diff) < INDEX_CLOSE_ENOUGH:
             self.set_speed(0)
             return
         else:
@@ -366,13 +370,17 @@ class stepper():
             # the start of this movement and the speed of the movement. Eugh, a bit.
             # Slow float maths, but in PWM mode it doesn't matter too much.
             self.index += int(self.freq * (ticks_diff(ticks, self.move_start_ticks_us)/1e6) * (self.dir*-1))
-        self.index %= REAL_STEPS_PER_REV
         if self.debug: print("Index: {}".format(self.index))
-        # Hmrmmghm sort this out. This doesn't handle overshoots past zero in either direction.
-        if abs(self.index - self.target_index) < INDEX_CLOSE_ENOUGH
+        # TODO Fix this. It doesn't handle zero-crossing properly, or anything really.
+        # Ideally if our next tick would take us further from the target, and we're running in PWM mode,
+        # we should stop. Essentially the G0_CLOSE_ENOUGH_INDEX parameter should vary based on the speed,
+        # and if we're closer than half that number to the target we should stop stepping.
+        # Also this ties into the close-enough check in set_angle, before we start seeking.
+        if prev_index <= self.target_index <= self.index:
             self.set_speed(0)
             done_flag = True
-            self.seeking = False
+
+        self.index %= REAL_STEPS_PER_REV
         return done_flag
 
 def robust_publish(broker, topic, message):
