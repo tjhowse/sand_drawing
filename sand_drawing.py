@@ -79,11 +79,12 @@ def main():
                 "G1 X270 Y180",
                 "G1 Y180",
                 "G1 Y270",
+                "J0 3",
                 ]
-    pattern_step = 0
-
     last_pattern_check_ticks_ms = ticks_ms()
     print("about to loop")
+    my_cnc.set_pattern(pattern)
+
     while True:
         mqtt = mqtt_check(mqtt)
         last_pattern_check_ticks_ms = ticks_ms()
@@ -92,19 +93,12 @@ def main():
             pattern = G_PATTERN.split(',')
             pattern_step = 0
             G_PATTERN = ""
-        print("Looping")
-        my_cnc.gcode(pattern[pattern_step])
+            my_cnc.set_pattern(pattern)
         while not my_cnc.tick():
             if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
                 mqtt = mqtt_check(mqtt)
                 last_pattern_check_ticks_ms = ticks_ms()
-        pattern_step += 1
-        if pattern_step == len(pattern):
-            # We're done!
-            print("Done")
-            pattern_step = 0
-            # while True:
-                # sleep_ms(1000)
+
 
 def mqtt_check(mqtt):
     if not MQTT_ENABLED:
@@ -134,35 +128,40 @@ class cnc():
     move_mode = 0
     coord_mode = 0
     debug = True
+    gcode = None
 
     def __init__(self, s1, s2):
         self.s1 = s1
         self.s2 = s2
 
-    def gcode(self, gcode):
-        self.code = gcode.split(' ')
+    def set_pattern(self, new_pattern):
+        self.pattern = new_pattern
+        self.pattern_step = 0
+
+    def set_gcode(self, gcode):
+        self.gcode = gcode.split(' ')
         if self.debug:
-            print(self.code)
-        if self.code[0] == "G28":
+            print(self.gcode)
+        if self.gcode[0] == "G28":
             self.s1.set_speed(0)
             self.s2.set_speed(0)
-            if len(self.code) == 1:
+            if len(self.gcode) == 1:
                 return
-            if self.code[1] == 'Y':
+            if self.gcode[1] == 'Y':
                 if self.debug:
                     print("Homing Y axis")
                 self.s2.home()
-            elif self.code[1] == 'X':
+            elif self.gcode[1] == 'X':
                 if self.debug:
                     print("Homing X axis")
                 self.s1.home()
             return
 
-        elif self.code[0] in ["G0", "G1"]:
-            pwm_move = self.code[0] == "G0"
-            if len(self.code) == 1:
+        elif self.gcode[0] in ["G0", "G1"]:
+            pwm_move = self.gcode[0] == "G0"
+            if len(self.gcode) == 1:
                 return
-            for coord in self.code[1:]:
+            for coord in self.gcode[1:]:
                 if self.coord_mode == 0:
                     if self.move_mode == 0:
                         # Continuous raw movement
@@ -181,18 +180,24 @@ class cnc():
                             pass
 
             return
-        elif self.code[0] == "G15":
+        elif self.gcode[0] == "G15":
             # Set coordinate mode
-            if len(self.code) == 1:
+            if len(self.gcode) == 1:
                 return
-            self.coord_mode = int(self.code[1])
+            self.coord_mode = int(self.gcode[1])
             return
-        elif self.code[0] == "G16":
+        elif self.gcode[0] == "G16":
             # Set movement mode
-            if len(self.code) == 1:
+            if len(self.gcode) == 1:
                 return
-            self.move_mode = int(self.code[1])
+            self.move_mode = int(self.gcode[1])
             return
+        elif self.gcode[0] == "J0":
+            # Jump to a line in the gcode pattern
+            step = int(self.gcode[1])
+            if 0 <= step < len(self.pattern):
+                self.pattern_step = step
+                self.set_gcode(self.pattern[self.pattern_step])
 
     def tick(self):
         ticks = ticks_us()
@@ -201,9 +206,18 @@ class cnc():
         done2 = self.s2.go(ticks)
         done = done1 and done2
         # Not very happy about this. Revisit it.
-        if self.code[0] == "G28" and done:
+        if self.gcode and self.gcode[0] == "G28" and done:
             self.s1.homing = False
             self.s2.homing = False
+        if done:
+            self.pattern_step += 1
+            if self.pattern_step < len(self.pattern):
+                self.set_gcode(self.pattern[self.pattern_step])
+            elif self.gcode != None:
+                print("Done running pattern")
+                self.gcode = None
+
+
         return done
 
 class stepper():
