@@ -158,7 +158,8 @@ class cnc():
                 self.s1.home()
             return
 
-        elif self.code[0] == "G1":
+        elif self.code[0] in ["G0", "G1"]:
+            pwm_move = self.code[0] == "G0"
             if len(self.code) == 1:
                 return
             for coord in self.code[1:]:
@@ -166,15 +167,15 @@ class cnc():
                     if self.move_mode == 0:
                         # Continuous raw movement
                         if coord.startswith('X'):
-                            self.s1.set_speed(float(coord[1:]))
+                            self.s1.set_speed(float(coord[1:]), pwm_motion=pwm_move)
                         elif coord.startswith('Y'):
-                            self.s2.set_speed(float(coord[1:]))
+                            self.s2.set_speed(float(coord[1:]), pwm_motion=pwm_move)
                     elif self.move_mode == 1:
                         # Discrete raw movement
                         if coord.startswith('X'):
-                            self.s1.set_angle(float(coord[1:]))
+                            self.s1.set_angle(float(coord[1:]), pwm_motion=pwm_move)
                         elif coord.startswith('Y'):
-                            self.s2.set_angle(float(coord[1:]))
+                            self.s2.set_angle(float(coord[1:]), pwm_motion=pwm_move)
                         elif coord.startswith('S'):
                             # This is where the speed of the movement is set.
                             pass
@@ -222,6 +223,7 @@ class stepper():
     debug = True
     seeking = False # Moving towards target_index
     target_index = -1
+    pwm = None
 
     def __init__(self, s_pin, d_pin, o_pin, debug=False, name=''):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
@@ -232,27 +234,30 @@ class stepper():
         self.set_dir(0)
         self.debug = debug
         self.name = name
-        if PWM_STEPPING:
-            self.pwm = machine.PWM(self.s)
 
-    def set_speed(self, new_speed):
+    def set_speed(self, new_speed, pwm_motion=False):
         # Sets the speed in degrees per second
+        if pwm_motion:
+            if self.pwm == None:
+                self.pwm = machine.PWM(self.s)
+        else:
+            self.pwm = None
         if new_speed == 0:
-            if PWM_STEPPING:
+            if self.pwm:
                 self.pwm.duty(0)
             self.stepping = False
-            return
-        if new_speed < 0:
-            self.set_dir(1)
         else:
-            self.set_dir(0)
-        self.stepping = True
-        # Int for speed of calculation inside the tight loop fite me.
-        self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
-        if PWM_STEPPING:
-            self.freq = int(abs(new_speed)*REAL_STEPS_PER_DEGREE)
-            self.pwm.freq(self.freq)
-            self.pwm.duty(int(self.freq/2))
+            if new_speed < 0:
+                self.set_dir(1)
+            else:
+                self.set_dir(0)
+            self.stepping = True
+            # Int for speed of calculation inside the tight loop fite me.
+            self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
+            if self.pwm != None:
+                self.freq = int(abs(new_speed)*REAL_STEPS_PER_DEGREE)
+                self.pwm.freq(self.freq)
+                self.pwm.duty(int(self.freq/2))
 
         if self.debug:
             if self.name: print("Name: {}".format(self.name))
@@ -264,15 +269,16 @@ class stepper():
             print("seeking: {}".format(self.seeking))
             print("Index: {}".format(self.index))
             print("target index: {}".format(self.target_index))
-            if PWM_STEPPING: print("Freq: {}".format(self.freq))
+            if self.pwm != None: print("Freq: {}".format(self.freq))
             print("--------------------")
 
     def set_dir(self, new_dir):
         self.dir = new_dir
         self.d.value(1-self.dir)
 
-    def set_angle(self, angle, speed = DEFAULT_MOVE_SPEED):
+    def set_angle(self, angle, speed=DEFAULT_MOVE_SPEED, pwm_motion=False):
         if not self.homed:
+            print("Cannot set angle. Not homed.")
             return
         self.target_index = int(angle*REAL_STEPS_PER_DEGREE)
         diff = self.target_index - self.index
@@ -289,15 +295,15 @@ class stepper():
         if abs(diff) < REAL_STEPS_PER_REV/2:
             # Going straight there is faster.
             if diff < 0:
-                self.set_speed(-speed)
+                self.set_speed(-speed, pwm_motion=pwm_motion)
             else:
-                self.set_speed(speed)
+                self.set_speed(speed, pwm_motion=pwm_motion)
         else:
             # Cross zero to get there
             if diff > 0:
-                self.set_speed(-speed)
+                self.set_speed(-speed, pwm_motion=pwm_motion)
             else:
-                self.set_speed(speed)
+                self.set_speed(speed, pwm_motion=pwm_motion)
 
     def home(self):
         self.homed = False
@@ -312,7 +318,7 @@ class stepper():
             return False
         if self.debug: print(ticks_diff(ticks, self.last_step))
         self.high_low = 1 - self.high_low
-        if not PWM_STEPPING:
+        if self.pwm == None:
             self.s.value(self.high_low)
         self.last_step = ticks
         if not self.high_low:
@@ -330,7 +336,9 @@ class stepper():
                 done_flag = True
                 return True
             self.last_o = self.o.value()
-        if self.homed and self.high_low == 1:
+        if self.homed:
+            if self.pwm == None:
+                self.high_low == 1
             # On a rising edge increase the index by 1 if going clockwise,
             # or decrement by 1 if going anti-clockwise.
             self.index += 1 + self.dir*-2
