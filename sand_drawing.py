@@ -52,7 +52,8 @@ GEAR_RATIO = 44/20
 REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
 REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
 
-INDEX_CLOSE_ENOUGH = 3
+G0_INDEX_CLOSE_ENOUGH = 30
+G1_INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = 180
 NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
@@ -74,11 +75,11 @@ def main():
                 "G1 Y360",
                 "G1 X180 Y90",
                 "G1 Y180",
-                "G1 Y270",
-                "G1 Y360",
-                "G1 X270 Y180",
-                "G1 Y180",
-                "G1 Y270",
+                "G0 Y270",
+                "G0 Y360",
+                "G0 X270 Y180",
+                "G0 Y180",
+                "G0 Y270",
                 "J0 3",
                 ]
     last_pattern_check_ticks_ms = ticks_ms()
@@ -268,6 +269,8 @@ class stepper():
             self.stepping = True
             # Int for speed of calculation inside the tight loop fite me.
             self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
+            self.index_per_us = int(new_speed*REAL_STEPS_PER_DEGREE*1e6)
+            self.move_start_ticks_us = ticks_us()
             if self.pwm != None:
                 self.freq = int(abs(new_speed)*REAL_STEPS_PER_DEGREE)
                 self.pwm.freq(self.freq)
@@ -299,7 +302,7 @@ class stepper():
         if self.debug:
             print("Set angle: {}".format(angle))
             print("Index diff: {}".format(diff))
-        if abs(diff) < INDEX_CLOSE_ENOUGH:
+        if abs(diff) < G0_INDEX_CLOSE_ENOUGH:
             self.seeking = False
             self.set_speed(0)
             return
@@ -332,11 +335,11 @@ class stepper():
             return False
         if self.debug: print(ticks_diff(ticks, self.last_step))
         self.high_low = 1 - self.high_low
+        self.last_step = ticks
         if self.pwm == None:
             self.s.value(self.high_low)
-        self.last_step = ticks
-        if not self.high_low:
-            return False
+            if not self.high_low:
+                return False
         if self.homing:
             if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
                 # Rising edge opto when rotating clockwise. We're at zero.
@@ -351,14 +354,18 @@ class stepper():
                 return True
             self.last_o = self.o.value()
         if self.homed:
-            if self.pwm == None:
-                self.high_low == 1
             # On a rising edge increase the index by 1 if going clockwise,
             # or decrement by 1 if going anti-clockwise.
-            self.index += 1 + self.dir*-2
+            if self.pwm == None:
+                self.index += 1 + self.dir*-2
+            else:
+                # We have to update the index based on the amount of time elapsed since
+                # the start of this movement and the speed of the movement. Eugh, a bit.
+                self.index += self.index_per_us * ticks_diff(ticks, self.move_start_ticks_us)
         self.index %= REAL_STEPS_PER_REV
         if self.seeking and self.homed:
-            if abs(self.index - self.target_index) < INDEX_CLOSE_ENOUGH:
+            err = abs(self.index - self.target_index)
+            if self.pwm == None and err < G1_INDEX_CLOSE_ENOUGH or self.pwm != None and err < G0_INDEX_CLOSE_ENOUGH:
                 self.set_speed(0)
                 done_flag = True
                 self.seeking = False
