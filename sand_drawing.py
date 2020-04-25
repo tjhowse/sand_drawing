@@ -43,17 +43,13 @@ if WILD_MODE:
     DEFAULT_MOVE_SPEED = 180
 else:
     MICROSTEPPING = 16
-    if MICROCONTROLLER == "atom":
-        DEFAULT_MOVE_SPEED = 360
-    else:
-        DEFAULT_MOVE_SPEED = 360
+    DEFAULT_MOVE_SPEED = 360
 
 GEAR_RATIO = 44/20
 REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
 REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
 
-G0_INDEX_CLOSE_ENOUGH = 30
-G1_INDEX_CLOSE_ENOUGH = 3
+INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = 180
 NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
@@ -61,25 +57,28 @@ NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 def main():
     global G_PATTERN
     mqtt = None
-    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,False, "X")
-    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,False, "Y")
+    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,True, "X")
+    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,True, "Y")
     my_cnc = cnc(s1, s2)
 
     # pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
     pattern = [ "G28 X",
                 "G28 Y",
                 "G16 1",
-                "G1 X90 Y0",
-                "G1 Y180",
-                "G1 Y270",
-                "G1 Y360",
-                "G1 X180 Y90",
-                "G1 Y180",
+                # "G1 X90 Y0",
+                # "G1 Y180",
+                # "G1 Y270",
+                # "G1 Y360",
+                # "G1 X180 Y90",
+                # "G1 Y180",
+                # "G0 Y270",
+                # "G0 Y360",
+                # "G0 X270 Y180",
+                # "G0 Y180",
                 "G0 Y270",
-                "G0 Y360",
-                "G0 X270 Y180",
+                "G0 Y0",
+                "G0 Y90",
                 "G0 Y180",
-                "G0 Y270",
                 "J0 3",
                 ]
     last_pattern_check_ticks_ms = ticks_ms()
@@ -256,6 +255,8 @@ class stepper():
             if self.pwm == None:
                 self.pwm = machine.PWM(self.s)
         else:
+            if self.pwm != None:
+                self.pwm.deinit()
             self.pwm = None
         if new_speed == 0:
             if self.pwm:
@@ -269,7 +270,6 @@ class stepper():
             self.stepping = True
             # Int for speed of calculation inside the tight loop fite me.
             self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
-            self.index_per_us = int(new_speed*REAL_STEPS_PER_DEGREE*1e6)
             self.move_start_ticks_us = ticks_us()
             if self.pwm != None:
                 self.freq = int(abs(new_speed)*REAL_STEPS_PER_DEGREE)
@@ -286,7 +286,8 @@ class stepper():
             print("seeking: {}".format(self.seeking))
             print("Index: {}".format(self.index))
             print("target index: {}".format(self.target_index))
-            if self.pwm != None: print("Freq: {}".format(self.freq))
+            if self.pwm != None:
+                print("Freq: {}".format(self.freq))
             print("--------------------")
 
     def set_dir(self, new_dir):
@@ -333,7 +334,7 @@ class stepper():
             return True
         if ticks_diff(ticks, self.last_step) <= self.step_interval:
             return False
-        if self.debug: print(ticks_diff(ticks, self.last_step))
+        # if self.debug: print(ticks_diff(ticks, self.last_step))
         self.high_low = 1 - self.high_low
         self.last_step = ticks
         if self.pwm == None:
@@ -353,22 +354,25 @@ class stepper():
                 done_flag = True
                 return True
             self.last_o = self.o.value()
-        if self.homed:
-            # On a rising edge increase the index by 1 if going clockwise,
-            # or decrement by 1 if going anti-clockwise.
-            if self.pwm == None:
-                self.index += 1 + self.dir*-2
-            else:
-                # We have to update the index based on the amount of time elapsed since
-                # the start of this movement and the speed of the movement. Eugh, a bit.
-                self.index += self.index_per_us * ticks_diff(ticks, self.move_start_ticks_us)
+        if not self.homed:
+            return done_flag
+        # On a rising edge increase the index by 1 if going clockwise,
+        # or decrement by 1 if going anti-clockwise.
+        prev_index = self.index
+        if self.pwm == None:
+            self.index += 1 + self.dir*-2
+        else:
+            # We have to update the index based on the amount of time elapsed since
+            # the start of this movement and the speed of the movement. Eugh, a bit.
+            # Slow float maths, but in PWM mode it doesn't matter too much.
+            self.index += int(self.freq * (ticks_diff(ticks, self.move_start_ticks_us)/1e6) * (self.dir*-1))
         self.index %= REAL_STEPS_PER_REV
-        if self.seeking and self.homed:
-            err = abs(self.index - self.target_index)
-            if self.pwm == None and err < G1_INDEX_CLOSE_ENOUGH or self.pwm != None and err < G0_INDEX_CLOSE_ENOUGH:
-                self.set_speed(0)
-                done_flag = True
-                self.seeking = False
+        if self.debug: print("Index: {}".format(self.index))
+        # Hmrmmghm sort this out. This doesn't handle overshoots past zero in either direction.
+        if abs(self.index - self.target_index) < INDEX_CLOSE_ENOUGH
+            self.set_speed(0)
+            done_flag = True
+            self.seeking = False
         return done_flag
 
 def robust_publish(broker, topic, message):
