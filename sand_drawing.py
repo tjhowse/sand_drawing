@@ -43,11 +43,12 @@ if WILD_MODE:
     DEFAULT_MOVE_SPEED = 180
 else:
     MICROSTEPPING = 16
-    DEFAULT_MOVE_SPEED = 360
+    DEFAULT_MOVE_SPEED = 30
 
 GEAR_RATIO = 44/20
 REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
 REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
+HALF_REAL_STEPS_PER_REV = REAL_STEPS_PER_REV/2
 
 INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = 180
@@ -57,7 +58,7 @@ NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 def main():
     global G_PATTERN
     mqtt = None
-    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,True, "X")
+    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,False, "X")
     s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,True, "Y")
     my_cnc = cnc(s1, s2)
 
@@ -242,6 +243,7 @@ class stepper():
     seeking = False # Moving towards target_index
     target_index = -1
     pwm = None
+    prev_err = 0
 
     def __init__(self, s_pin, d_pin, o_pin, debug=False, name=''):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
@@ -276,6 +278,7 @@ class stepper():
             # Int for speed of calculation inside the tight loop fite me.
             self.step_interval = int(1e6*(1/(abs(new_speed)*REAL_STEPS_PER_DEGREE))/2)
             self.move_start_ticks_us = ticks_us()
+            self.move_start_index = self.index
             if self.pwm != None:
                 self.freq = int(abs(new_speed)*REAL_STEPS_PER_DEGREE)
                 self.pwm.freq(self.freq)
@@ -340,6 +343,7 @@ class stepper():
             return False
         # if self.debug: print(ticks_diff(ticks, self.last_step))
         self.high_low = 1 - self.high_low
+        last_step_ticks_us = self.last_step
         self.last_step = ticks
         if self.pwm == None:
             self.s.value(self.high_low)
@@ -362,25 +366,34 @@ class stepper():
             return done_flag
         # On a rising edge increase the index by 1 if going clockwise,
         # or decrement by 1 if going anti-clockwise.
-        prev_index = self.index
+        delta_index = 0
         if self.pwm == None:
             self.index += 1 + self.dir*-2
         else:
             # We have to update the index based on the amount of time elapsed since
             # the start of this movement and the speed of the movement. Eugh, a bit.
             # Slow float maths, but in PWM mode it doesn't matter too much.
-            self.index += int(self.freq * (ticks_diff(ticks, self.move_start_ticks_us)/1e6) * (self.dir*-1))
-        if self.debug: print("Index: {}".format(self.index))
-        # TODO Fix this. It doesn't handle zero-crossing properly, or anything really.
-        # Ideally if our next tick would take us further from the target, and we're running in PWM mode,
-        # we should stop. Essentially the G0_CLOSE_ENOUGH_INDEX parameter should vary based on the speed,
-        # and if we're closer than half that number to the target we should stop stepping.
-        # Also this ties into the close-enough check in set_angle, before we start seeking.
-        if prev_index <= self.target_index <= self.index:
-            self.set_speed(0)
-            done_flag = True
-
+            delta_index = int(self.freq * (ticks_diff(ticks, last_step_ticks_us)/1e6) * (1 + self.dir*-2))
+            if self.debug: print("delta_index: {}".format(delta_index))
+            self.index += delta_index
         self.index %= REAL_STEPS_PER_REV
+        if self.debug: print("Index: {}".format(self.index))
+        if self.pwm == None:
+            if self.target_index == self.index:
+                self.set_speed(0)
+                done_flag = True
+        else:
+            err = int(HALF_REAL_STEPS_PER_REV - abs(abs(self.index - self.target_index) - HALF_REAL_STEPS_PER_REV))
+            # If the error is smaller than a step, or if the error is increasing, stop.
+            if err < abs(delta_index/2) or (self.prev_err < err):
+                if self.debug: print("Stopping move")
+                self.set_speed(0)
+                done_flag = True
+                self.prev_err = REAL_STEPS_PER_REV
+            if self.debug: print("Prev Err: {} Err: {}".format(self.prev_err,err))
+            self.prev_err = err
+
+
         return done_flag
 
 def robust_publish(broker, topic, message):
