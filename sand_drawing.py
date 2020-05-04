@@ -197,7 +197,6 @@ class cnc():
                         elif coord.startswith('S'):
                             # This is where the speed of the movement is set.
                             pass
-
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
@@ -320,6 +319,7 @@ class stepper():
         if not self.homed:
             print("Cannot set angle. Not homed.")
             return
+        angle %= 360
         self.target_index = int(angle*REAL_STEPS_PER_DEGREE)
         diff = self.target_index - self.index
         if self.debug:
