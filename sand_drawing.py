@@ -14,7 +14,7 @@ from constants import *
 from stepper import stepper
 from cnc import cnc
 
-MQTT_ENABLED = False
+MQTT_ENABLED = True
 WIFI_CONNECT_WAIT_MAX_S = 10
 NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
@@ -29,19 +29,21 @@ def main():
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,False, "X")
     s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,False, "Y")
     my_cnc = cnc(s1, s2)
-
     pattern = [ "G28 X",
                 "G28 Y",
-                "G16 1",
-                "G1 X0 Y0",
-                "G1 X60 Y300",
-                "G1 X120 Y240",
-                "G1 X180 Y180",
-                "G1 X240 Y120",
-                "G1 X300 Y60",
-                "G1 X0 Y0",
+                "G16 2",
+                "G1 X1 Y1",
+                "G1 X1000 Y1000",
                 "J0 3",
                 ]
+                # "G1 X60 Y300",
+                # "G1 X120 Y240",
+                # "G1 X180 Y180",
+                # "G1 X240 Y120",
+                # "G1 X300 Y60",
+                # "G1 X0 Y0",
+                # "J0 3",
+                # ]
     # pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
     # pattern = [ "G28 X",
     #             "G28 Y",
@@ -77,7 +79,6 @@ def main():
         if G_PATTERN != "":
             print(G_PATTERN)
             pattern = G_PATTERN.split(',')
-            pattern_step = 0
             G_PATTERN = ""
             my_cnc.set_pattern(pattern)
         while not my_cnc.tick():

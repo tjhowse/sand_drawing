@@ -8,6 +8,21 @@ def distance(x, y):
 
 def lawOfCosines(a, b, c):
     return acos((a*a + b*b - c*c) / (2 * a * b))
+
+def cartesian_calc(x, y):
+    # Mostly stolen directly from https://appliedgo.net/roboticarm/
+    # This calculates the angles for the steppers and calls returns the two angles.
+    dist = distance(x, y)
+    d1 = atan2(y,x)
+    d2 = lawOfCosines(dist, ARM_1_LENGTH, ARM_2_LENGTH)
+    a1 = d1 + d2
+    a2 = lawOfCosines(ARM_1_LENGTH, ARM_2_LENGTH, dist)
+    # Convert to degrees
+    a1 = (a1*180)/pi
+    a2 = (a2*180)/pi
+    print("a1: {} a2: {}".format(a1, a2))
+    return (a1, a2+(a1-180))
+
 ARM_1_LENGTH = 200
 ARM_2_LENGTH = 200
 
@@ -21,6 +36,8 @@ class cnc():
     coord_mode = 0
     debug = True
     gcode = None
+    cart_x = 0
+    cart_y = 0
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -30,6 +47,7 @@ class cnc():
         print(new_pattern)
         self.pattern = new_pattern
         self.pattern_step = 0
+        self.set_gcode(self.pattern[self.pattern_step])
 
     def set_gcode(self, gcode):
         self.gcode = gcode.split(' ')
@@ -71,6 +89,22 @@ class cnc():
                         elif coord.startswith('S'):
                             # This is where the speed of the movement is set.
                             pass
+                    elif self.move_mode == 2:
+                        # Absolute cartesian positioning
+                        if coord.startswith('X'):
+                            self.cart_x = float(coord[1:])
+                        elif coord.startswith('Y'):
+                            self.cart_y = float(coord[1:])
+                        elif coord.startswith('S'):
+                            # This is where the speed of the movement is set.
+                            pass
+
+            if self.move_mode == 2:
+                # Manage the cartesian translation
+                (a1, a2) = cartesian_calc(self.cart_x, self.cart_y)
+                if self.debug: print("Arm1: {} Arm2: {}".format(a1, a2))
+                self.s1.set_angle(a1, pwm_motion=pwm_move)
+                self.s2.set_angle(a2, pwm_motion=pwm_move)
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
@@ -91,20 +125,7 @@ class cnc():
                 self.pattern_step = step
                 self.set_gcode(self.pattern[self.pattern_step])
 
-    def cartesian_move(self, x, y, speed):
-        # Mostly stolen directly from https://appliedgo.net/roboticarm/
-        # This calculates the angles for the steppers and calls set_angle on them
-        # accordingly.
-        dist = distance(x, y)
-        d1 = atan2(y,x)
-        d2 = lawOfCosines(dist, ARM_1_LENGTH, ARM_2_LENGTH)
-        a1 = d1 + d2
-        a2 = lawOfCosines(ARM_1_LENGTH, ARM_2_LENGTH, dist)
-        # Convert to degrees
-        a1 = (a1*180)/pi
-        a2 = (a2*180)/pi
-        self.s1.set_angle(a1)
-        self.s2.set_angle(a2-(a1-180))
+
 
     def tick(self):
         ticks = ticks_us()
