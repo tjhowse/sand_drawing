@@ -42,8 +42,8 @@ if WILD_MODE:
     MICROSTEPPING = 1
     DEFAULT_MOVE_SPEED = 180
 else:
-    MICROSTEPPING = 16
-    DEFAULT_MOVE_SPEED = 30
+    MICROSTEPPING = 32
+    DEFAULT_MOVE_SPEED = 180
 
 GEAR_RATIO = 44/20
 REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
@@ -59,33 +59,46 @@ def main():
     global G_PATTERN
     mqtt = None
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,False, "X")
-    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,True, "Y")
+    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,False, "Y")
     my_cnc = cnc(s1, s2)
 
-    # pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
     pattern = [ "G28 X",
                 "G28 Y",
                 "G16 1",
-                # "G1 X90 Y0",
-                # "G1 Y180",
-                # "G1 Y270",
-                # "G1 Y360",
-                # "G1 X180 Y90",
-                # "G1 Y180",
-                # "G0 Y270",
-                # "G0 Y360",
-                # "G0 X270 Y180",
-                # "G0 Y180",
-                "G0 Y270",
-                "G0 Y0",
-                "G0 Y90",
-                "G0 Y180",
-                "G0 Y90",
-                "G0 Y0",
-                "G0 Y270",
-                "G0 Y180",
+                "G1 X0 Y0",
+                "G1 X60 Y300",
+                "G1 X120 Y240",
+                "G1 X180 Y180",
+                "G1 X240 Y120",
+                "G1 X300 Y60",
+                "G1 X0 Y0",
                 "J0 3",
                 ]
+    # pattern = ["G28 X", "G28 Y", "G1 X-180 Y360"]
+    # pattern = [ "G28 X",
+    #             "G28 Y",
+    #             "G16 1",
+    #             "G1 X90 Y0",
+    #             "G1 Y180",
+    #             "G1 Y270",
+    #             "G1 Y360",
+    #             "G1 X180 Y90",
+    #             "G1 Y180",
+    #             "J0 3",
+    #             # "G0 Y270",
+    #             # "G0 Y360",
+    #             # "G0 X270 Y180",
+    #             # "G0 Y180",
+    #             "G0 Y270",
+    #             "G0 Y0",
+    #             "G0 Y90",
+    #             "G0 Y180",
+    #             "G0 Y90",
+    #             "G0 Y0",
+    #             "G0 Y270",
+    #             "G0 Y180",
+    #             "J0 3",
+    #             ]
     last_pattern_check_ticks_ms = ticks_ms()
     print("about to loop")
     my_cnc.set_pattern(pattern)
@@ -140,6 +153,7 @@ class cnc():
         self.s2 = s2
 
     def set_pattern(self, new_pattern):
+        print(new_pattern)
         self.pattern = new_pattern
         self.pattern_step = 0
 
