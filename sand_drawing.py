@@ -8,54 +8,20 @@ import network
 import secrets
 if secrets.wifi_ssid == 'my_ssid':
     import secrets_real as secrets
+
+from constants import *
+
 from stepper import stepper
 from cnc import cnc
 
-MICROCONTROLLER = "atom"
-PWM_STEPPING = False
-if MICROCONTROLLER == "d1mini":
-    A1S_PIN = 16
-    A1D_PIN = 5
-    A2S_PIN = 4
-    A2D_PIN = 0
-    A1O_PIN = 12
-    A2O_PIN = 14
-elif MICROCONTROLLER == "atom":
-    A1S_PIN = 33
-    A1D_PIN = 23
-    A2S_PIN = 19
-    A2D_PIN = 22
-    A1O_PIN = 21
-    A2O_PIN = 25
-
-
 MQTT_ENABLED = False
-
 WIFI_CONNECT_WAIT_MAX_S = 10
+NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
 SAND_DRAWING_TOPIC = secrets.mqtt_root+"/sand_drawing"
 PATTERN_TOPIC = bytes(SAND_DRAWING_TOPIC+"/pattern", "utf-8")
 
 G_PATTERN = ""
-
-STEPS_PER_REV = 200
-WILD_MODE = False
-if WILD_MODE:
-    MICROSTEPPING = 1
-    DEFAULT_MOVE_SPEED = 180
-else:
-    MICROSTEPPING = 32
-    DEFAULT_MOVE_SPEED = 180
-
-GEAR_RATIO = 44/20
-REAL_STEPS_PER_REV = int(STEPS_PER_REV*MICROSTEPPING*GEAR_RATIO)
-REAL_STEPS_PER_DEGREE = REAL_STEPS_PER_REV/360
-HALF_REAL_STEPS_PER_REV = REAL_STEPS_PER_REV/2
-
-INDEX_CLOSE_ENOUGH = 3
-HOME_SPEED = 180
-NEW_PATTERN_CHECK_INTERVAL_MS = 2000
-
 
 def main():
     global G_PATTERN

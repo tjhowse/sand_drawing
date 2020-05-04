@@ -1,4 +1,7 @@
+# pylint: disable=E0401
 from math import acos, atan2, sqrt, pi
+from constants import *
+from utime import ticks_us, ticks_diff
 
 def distance(x, y):
     return sqrt(x*x + y*y)

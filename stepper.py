@@ -1,3 +1,8 @@
+# pylint: disable=E0401
+from constants import *
+from utime import ticks_us, ticks_diff
+import machine
+
 class stepper():
     # This manages the interface to a stepper
     s = None # The step output Pin object
