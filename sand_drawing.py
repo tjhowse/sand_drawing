@@ -139,10 +139,6 @@ def mqtt_check(mqtt):
             mqtt = None
     return mqtt
 
-
-
-
-
 def robust_publish(broker, topic, message):
     if broker == None:
         return None

@@ -1,4 +1,12 @@
+from math import acos, atan2, sqrt, pi
 
+def distance(x, y):
+    return sqrt(x*x + y*y)
+
+def lawOfCosines(a, b, c):
+    return acos((a*a + b*b - c*c) / (2 * a * b))
+ARM_1_LENGTH = 200
+ARM_2_LENGTH = 200
 
 class cnc():
     # Coordinate modes:
@@ -79,6 +87,21 @@ class cnc():
             if 0 <= step < len(self.pattern):
                 self.pattern_step = step
                 self.set_gcode(self.pattern[self.pattern_step])
+
+    def cartesian_move(self, x, y, speed):
+        # Mostly stolen directly from https://appliedgo.net/roboticarm/
+        # This calculates the angles for the steppers and calls set_angle on them
+        # accordingly.
+        dist = distance(x, y)
+        d1 = atan2(y,x)
+        d2 = lawOfCosines(dist, ARM_1_LENGTH, ARM_2_LENGTH)
+        a1 = d1 + d2
+        a2 = lawOfCosines(ARM_1_LENGTH, ARM_2_LENGTH, dist)
+        # Convert to degrees
+        a1 = (a1*180)/pi
+        a2 = (a2*180)/pi
+        self.s1.set_angle(a1)
+        self.s2.set_angle(a2-(a1-180))
 
     def tick(self):
         ticks = ticks_us()
