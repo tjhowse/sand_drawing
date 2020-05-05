@@ -17,37 +17,32 @@ def cartesian_calc(x, y):
     d2 = lawOfCosines(dist, ARM_1_LENGTH, ARM_2_LENGTH)
     a1 = d1 + d2
     a2 = lawOfCosines(ARM_1_LENGTH, ARM_2_LENGTH, dist)
-    # Convert to degrees
+
+    # Convert to degrees and map the angle of the first arm onto the second
     a1 = (a1*180)/pi
-    a2 = (a2*180)/pi
+    a2 = (a2*180)/pi+(a1-180)
 
-    e2 = -d2
-    b1 = d1 + e2
-    b2 = -lawOfCosines(ARM_1_LENGTH, ARM_2_LENGTH, dist)
-    # Convert to degrees
-    b1 = (b1*180)/pi
-    b2 = (b2*180)/pi
-
-    print("a1: {} a2: {}".format(a1, a2))
-    print("b1: {} b2: {}".format(b1, b2))
-    return (a1, a2+(a1-180))
-    # return (b1, b2+(b1-180))
+    # Due to dark geomancies these two angles are interchangable - they both result
+    # in the same end point.
+    return (a1%360, a2%360)
 
 ARM_1_LENGTH = 200
 ARM_2_LENGTH = 200
 
-class cnc():
-    # Coordinate modes:
-    #   0: raw:        Default mode. Raw deg/second speed or degrees for each stepper. X is shaft 1, Y is shaft 2
-    #   1: cartesian:  X is horizontal, Y is vertical.
-    #   2: polar:      X is angle, Y is distance from centre.
+def wrapping_diff(x, y):
+    diff = x - y
+    return (diff + 180) % 360 - 180
 
+
+class cnc():
     move_mode = 0
     coord_mode = 0
     debug = True
     gcode = None
     cart_x = 0
     cart_y = 0
+    arm_1_angle = 0
+    arm_2_angle = 0
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -93,9 +88,11 @@ class cnc():
                     elif self.move_mode == 1:
                         # Discrete raw movement
                         if coord.startswith('X'):
-                            self.s1.set_angle(float(coord[1:]), pwm_motion=pwm_move)
+                            self.arm_1_angle = float(coord[1:])
+                            self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
                         elif coord.startswith('Y'):
-                            self.s2.set_angle(float(coord[1:]), pwm_motion=pwm_move)
+                            self.arm_2_angle = float(coord[1:])
+                            self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
                         elif coord.startswith('S'):
                             # This is where the speed of the movement is set.
                             pass
@@ -112,9 +109,21 @@ class cnc():
             if self.move_mode == 2:
                 # Manage the cartesian translation
                 (a1, a2) = cartesian_calc(self.cart_x, self.cart_y)
-                if self.debug: print("Arm1: {} Arm2: {}".format(a1, a2))
-                self.s1.set_angle(a1, pwm_motion=pwm_move)
-                self.s2.set_angle(a2, pwm_motion=pwm_move)
+                if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
+                if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
+                # Work out which arm 1 angle difference is smaller.
+                diff_1 = wrapping_diff(a1, self.arm_1_angle)
+                diff_2 = wrapping_diff(a2, self.arm_1_angle)
+                if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
+                if abs(diff_1) < abs(diff_2):
+                    self.arm_1_angle = a1
+                    self.arm_2_angle = a2
+                else:
+                    self.arm_1_angle = a2
+                    self.arm_2_angle = a1
+                if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
+                self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
+                self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
@@ -134,8 +143,6 @@ class cnc():
             if 0 <= step < len(self.pattern):
                 self.pattern_step = step
                 self.set_gcode(self.pattern[self.pattern_step])
-
-
 
     def tick(self):
         ticks = ticks_us()
