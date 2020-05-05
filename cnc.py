@@ -20,8 +20,18 @@ def cartesian_calc(x, y):
     # Convert to degrees
     a1 = (a1*180)/pi
     a2 = (a2*180)/pi
+
+    e2 = -d2
+    b1 = d1 + e2
+    b2 = -lawOfCosines(ARM_1_LENGTH, ARM_2_LENGTH, dist)
+    # Convert to degrees
+    b1 = (b1*180)/pi
+    b2 = (b2*180)/pi
+
     print("a1: {} a2: {}".format(a1, a2))
+    print("b1: {} b2: {}".format(b1, b2))
     return (a1, a2+(a1-180))
+    # return (b1, b2+(b1-180))
 
 ARM_1_LENGTH = 200
 ARM_2_LENGTH = 200

@@ -79,6 +79,7 @@ def main():
         if G_PATTERN != "":
             print(G_PATTERN)
             pattern = G_PATTERN.split(',')
+            pattern = [a.strip() for a in pattern]
             G_PATTERN = ""
             my_cnc.set_pattern(pattern)
         while not my_cnc.tick():
