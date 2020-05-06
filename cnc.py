@@ -107,23 +107,29 @@ class cnc():
                             pass
 
             if self.move_mode == 2:
-                # Manage the cartesian translation
-                (a1, a2) = cartesian_calc(self.cart_x, self.cart_y)
-                if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
-                if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
-                # Work out which arm 1 angle difference is smaller.
-                diff_1 = wrapping_diff(a1, self.arm_1_angle)
-                diff_2 = wrapping_diff(a2, self.arm_1_angle)
-                if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
-                if abs(diff_1) < abs(diff_2):
-                    self.arm_1_angle = a1
-                    self.arm_2_angle = a2
+                if (self.cart_x == self.cart_y == 0):
+                    # Handle the zero case.
+                    self.arm_2_angle = self.arm_1_angle-180
+                    self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
+                    self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
                 else:
-                    self.arm_1_angle = a2
-                    self.arm_2_angle = a1
-                if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
-                self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
-                self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
+                    # Manage the cartesian translation
+                    (a1, a2) = cartesian_calc(self.cart_x, self.cart_y)
+                    if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
+                    if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
+                    # Work out which arm 1 angle difference is smaller.
+                    diff_1 = wrapping_diff(a1, self.arm_1_angle)
+                    diff_2 = wrapping_diff(a2, self.arm_1_angle)
+                    if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
+                    if abs(diff_1) < abs(diff_2):
+                        self.arm_1_angle = a1
+                        self.arm_2_angle = a2
+                    else:
+                        self.arm_1_angle = a2
+                        self.arm_2_angle = a1
+                    if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
+                    self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
+                    self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
