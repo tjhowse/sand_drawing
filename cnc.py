@@ -121,14 +121,20 @@ class cnc():
                     diff_1 = wrapping_diff(a1, self.arm_1_angle)
                     diff_2 = wrapping_diff(a2, self.arm_1_angle)
                     if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
-                    if abs(diff_1) < abs(diff_2):
-                        self.arm_1_angle = a1
-                        self.arm_2_angle = a2
-                    else:
-                        self.arm_1_angle = a2
-                        self.arm_2_angle = a1
+                    if abs(diff_1) > abs(diff_2):
+                        # Swap a1 and a2
+                        a1, a2 = a2, a1
+                    # This scalar will be used to slow down one of the arms,
+                    # usually arm1, so both arms finish their motion at the same time.
+                    speed_scalar = 0
+                    total_1 = abs(wrapping_diff(a1, self.arm_1_angle))
+                    total_2 = total_1 + abs(wrapping_diff(a2, self.arm_2_angle))
+                    speed_scalar = total_1/total_2
+                    arm_1_speed = DEFAULT_MOVE_SPEED*speed_scalar
+                    self.arm_1_angle = a1
+                    self.arm_2_angle = a2
                     if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
-                    self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
+                    self.s1.set_angle(self.arm_1_angle, speed=arm_1_speed pwm_motion=pwm_move)
                     self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
             return
         elif self.gcode[0] == "G15":
