@@ -128,13 +128,16 @@ class cnc():
                     # usually arm1, so both arms finish their motion at the same time.
                     speed_scalar = 0
                     total_1 = abs(wrapping_diff(a1, self.arm_1_angle))
-                    total_2 = total_1 + abs(wrapping_diff(a2, self.arm_2_angle))
+                    total_2 = abs(wrapping_diff(a2, self.arm_2_angle))
+                    # This should be able to slow down either arm based on which one has furtherest to travel.
+                    # It currently doesn't
                     speed_scalar = total_1/total_2
                     arm_1_speed = DEFAULT_MOVE_SPEED*speed_scalar
                     self.arm_1_angle = a1
                     self.arm_2_angle = a2
+                    if self.debug: print("speed_scalar: {}".format(speed_scalar))
                     if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
-                    self.s1.set_angle(self.arm_1_angle, speed=arm_1_speed pwm_motion=pwm_move)
+                    self.s1.set_angle(self.arm_1_angle, speed=arm_1_speed, pwm_motion=pwm_move)
                     self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
             return
         elif self.gcode[0] == "G15":

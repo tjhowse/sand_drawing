@@ -156,7 +156,7 @@ class stepper():
             if self.debug: print("delta_index: {}".format(delta_index))
             self.index += delta_index
         self.index %= REAL_STEPS_PER_REV
-        if self.debug: print("Index: {}".format(self.index))
+        # if self.debug: print("Index: {}".format(self.index))
         if self.pwm == None:
             if self.target_index == self.index:
                 self.set_speed(0)
@@ -169,7 +169,7 @@ class stepper():
                 self.set_speed(0)
                 done_flag = True
                 self.prev_err = REAL_STEPS_PER_REV
-            if self.debug: print("Prev Err: {} Err: {}".format(self.prev_err,err))
+            # if self.debug: print("Prev Err: {} Err: {}".format(self.prev_err,err))
             self.prev_err = err
 
 
