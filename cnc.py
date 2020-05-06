@@ -118,27 +118,24 @@ class cnc():
                     if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
                     if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
                     # Work out which arm 1 angle difference is smaller.
-                    diff_1 = wrapping_diff(a1, self.arm_1_angle)
-                    diff_2 = wrapping_diff(a2, self.arm_1_angle)
+                    diff_1 = abs(wrapping_diff(a1, self.arm_1_angle))
+                    diff_2 = abs(wrapping_diff(a2, self.arm_1_angle))
                     if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
-                    if abs(diff_1) > abs(diff_2):
+                    if diff_1 > diff_2:
                         # Swap a1 and a2
                         a1, a2 = a2, a1
-                    # This scalar will be used to slow down one of the arms,
-                    # usually arm1, so both arms finish their motion at the same time.
-                    speed_scalar = 0
-                    total_1 = abs(wrapping_diff(a1, self.arm_1_angle))
-                    total_2 = abs(wrapping_diff(a2, self.arm_2_angle))
-                    # This should be able to slow down either arm based on which one has furtherest to travel.
-                    # It currently doesn't
-                    speed_scalar = total_1/total_2
-                    arm_1_speed = DEFAULT_MOVE_SPEED*speed_scalar
+                    arm_1_travel = abs(wrapping_diff(a1, self.arm_1_angle))
+                    arm_2_travel = abs(wrapping_diff(a2, self.arm_2_angle))
+                    # This is the total travel distance for both steppers
+                    total_angle_travel = arm_1_travel+arm_2_travel
+                    arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
+                    arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
                     self.arm_1_angle = a1
                     self.arm_2_angle = a2
-                    if self.debug: print("speed_scalar: {}".format(speed_scalar))
+                    if self.debug: print("diff_1: {} diff_2: {} total: {}".format(diff_1, diff_2, total_angle_travel))
                     if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
                     self.s1.set_angle(self.arm_1_angle, speed=arm_1_speed, pwm_motion=pwm_move)
-                    self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
+                    self.s2.set_angle(self.arm_2_angle, speed=arm_2_speed, pwm_motion=pwm_move)
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
