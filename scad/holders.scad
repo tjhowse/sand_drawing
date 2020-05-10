@@ -294,7 +294,6 @@ module arm2()
         translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm2_z);
         translate([-arm1_axis_offset/2,0,arm2_z/2]) rotate([0,-90,90]) translate([0,0,-15]) cylinder(r=pin_r,h=30);
     }
-    translate([arm1_axis_offset/2+608_id/2+wt,0,0]) optoflag();
 }
 
 
@@ -346,11 +345,39 @@ module optoswitch_holder()
     translate([0,-optoholder_y/2,-lip_z+optoholder_wt]) cube([optoholder_wt,optoholder_y/2+holder_y/2, lip_z]);
 }
 
+optoarm_x = arm1_axis_offset*(2/3);
+optoarm_y = 10;
+optoarm_z = wt*2;
+
+module arm2optoarm()
+{
+    // This part must be glued onto arm2 because the orientation makes these two parts hard to
+    // print without loads of support material.
+    difference()
+    {
+        union()
+        {
+            cylinder(r=608_id/2+wt*2, h=wt*2);
+            hull()
+            {
+                cylinder(r=optoarm_y/2, h=wt);
+                translate([optoarm_x-optoarm_y/2,0,0]) cylinder(r=optoarm_y/2, h=wt);
+            }
+            translate([optoarm_x,0,0]) optoflag();
+        }
+        cylinder(r=608_id/2+wt, h=100);
+        translate([-100,-50,-50]) cube([100,100,100]);
+    }
+
+}
+
 module assembled()
 {
     rotate([180,0,0]) top_holder();
     shaft_1_drive_pulley();
-    color("red") translate([holder_x/2,0,0]) optoswitch_holder();
+    // This arm was only used for benchtesting the system. It is not required in the final
+    // device, as the optoswitches are mounted directly to the table.
+    // color("red") translate([holder_x/2,0,0]) optoswitch_holder();
     translate([0,0,shaft_1_drive_pulley_z+washer_z-bearing_retain_lip])
     {
         shaft_2_drive_pulley();
@@ -360,11 +387,16 @@ module assembled()
             translate([0,0,arm1_z]) rotate([180,0,0]) arm1_split_base();
             rotate([0,0,180]) arm1_split_end();
             translate([arm1_axis_offset/2,0,-shaft_2_driven_pulley_z-washer_z]) shaft_2_driven_pulley();
-            translate([arm1_axis_offset,0,arm1_z+arm2_z]) rotate([180,0,0]) arm2();
+            translate([arm1_axis_offset,0,arm1_z+arm2_z]) rotate([180,0,0])
+            {
+                arm2();
+                translate([-arm1_axis_offset/2,0,arm2_z]) rotate([180,0,180]) arm2optoarm();
+            }
         }
     }
 }
 
+// arm2optoarm();
 translate([0,-60,0]) assembled();
 // rotate([90,0,0]) optoswitch_holder();
 
