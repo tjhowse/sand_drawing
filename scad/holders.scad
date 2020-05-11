@@ -277,7 +277,9 @@ module bottom_bearing_holder()
     echo(clampy_z);
 }
 
-arm2_z = (wt+pin_r)*2;
+arm2_hub_z = (wt+pin_r)*2;
+arm2_z = wt*2/3;
+
 module arm2()
 {
     difference()
@@ -286,13 +288,13 @@ module arm2()
         {
             hull()
             {
-                translate([arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=wt);
-                translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=wt);
+                translate([arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm2_z);
+                translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm2_z);
             }
-            translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm2_z);
+            translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2+wt,h=arm2_hub_z);
         }
-        translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm2_z);
-        translate([-arm1_axis_offset/2,0,arm2_z/2]) rotate([0,-90,90]) translate([0,0,-15]) cylinder(r=pin_r,h=30);
+        translate([-arm1_axis_offset/2,0,0]) cylinder(r=608_id/2,h=arm2_hub_z);
+        translate([-arm1_axis_offset/2,0,arm2_hub_z/2]) rotate([0,-90,90]) translate([0,0,-15]) cylinder(r=pin_r,h=30);
     }
 }
 
@@ -321,7 +323,7 @@ optoswitch_z = 15;
 arm1_optoflag_holder_z = shaft_1_drive_pulley_z+washer_z-bearing_retain_lip+shaft_2_drive_pulley_z+washer_z+optoflag_z/2+optoswitch_z/2;
 arm1_optoflag_holder_offset = arm1_axis_offset-holder_x/2+608_od/2+wt+optoholder_wt/2+optoflag_x + optoswitch_x;
 
-arm2_optoflag_holder_z = shaft_1_drive_pulley_z+washer_z-bearing_retain_lip+shaft_2_drive_pulley_z+washer_z-optoflag_z/2+608_z*2+bearing_retain_lip+arm2_z+optoswitch_z/2;
+arm2_optoflag_holder_z = shaft_1_drive_pulley_z+washer_z-bearing_retain_lip+shaft_2_drive_pulley_z+washer_z-optoflag_z/2+608_z*2+bearing_retain_lip+arm2_hub_z+optoswitch_z/2;
 
 arm2_optoflag_holder_offset = arm1_axis_offset*2-holder_x/2+608_id/2+wt+optoholder_wt/2+optoflag_x + optoswitch_x;
 
@@ -387,22 +389,23 @@ module assembled()
             translate([0,0,arm1_z]) rotate([180,0,0]) arm1_split_base();
             rotate([0,0,180]) arm1_split_end();
             translate([arm1_axis_offset/2,0,-shaft_2_driven_pulley_z-washer_z]) shaft_2_driven_pulley();
-            translate([arm1_axis_offset,0,arm1_z+arm2_z]) rotate([180,0,0])
+            translate([arm1_axis_offset,0,arm1_z+arm2_hub_z]) rotate([180,0,0])
             {
                 arm2();
-                translate([-arm1_axis_offset/2,0,arm2_z]) rotate([180,0,180]) arm2optoarm();
+                translate([-arm1_axis_offset/2,0,arm2_hub_z]) rotate([180,0,180]) arm2optoarm();
             }
         }
     }
 }
 
 // arm2optoarm();
-translate([0,-60,0]) assembled();
-// rotate([90,0,0]) optoswitch_holder();
+// translate([0,-60,0]) assembled();
+rotate([90,0,0]) optoswitch_holder();
 
 // optoflag();
 // translate([0,30,0]) arm2();
 // arm1();
+// arm2();
 
 // %bottom_hardware();
 // bottom_bearing_holder();
