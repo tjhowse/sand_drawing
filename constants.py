@@ -1,3 +1,4 @@
+import math
 MICROCONTROLLER = "atom"
 PWM_STEPPING = False
 if MICROCONTROLLER == "d1mini":
@@ -34,3 +35,16 @@ HOME_SPEED = 180
 
 ARM1_HOME_INDEX = 0
 ARM2_HOME_INDEX = 0
+
+# This may need adjustment for your enclosure. Mine's a regular octagon.
+# If your enclosure is circular (how fancy) you can simplify the bounds-checking
+# in the cnc class.
+ENCLOSURE_VERTEX_COUNT = 8
+# This is the distance of the verticies from the centre.
+ENCLOSURE_RADIUS = 183
+ENCLOSURE_VERTICES = []
+for i in range(ENCLOSURE_VERTEX_COUNT):
+    angle = math.radians(i*(360/ENCLOSURE_VERTEX_COUNT))
+    x = math.trunc(ENCLOSURE_RADIUS*math.sin(angle))
+    y = math.trunc(ENCLOSURE_RADIUS*math.cos(angle))
+    ENCLOSURE_VERTICES += [(x,y)]

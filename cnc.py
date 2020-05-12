@@ -1,7 +1,7 @@
 # pylint: disable=E0401
 from math import acos, atan2, sqrt, pi
 from constants import *
-from utime import ticks_us, ticks_diff
+# from utime import ticks_us, ticks_diff
 
 def distance(x, y):
     return sqrt(x*x + y*y)
@@ -26,6 +26,7 @@ def cartesian_calc(x, y):
     # in the same end point.
     return (a1%360, a2%360)
 
+# Mostly stolen directly from https://stackoverflow.com/questions/1119627/how-to-test-if-a-point-is-inside-of-a-convex-polygon-in-2d-integer-coordinates
 ARM_1_LENGTH = 200
 ARM_2_LENGTH = 200
 
@@ -33,6 +34,85 @@ def wrapping_diff(x, y):
     diff = x - y
     return (diff + 180) % 360 - 180
 
+RIGHT = "RIGHT"
+LEFT = "LEFT"
+
+def inside_convex_polygon(point, vertices):
+    previous_side = None
+    n_vertices = len(vertices)
+    for n in range(n_vertices):
+        a, b = vertices[n], vertices[(n+1)%n_vertices]
+        affine_segment = v_sub(b, a)
+        affine_point = v_sub(point, a)
+        current_side = get_side(affine_segment, affine_point)
+        if current_side is None:
+            return False #outside or over an edge
+        elif previous_side is None: #first segment
+            previous_side = current_side
+        elif previous_side != current_side:
+            return False
+    return True
+
+def get_side(a, b):
+    x = cosine_sign(a, b)
+    if x < 0:
+        return LEFT
+    elif x > 0:
+        return RIGHT
+    else:
+        return None
+
+def v_sub(a, b):
+    return (a[0]-b[0], a[1]-b[1])
+
+def cosine_sign(a, b):
+    return a[0]*b[1]-a[1]*b[0]
+
+def sum_distance_3_vertices(vertices):
+    n_vertices = len(vertices)
+    sum = 0
+    for n in range(n_vertices):
+        a, b = vertices[n], vertices[(n+1)%n_vertices]
+        x_diff = a[0] - b[0]
+        y_diff = a[1] - b[1]
+        sum += distance(x_diff, y_diff)
+    return sum
+
+def filter_coordinate(point, vertices):
+    # This function returns a (x,y) tuple after it's been bounds-capped to fit inside the enclosure.
+    if inside_convex_polygon(point, vertices):
+        return point
+    # Now we need to limit the coordinate to the edge of the enclosure
+    n_vertices = len(vertices)
+    # min_distance = sum_distance_3_vertices([point, vertices[0], vertices[1]])
+    min_distance = -1
+    closest_vertices = [vertices[0], vertices[1]]
+    for n in range(n_vertices):
+        a, b = vertices[n], vertices[(n+1)%n_vertices]
+        d = sum_distance_3_vertices([point, a, b])
+        if min_distance == -1 or min_distance > d:
+            min_distance = d
+            closest_vertices = [a,b]
+    # For less mess
+    a, b = closest_vertices
+    p = point
+    print("{} {} {}".format(p, a, b))
+    v_a_p = (p[0]-a[0], p[1]-a[1])
+    v_a_b = (b[0]-a[0], b[1]-a[1])
+    smag_a_b = v_a_b[0]**2 + v_a_b[1]**2
+    ABAPproduct = v_a_b[0]*v_a_p[0] + v_a_b[1]*v_a_p[1]
+    # Listen: I'm just as much at sea as you. I'm just copying this from someone convincing on stackoverflow:
+    # https://stackoverflow.com/questions/3120357/get-closest-point-to-a-line
+    print(ABAPproduct)
+    print(smag_a_b)
+    dist = ABAPproduct / smag_a_b
+    print(dist)
+    if dist < 0:
+        return a
+    elif dist > 1:
+        return b
+    else:
+        return (a[0]+v_a_b[0]*dist, a[0]+v_a_b[1]*dist)
 
 class cnc():
     move_mode = 0
