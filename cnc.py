@@ -31,8 +31,8 @@ def cartesian_calc(x, y):
     return (a1%360, a2%360)
 
 # Mostly stolen directly from https://stackoverflow.com/questions/1119627/how-to-test-if-a-point-is-inside-of-a-convex-polygon-in-2d-integer-coordinates
-ARM_1_LENGTH = 200
-ARM_2_LENGTH = 200
+ARM_1_LENGTH = 100
+ARM_2_LENGTH = 100
 
 def wrapping_diff(x, y):
     diff = x - y
@@ -180,7 +180,9 @@ class cnc():
 
             if self.move_mode == 2:
                 # TODO translate other movement modes into cartesian points so they can be filtered too.
+                if self.debug: print("Unfiltered coordinates: {}".format((self.cart_x, self.cart_y)))
                 (self.cart_x, self.cart_y) = filter_coordinate((self.cart_x, self.cart_y), ENCLOSURE_VERTICES)
+                if self.debug: print("Filtered coordinates: {}".format((self.cart_x, self.cart_y)))
                 if (self.cart_x == self.cart_y == 0):
                     # Handle the zero case.
                     self.arm_2_angle = self.arm_1_angle-180
@@ -202,8 +204,12 @@ class cnc():
                     arm_2_travel = abs(wrapping_diff(a2, self.arm_2_angle))
                     # This is the total travel distance for both steppers
                     total_angle_travel = arm_1_travel+arm_2_travel
-                    arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
-                    arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
+                    if total_angle_travel != 0:
+                        arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
+                        arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
+                    else:
+                        arm_1_speed = 0
+                        arm_2_speed = 0
                     self.arm_1_angle = a1
                     self.arm_2_angle = a2
                     if self.debug: print("diff_1: {} diff_2: {} total: {}".format(diff_1, diff_2, total_angle_travel))

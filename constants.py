@@ -33,15 +33,16 @@ HALF_REAL_STEPS_PER_REV = REAL_STEPS_PER_REV/2
 INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = 180
 
-ARM1_HOME_INDEX = 0
-ARM2_HOME_INDEX = 0
+# You'll have to tweak these to suite the exact placement of your optoswitches.
+ARM1_HOME_INDEX = REAL_STEPS_PER_REV-40
+ARM2_HOME_INDEX = REAL_STEPS_PER_REV/2-150
 
 # This may need adjustment for your enclosure. Mine's a regular octagon.
 # If your enclosure is circular (how fancy) you can simplify the bounds-checking
 # in the cnc class.
 ENCLOSURE_VERTEX_COUNT = 8
 # This is the distance of the verticies from the centre.
-ENCLOSURE_RADIUS = 183
+ENCLOSURE_RADIUS = 180
 ENCLOSURE_VERTICES = []
 for i in range(ENCLOSURE_VERTEX_COUNT):
     angle = math.radians(i*(360/ENCLOSURE_VERTEX_COUNT))
