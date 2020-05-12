@@ -72,15 +72,8 @@ def v_sub(a, b):
 def cosine_sign(a, b):
     return a[0]*b[1]-a[1]*b[0]
 
-def sum_distance_3_vertices(vertices):
-    n_vertices = len(vertices)
-    sum = 0
-    for n in range(n_vertices):
-        a, b = vertices[n], vertices[(n+1)%n_vertices]
-        x_diff = a[0] - b[0]
-        y_diff = a[1] - b[1]
-        sum += distance(x_diff, y_diff)
-    return sum
+def sum_distance_p_a_p_b(p, a, b):
+    return distance(p[0]-a[0], p[1]-a[1]) + distance(p[0]-b[0], p[1]-b[1])
 
 def filter_coordinate(point, vertices):
     # This function returns a (x,y) tuple after it's been bounds-capped to fit inside the enclosure.
@@ -88,12 +81,11 @@ def filter_coordinate(point, vertices):
         return point
     # Now we need to limit the coordinate to the edge of the enclosure
     n_vertices = len(vertices)
-    # min_distance = sum_distance_3_vertices([point, vertices[0], vertices[1]])
     min_distance = -1
     closest_vertices = [vertices[0], vertices[1]]
     for n in range(n_vertices):
         a, b = vertices[n], vertices[(n+1)%n_vertices]
-        d = sum_distance_3_vertices([point, a, b])
+        d = sum_distance_p_a_p_b(point, a, b)
         if min_distance == -1 or min_distance > d:
             min_distance = d
             closest_vertices = [a,b]
