@@ -108,7 +108,7 @@ def filter_coordinate(point, vertices):
     elif dist > 1:
         return b
     else:
-        return (a[0]+v_a_b[0]*dist, a[0]+v_a_b[1]*dist)
+        return (a[0]+v_a_b[0]*dist, a[1]+v_a_b[1]*dist)
 
 class cnc():
     move_mode = 0
