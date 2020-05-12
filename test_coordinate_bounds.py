@@ -3,7 +3,8 @@
 from constants import *
 from cnc import *
 
-point = (200,-150)
 
-a = filter_coordinate(point, ENCLOSURE_VERTICES)
-print(a)
+print(filter_coordinate((200,-150), ENCLOSURE_VERTICES))
+print(filter_coordinate((200,-150), ENCLOSURE_VERTICES))
+print(filter_coordinate((-200,-150), ENCLOSURE_VERTICES))
+print(filter_coordinate((-200,150), ENCLOSURE_VERTICES))
