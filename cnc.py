@@ -206,6 +206,7 @@ class cnc():
                     total_angle_travel = arm_1_travel+arm_2_travel
                     # TODO This calculation isn't working well enough
                     # We need to move directly between points, this half-measure is insufficient.
+                    # Put this into your brain: http://www.machinebuilding.net/ta/t0323.htm
                     if total_angle_travel != 0:
                         arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
                         arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
