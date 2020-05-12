@@ -92,23 +92,19 @@ def filter_coordinate(point, vertices):
     # For less mess
     a, b = closest_vertices
     p = point
-    print("p:{} a:{} b:{}".format(p, a, b))
     v_a_p = (p[0]-a[0], p[1]-a[1])
     v_a_b = (b[0]-a[0], b[1]-a[1])
     smag_a_b = v_a_b[0]**2 + v_a_b[1]**2
     ABAPproduct = v_a_b[0]*v_a_p[0] + v_a_b[1]*v_a_p[1]
     # Listen: I'm just as much at sea as you. I'm just copying this from someone convincing on stackoverflow:
     # https://stackoverflow.com/questions/3120357/get-closest-point-to-a-line
-    print(ABAPproduct)
-    print(smag_a_b)
     dist = ABAPproduct / smag_a_b
-    print(dist)
     if dist < 0:
         return a
     elif dist > 1:
         return b
     else:
-        return (a[0]+v_a_b[0]*dist, a[1]+v_a_b[1]*dist)
+        return (math.trunc(a[0]+v_a_b[0]*dist), math.trunc(a[1]+v_a_b[1]*dist))
 
 class cnc():
     move_mode = 0
