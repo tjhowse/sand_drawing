@@ -179,6 +179,8 @@ class cnc():
                             pass
 
             if self.move_mode == 2:
+                # TODO translate other movement modes into cartesian points so they can be filtered too.
+                (self.cart_x, self.cart_y) = filter_coordinate((self.cart_x, self.cart_y), ENCLOSURE_VERTICES)
                 if (self.cart_x == self.cart_y == 0):
                     # Handle the zero case.
                     self.arm_2_angle = self.arm_1_angle-180
