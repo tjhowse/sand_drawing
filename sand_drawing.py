@@ -26,8 +26,8 @@ G_PATTERN = ""
 def main():
     global G_PATTERN
     mqtt = None
-    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,True, "X")
-    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,True, "Y")
+    s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN,True, "X", ARM1_HOME_INDEX)
+    s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN,True, "Y", ARM2_HOME_INDEX)
     my_cnc = cnc(s1, s2)
     pattern = [ "G28 X",
                 "G28 Y",

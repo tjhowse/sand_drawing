@@ -23,7 +23,7 @@ class stepper():
     pwm = None
     prev_err = 0
 
-    def __init__(self, s_pin, d_pin, o_pin, debug=False, name=''):
+    def __init__(self, s_pin, d_pin, o_pin, debug=False, name='', home_index=0):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
         self.d = machine.Pin(d_pin, machine.Pin.OUT)
         # This is declared an output so we can use the internal pull-up.
@@ -32,6 +32,7 @@ class stepper():
         self.set_dir(0)
         self.debug = debug
         self.name = name
+        self.home_index = home_index
 
     def set_speed(self, new_speed, pwm_motion=False):
         # Sets the speed in degrees per second
@@ -132,7 +133,7 @@ class stepper():
             if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
                 # Rising edge opto when rotating clockwise. We're at zero.
                 self.homed = True
-                self.index = 0
+                self.index = self.home_index
                 self.set_speed(0)
                 if self.debug:
                     print("homed")
