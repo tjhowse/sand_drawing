@@ -1,7 +1,11 @@
 # pylint: disable=E0401
 from math import acos, atan2, sqrt, pi
 from constants import *
-# from utime import ticks_us, ticks_diff
+try:
+    from utime import ticks_us, ticks_diff
+except ImportError:
+    # This isn't running on-target. We don't need these.
+    pass
 
 def distance(x, y):
     return sqrt(x*x + y*y)
@@ -96,7 +100,7 @@ def filter_coordinate(point, vertices):
     # For less mess
     a, b = closest_vertices
     p = point
-    print("{} {} {}".format(p, a, b))
+    print("p:{} a:{} b:{}".format(p, a, b))
     v_a_p = (p[0]-a[0], p[1]-a[1])
     v_a_b = (b[0]-a[0], b[1]-a[1])
     smag_a_b = v_a_b[0]**2 + v_a_b[1]**2
