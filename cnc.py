@@ -113,6 +113,9 @@ class vector2():
     def set_zero(self):
         self.x = 0
         self.y = 0
+    def copy(self, p):
+        self.x = p.x
+        self.y = p.y
     def vector_to(self, p):
         return self.__sub__(p)
     def distance_to(self, p):
@@ -134,12 +137,14 @@ class vector2():
         return p.x==self.x and p.y==self.y
     def __ne__(self, p):
         return not self.__eq__(p)
+    def __str__(self):
+        return "({},{})".format(self.x, self.y)
 
 
 class cnc():
     move_mode = 0
     coord_mode = 0
-    debug = True
+    debug = False
     gcode = None
     origin = vector2()
     move_vector = vector2()
@@ -213,15 +218,18 @@ class cnc():
 
             if self.move_mode == 2:
                 # TODO translate other movement modes into cartesian points so they can be filtered too.
-                if self.debug: print("Unfiltered coordinates: {}".format((self.target.x, self.target.y)))
+                if self.debug: print("Unfiltered coordinates: {}".format(self.target))
                 (self.target.x, self.target.y) = filter_coordinate((self.target.x, self.target.y), ENCLOSURE_VERTICES)
-                if self.debug: print("Filtered coordinates: {}".format((self.target.x, self.target.y)))
+                if self.debug: print("Filtered coordinates: {}".format(self.target))
+                if self.debug: print("self.origin: {}".format(self.origin))
                 self.move_vector = self.origin.vector_to(self.target)
                 move_mag = self.move_vector.magnitude()
+                if self.debug: print("move_vector: {} move_mag: {}".format(self.move_vector, move_mag))
                 if move_mag > PATH_SPLIT_SIZE:
                     # This move needs to be split up. Create a vector for calculating stepwise
                     # movements along this path
                     points = math.ceil(move_mag/PATH_SPLIT_SIZE)
+                    if self.debug: print("Path length {} > {}, split into {} chunks".format(move_mag, PATH_SPLIT_SIZE, points))
                     self.move_vector.cap_magnitude(move_mag/points)
             return
         elif self.gcode[0] == "G15":
@@ -244,7 +252,8 @@ class cnc():
                 self.set_gcode(self.pattern[self.pattern_step])
 
     def start_move_to_point(self, p):
-        self.origin = p
+        if self.debug: print("Setting origin to {}".format(p))
+        self.origin.copy(p)
         if (p.x == p.y == 0):
             # Handle the zero case.
             self.arm_2_angle = self.arm_1_angle-180
@@ -285,11 +294,14 @@ class cnc():
                 # Check distance to final target:
                 if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
                     # We're near enough to the end of the move. Go straight there.
+                    if self.debug: print("Moving to final target {}".format(self.target))
                     self.start_move_to_point(self.target)
                 else:
                     # We need to take another step towards the target.
                     self.intermediate_target = self.origin + self.move_vector
+                    if self.debug: print("Moving to intermediate target {}".format(self.intermediate_target))
                     self.start_move_to_point(self.intermediate_target)
+                return False
             self.pattern_step += 1
             if self.pattern_step < len(self.pattern):
                 self.set_gcode(self.pattern[self.pattern_step])

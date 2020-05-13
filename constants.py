@@ -52,4 +52,4 @@ for i in range(ENCLOSURE_VERTEX_COUNT):
 
 # Movements will be split into smaller stepwise movements of this length at most
 # Lower numbers mean straighter movements but more processing time.
-PATH_SPLIT_SIZE = 5
+PATH_SPLIT_SIZE = 1
