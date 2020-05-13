@@ -114,7 +114,7 @@ class vector2():
         self.x = 0
         self.y = 0
     def vector_to(self, p):
-        return vector2(p.x-self.x, p.y-self.y)
+        return self.__sub__(p)
     def distance_to(self, p):
         return distance(p.x-self.x, p.y-self.y)
     def magnitude(self):
@@ -126,8 +126,14 @@ class vector2():
     def cap_magnitude(self, m):
         if self.magnitude() > m:
             self.set_magnitude(m)
-    # def __add__(self, p):
-    #     return
+    def __add__(self, p):
+        return vector2(p.x+self.x, p.y+self.y)
+    def __sub__(self, p):
+        return vector2(p.x-self.x, p.y-self.y)
+    def __eq__(self, p):
+        return p.x==self.x and p.y==self.y
+    def __ne__(self, p):
+        return not self.__eq__(p)
 
 
 class cnc():
@@ -136,13 +142,12 @@ class cnc():
     debug = True
     gcode = None
     origin = vector2()
-    vector = vector2()
+    move_vector = vector2()
     intermediate_target = vector2()
     target = vector2()
     arm_1_angle = 0
     arm_2_angle = 0
     pwm_move = False # Movement modes using PWM to drive steppers. Faster, less precise.
-    split_path_move = False # Moving in PATH_SPLIT_SIZE chunks towards target
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -218,10 +223,6 @@ class cnc():
                     # movements along this path
                     points = math.ceil(move_mag/PATH_SPLIT_SIZE)
                     self.move_vector.cap_magnitude(move_mag/points)
-                    self.split_path_move = True
-                else:
-                    self.split_path_move = False
-                    self.set_angles_for_point(self.target)
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
@@ -242,7 +243,8 @@ class cnc():
                 self.pattern_step = step
                 self.set_gcode(self.pattern[self.pattern_step])
 
-    def set_angles_for_point(self, p):
+    def start_move_to_point(self, p):
+        self.origin = p
         if (p.x == p.y == 0):
             # Handle the zero case.
             self.arm_2_angle = self.arm_1_angle-180
@@ -272,28 +274,26 @@ class cnc():
         done1 = self.s1.go(ticks)
         done2 = self.s2.go(ticks)
         done = done1 and done2
-        # Not very happy about this. Revisit it.
+        # TODO Not very happy about this. Revisit it.
         if self.gcode and self.gcode[0] == "G28" and done:
             self.s1.homing = False
             self.s2.homing = False
             self.origin.set_zero()
         if done:
-            if self.split_path_move:
+            # Was our last movement directly to the end point of the move?
+            if self.target != self.origin:
                 # Check distance to final target:
                 if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
                     # We're near enough to the end of the move. Go straight there.
-                    self.set_angles_for_point(self.target)
+                    self.start_move_to_point(self.target)
                 else:
                     # We need to take another step towards the target.
-                    self.intermediate_target = self.
-
-
+                    self.intermediate_target = self.origin + self.move_vector
+                    self.start_move_to_point(self.intermediate_target)
             self.pattern_step += 1
             if self.pattern_step < len(self.pattern):
                 self.set_gcode(self.pattern[self.pattern_step])
             elif self.gcode != None:
                 print("Done running pattern")
                 self.gcode = None
-
-
         return done
