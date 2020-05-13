@@ -106,13 +106,31 @@ def filter_coordinate(point, vertices):
     else:
         return (a[0]+v_a_b[0]*dist, a[1]+v_a_b[1]*dist)
 
+class vector2():
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+    def vectorTo(self, p):
+        return vector2(p.x-self.x, p.y-self.y)
+    def magnitude(self):
+        return sqrt(self.x*self.x+self.y*self.y)
+    def set_magnitude(self, m):
+        scale = m/self.magnitude()
+        self.x *= scale
+        self.y *= scale
+    def cap_magnitude(self, m):
+        if self.magnitude() > m:
+            self.set_magnitude(m)
+
+
 class cnc():
     move_mode = 0
     coord_mode = 0
     debug = True
     gcode = None
-    cart_x = 0
-    cart_y = 0
+    origin = vector2()
+    vector = vector2()
+    target = vector2()
     arm_1_angle = 0
     arm_2_angle = 0
 
@@ -171,26 +189,29 @@ class cnc():
                     elif self.move_mode == 2:
                         # Absolute cartesian positioning
                         if coord.startswith('X'):
-                            self.cart_x = float(coord[1:])
+                            self.target.x = float(coord[1:])
                         elif coord.startswith('Y'):
-                            self.cart_y = float(coord[1:])
+                            self.target.y = float(coord[1:])
                         elif coord.startswith('S'):
                             # This is where the speed of the movement is set.
                             pass
 
             if self.move_mode == 2:
                 # TODO translate other movement modes into cartesian points so they can be filtered too.
-                if self.debug: print("Unfiltered coordinates: {}".format((self.cart_x, self.cart_y)))
-                (self.cart_x, self.cart_y) = filter_coordinate((self.cart_x, self.cart_y), ENCLOSURE_VERTICES)
-                if self.debug: print("Filtered coordinates: {}".format((self.cart_x, self.cart_y)))
-                if (self.cart_x == self.cart_y == 0):
+                if self.debug: print("Unfiltered coordinates: {}".format((self.target.x, self.target.y)))
+                (self.target.x, self.target.y) = filter_coordinate((self.target.x, self.target.y), ENCLOSURE_VERTICES)
+                if self.debug: print("Filtered coordinates: {}".format((self.target.x, self.target.y)))
+                self.move_vector = self.origin.vectorTo(self.target)
+                self.move_vector.cap_magnitude(PATH_SPLIT_SIZE)
+
+                if (self.target.x == self.target.y == 0):
                     # Handle the zero case.
                     self.arm_2_angle = self.arm_1_angle-180
                     self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
                     self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
                 else:
                     # Manage the cartesian translation
-                    (a1, a2) = cartesian_calc(self.cart_x, self.cart_y)
+                    (a1, a2) = cartesian_calc(self.target.x, self.target.y)
                     if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
                     if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
                     # Work out which arm 1 angle difference is smaller.

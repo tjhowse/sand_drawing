@@ -49,3 +49,7 @@ for i in range(ENCLOSURE_VERTEX_COUNT):
     x = math.trunc(ENCLOSURE_RADIUS*math.sin(angle))
     y = math.trunc(ENCLOSURE_RADIUS*math.cos(angle))
     ENCLOSURE_VERTICES += [(x,y)]
+
+# Movements will be split into smaller stepwise movements of this length at most
+# Lower numbers mean straighter movements but more processing time.
+PATH_SPLIT_SIZE = 5
