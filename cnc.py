@@ -281,7 +281,7 @@ class cnc():
             self.origin.set_zero()
         if done:
             # Was our last movement directly to the end point of the move?
-            if self.target != self.origin:
+            if self.target != self.origin and self.move_mode == 2:
                 # Check distance to final target:
                 if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
                     # We're near enough to the end of the move. Go straight there.
