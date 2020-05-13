@@ -260,20 +260,6 @@ class cnc():
         if diff_1 > diff_2:
             # Swap a1 and a2
             a1, a2 = a2, a1
-        # arm_1_travel = abs(wrapping_diff(a1, self.arm_1_angle))
-        # arm_2_travel = abs(wrapping_diff(a2, self.arm_2_angle))
-        # # This is the total travel distance for both steppers
-        # total_angle_travel = arm_1_travel+arm_2_travel
-        # # TODO This calculation isn't working well enough
-        # # We need to move directly between points, this half-measure is insufficient.
-        # # Put this into your brain: http://www.machinebuilding.net/ta/t0323.htm
-        # # Or maybe this suspiciously similar one: https://www.pmdcorp.com/resources/type/articles/resources/get/motion-kinematics-article
-        # if total_angle_travel != 0:
-        #     arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
-        #     arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
-        # else:
-        #     arm_1_speed = 0
-        #     arm_2_speed = 0
         self.arm_1_angle = a1
         self.arm_2_angle = a2
         if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
