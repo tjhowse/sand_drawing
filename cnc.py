@@ -110,7 +110,7 @@ class vector2():
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
-    def vectorTo(self, p):
+    def vector_to(self, p):
         return vector2(p.x-self.x, p.y-self.y)
     def magnitude(self):
         return sqrt(self.x*self.x+self.y*self.y)
@@ -201,7 +201,7 @@ class cnc():
                 if self.debug: print("Unfiltered coordinates: {}".format((self.target.x, self.target.y)))
                 (self.target.x, self.target.y) = filter_coordinate((self.target.x, self.target.y), ENCLOSURE_VERTICES)
                 if self.debug: print("Filtered coordinates: {}".format((self.target.x, self.target.y)))
-                self.move_vector = self.origin.vectorTo(self.target)
+                self.move_vector = self.origin.vector_to(self.target)
                 self.move_vector.cap_magnitude(PATH_SPLIT_SIZE)
 
                 if (self.target.x == self.target.y == 0):
