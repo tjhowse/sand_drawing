@@ -133,6 +133,7 @@ class cnc():
     target = vector2()
     arm_1_angle = 0
     arm_2_angle = 0
+    pwm_move = False
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -164,7 +165,7 @@ class cnc():
             return
 
         elif self.gcode[0] in ["G0", "G1"]:
-            pwm_move = self.gcode[0] == "G0"
+            self.pwm_move = self.gcode[0] == "G0"
             if len(self.gcode) == 1:
                 return
             for coord in self.gcode[1:]:
@@ -172,17 +173,17 @@ class cnc():
                     if self.move_mode == 0:
                         # Continuous raw movement
                         if coord.startswith('X'):
-                            self.s1.set_speed(float(coord[1:]), pwm_motion=pwm_move)
+                            self.s1.set_speed(float(coord[1:]), pwm_motion=self.pwm_move)
                         elif coord.startswith('Y'):
-                            self.s2.set_speed(float(coord[1:]), pwm_motion=pwm_move)
+                            self.s2.set_speed(float(coord[1:]), pwm_motion=self.pwm_move)
                     elif self.move_mode == 1:
                         # Discrete raw movement
                         if coord.startswith('X'):
                             self.arm_1_angle = float(coord[1:])
-                            self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
+                            self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
                         elif coord.startswith('Y'):
                             self.arm_2_angle = float(coord[1:])
-                            self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
+                            self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
                         elif coord.startswith('S'):
                             # This is where the speed of the movement is set.
                             pass
@@ -202,45 +203,13 @@ class cnc():
                 (self.target.x, self.target.y) = filter_coordinate((self.target.x, self.target.y), ENCLOSURE_VERTICES)
                 if self.debug: print("Filtered coordinates: {}".format((self.target.x, self.target.y)))
                 self.move_vector = self.origin.vector_to(self.target)
-                self.move_vector.cap_magnitude(PATH_SPLIT_SIZE)
-
-                if (self.target.x == self.target.y == 0):
-                    # Handle the zero case.
-                    self.arm_2_angle = self.arm_1_angle-180
-                    self.s1.set_angle(self.arm_1_angle, pwm_motion=pwm_move)
-                    self.s2.set_angle(self.arm_2_angle, pwm_motion=pwm_move)
-                else:
-                    # Manage the cartesian translation
-                    (a1, a2) = cartesian_calc(self.target.x, self.target.y)
-                    if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
-                    if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
-                    # Work out which arm 1 angle difference is smaller.
-                    diff_1 = abs(wrapping_diff(a1, self.arm_1_angle))
-                    diff_2 = abs(wrapping_diff(a2, self.arm_1_angle))
-                    if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
-                    if diff_1 > diff_2:
-                        # Swap a1 and a2
-                        a1, a2 = a2, a1
-                    arm_1_travel = abs(wrapping_diff(a1, self.arm_1_angle))
-                    arm_2_travel = abs(wrapping_diff(a2, self.arm_2_angle))
-                    # This is the total travel distance for both steppers
-                    total_angle_travel = arm_1_travel+arm_2_travel
-                    # TODO This calculation isn't working well enough
-                    # We need to move directly between points, this half-measure is insufficient.
-                    # Put this into your brain: http://www.machinebuilding.net/ta/t0323.htm
-                    # Or maybe this suspiciously similar one: https://www.pmdcorp.com/resources/type/articles/resources/get/motion-kinematics-article
-                    if total_angle_travel != 0:
-                        arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
-                        arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
-                    else:
-                        arm_1_speed = 0
-                        arm_2_speed = 0
-                    self.arm_1_angle = a1
-                    self.arm_2_angle = a2
-                    if self.debug: print("diff_1: {} diff_2: {} total: {}".format(diff_1, diff_2, total_angle_travel))
-                    if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
-                    self.s1.set_angle(self.arm_1_angle, speed=arm_1_speed, pwm_motion=pwm_move)
-                    self.s2.set_angle(self.arm_2_angle, speed=arm_2_speed, pwm_motion=pwm_move)
+                move_mag = self.move_vector.magnitude()
+                if move_mag > PATH_SPLIT_SIZE:
+                    # This move needs to be split up. Create a vector for calculating stepwise
+                    # movements along this path
+                    points = math.ceil(move_mag/PATH_SPLIT_SIZE)
+                    self.move_vector.cap_magnitude(move_mag/points)
+                self.set_angles_for_point(self.target)
             return
         elif self.gcode[0] == "G15":
             # Set coordinate mode
@@ -260,6 +229,44 @@ class cnc():
             if 0 <= step < len(self.pattern):
                 self.pattern_step = step
                 self.set_gcode(self.pattern[self.pattern_step])
+
+    def set_angles_for_point(self, p):
+        if (p.x == p.y == 0):
+            # Handle the zero case.
+            self.arm_2_angle = self.arm_1_angle-180
+            self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
+            self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
+            return
+        # Manage the cartesian translation
+        (a1, a2) = cartesian_calc(p.x, p.y)
+        if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
+        if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
+        # Work out which arm 1 angle difference is smaller.
+        diff_1 = abs(wrapping_diff(a1, self.arm_1_angle))
+        diff_2 = abs(wrapping_diff(a2, self.arm_1_angle))
+        if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
+        if diff_1 > diff_2:
+            # Swap a1 and a2
+            a1, a2 = a2, a1
+        # arm_1_travel = abs(wrapping_diff(a1, self.arm_1_angle))
+        # arm_2_travel = abs(wrapping_diff(a2, self.arm_2_angle))
+        # # This is the total travel distance for both steppers
+        # total_angle_travel = arm_1_travel+arm_2_travel
+        # # TODO This calculation isn't working well enough
+        # # We need to move directly between points, this half-measure is insufficient.
+        # # Put this into your brain: http://www.machinebuilding.net/ta/t0323.htm
+        # # Or maybe this suspiciously similar one: https://www.pmdcorp.com/resources/type/articles/resources/get/motion-kinematics-article
+        # if total_angle_travel != 0:
+        #     arm_1_speed = DEFAULT_MOVE_SPEED*(arm_1_travel/total_angle_travel)
+        #     arm_2_speed = DEFAULT_MOVE_SPEED*(arm_2_travel/total_angle_travel)
+        # else:
+        #     arm_1_speed = 0
+        #     arm_2_speed = 0
+        self.arm_1_angle = a1
+        self.arm_2_angle = a2
+        if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
+        self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
+        self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
 
     def tick(self):
         ticks = ticks_us()
