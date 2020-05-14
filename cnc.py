@@ -232,12 +232,6 @@ class cnc():
                     if self.debug: print("Path length {} > {}, split into {} chunks".format(move_mag, PATH_SPLIT_SIZE, points))
                     self.move_vector.cap_magnitude(move_mag/points)
             return
-        elif self.gcode[0] == "G15":
-            # Set coordinate mode
-            if len(self.gcode) == 1:
-                return
-            self.coord_mode = int(self.gcode[1])
-            return
         elif self.gcode[0] == "G16":
             # Set movement mode
             if len(self.gcode) == 1:
