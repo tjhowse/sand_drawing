@@ -16,6 +16,7 @@ class stepper():
     high_low = 0 # The state of the step pin. 0: low, 1: high
     homing = True
     homed = False
+    home_correction = False # Are we doing that little move between the opto and angle=0?
     stepping = True
     debug = True
     seeking = False # Moving towards target_index
@@ -23,7 +24,7 @@ class stepper():
     pwm = None
     prev_err = 0
 
-    def __init__(self, s_pin, d_pin, o_pin, debug=False, name='', home_index=0):
+    def __init__(self, s_pin, d_pin, o_pin, debug=False, name='', home_index=0, home_angle=0):
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
         self.d = machine.Pin(d_pin, machine.Pin.OUT)
         # This is declared an output so we can use the internal pull-up.
@@ -33,6 +34,7 @@ class stepper():
         self.debug = debug
         self.name = name
         self.home_index = home_index
+        self.home_angle = home_angle
 
     def set_speed(self, new_speed, pwm_motion=False):
         # Sets the speed in degrees per second
@@ -115,6 +117,23 @@ class stepper():
         self.homing = True
         self.set_speed(HOME_SPEED)
 
+    def update_index(self, ticks, last_step_ticks_us):
+        # On a rising edge increase the index by 1 if going clockwise,
+        # or decrement by 1 if going anti-clockwise.
+        delta_index = 0
+        if self.pwm == None:
+            self.index += 1 + self.dir*-2
+            delta_index = 1
+        else:
+            # We have to update the index based on the amount of time elapsed since
+            # the start of this movement and the speed of the movement. Eugh, a bit.
+            # Slow float maths, but in PWM mode it doesn't matter too much.
+            delta_index = int(self.freq * (ticks_diff(ticks, last_step_ticks_us)/1e6) * (1 + self.dir*-2))
+            if self.debug: print("delta_index: {}".format(delta_index))
+            self.index += delta_index
+        self.index %= REAL_STEPS_PER_REV
+        return delta_index
+
     def go(self, ticks):
         done_flag = False
         if not self.stepping:
@@ -129,35 +148,28 @@ class stepper():
             self.s.value(self.high_low)
             if not self.high_low:
                 return False
+        delta_index = self.update_index(ticks, last_step_ticks_us)
         if self.homing:
-            if self.last_o == 0 and self.o.value() == 1 and self.dir == 0:
-                # Rising edge opto when rotating clockwise. We're at zero.
-                self.homed = True
+            if self.last_o == 0 and self.o.value() == 1 and self.dir == 0 and not self.home_correction:
+                # Rising edge opto when rotating clockwise. We're at self.home_index.
                 self.index = self.home_index
-                self.set_speed(0)
+                self.home_correction = True
+                self.homed = True
+                self.set_angle(self.home_angle, HOME_SPEED)
+                print("{} zeroed".format(self.name))
+            elif self.homed and self.home_correction and self.index == 0:
+                self.home_correction = False
+                print("{} home correction done".format(self.name))
+            elif self.homed and not self.home_correction:
                 if self.debug:
                     print("homed")
-                return True
-            elif self.homed:
+                print("{} homed".format(self.name))
                 done_flag = True
                 return True
             self.last_o = self.o.value()
         if not self.homed:
             return done_flag
-        # On a rising edge increase the index by 1 if going clockwise,
-        # or decrement by 1 if going anti-clockwise.
-        delta_index = 0
-        if self.pwm == None:
-            self.index += 1 + self.dir*-2
-        else:
-            # We have to update the index based on the amount of time elapsed since
-            # the start of this movement and the speed of the movement. Eugh, a bit.
-            # Slow float maths, but in PWM mode it doesn't matter too much.
-            delta_index = int(self.freq * (ticks_diff(ticks, last_step_ticks_us)/1e6) * (1 + self.dir*-2))
-            if self.debug: print("delta_index: {}".format(delta_index))
-            self.index += delta_index
-        self.index %= REAL_STEPS_PER_REV
-        # if self.debug: print("Index: {}".format(self.index))
+
         if self.pwm == None:
             if self.target_index == self.index:
                 self.set_speed(0)

@@ -169,8 +169,7 @@ class cnc():
 
     def set_gcode(self, gcode):
         self.gcode = gcode.split(' ')
-        if self.debug:
-            print(self.gcode)
+        print(self.gcode)
         if self.gcode[0] == "G28":
             self.s1.set_speed(0)
             self.s2.set_speed(0)
@@ -283,7 +282,7 @@ class cnc():
         if self.gcode and self.gcode[0] == "G28" and done:
             self.s1.homing = False
             self.s2.homing = False
-            self.origin.set_zero()
+            # self.start_move_to_point(vector2())
         if done:
             # Was our last movement directly to the end point of the move?
             if self.target != self.origin and self.move_mode == MOVE_MODE_CARTESIAN:
