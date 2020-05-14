@@ -140,10 +140,13 @@ class vector2():
     def __str__(self):
         return "({},{})".format(self.x, self.y)
 
+MOVE_MODE_RAW_SPEED = 0
+MOVE_MODE_RAW_ANGLE = 1
+MOVE_MODE_CARTESIAN = 2
+MOVE_MODE_POLAR = 3
 
 class cnc():
-    move_mode = 0
-    coord_mode = 0
+    move_mode = MOVE_MODE_CARTESIAN
     debug = False
     gcode = None
     origin = vector2()
@@ -188,35 +191,34 @@ class cnc():
             if len(self.gcode) == 1:
                 return
             for coord in self.gcode[1:]:
-                if self.coord_mode == 0:
-                    if self.move_mode == 0:
-                        # Continuous raw movement
-                        if coord.startswith('X'):
-                            self.s1.set_speed(float(coord[1:]), pwm_motion=self.pwm_move)
-                        elif coord.startswith('Y'):
-                            self.s2.set_speed(float(coord[1:]), pwm_motion=self.pwm_move)
-                    elif self.move_mode == 1:
-                        # Discrete raw movement
-                        if coord.startswith('X'):
-                            self.arm_1_angle = float(coord[1:])
-                            self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
-                        elif coord.startswith('Y'):
-                            self.arm_2_angle = float(coord[1:])
-                            self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
-                        elif coord.startswith('S'):
-                            # This is where the speed of the movement is set.
-                            pass
-                    elif self.move_mode == 2:
-                        # Absolute cartesian positioning
-                        if coord.startswith('X'):
-                            self.target.x = float(coord[1:])
-                        elif coord.startswith('Y'):
-                            self.target.y = float(coord[1:])
-                        elif coord.startswith('S'):
-                            # This is where the speed of the movement is set.
-                            pass
+                if self.move_mode == MOVE_MODE_RAW_SPEED:
+                    # Continuous raw movement
+                    if coord.startswith('X'):
+                        self.s1.set_speed(float(coord[1:]), pwm_motion=self.pwm_move)
+                    elif coord.startswith('Y'):
+                        self.s2.set_speed(float(coord[1:]), pwm_motion=self.pwm_move)
+                elif self.move_mode == MOVE_MODE_RAW_ANGLE:
+                    # Discrete raw movement
+                    if coord.startswith('X'):
+                        self.arm_1_angle = float(coord[1:])
+                        self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
+                    elif coord.startswith('Y'):
+                        self.arm_2_angle = float(coord[1:])
+                        self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
+                    elif coord.startswith('S'):
+                        # This is where the speed of the movement is set.
+                        pass
+                elif self.move_mode == MOVE_MODE_CARTESIAN:
+                    # Absolute cartesian positioning
+                    if coord.startswith('X'):
+                        self.target.x = float(coord[1:])
+                    elif coord.startswith('Y'):
+                        self.target.y = float(coord[1:])
+                    elif coord.startswith('S'):
+                        # This is where the speed of the movement is set.
+                        pass
 
-            if self.move_mode == 2:
+            if self.move_mode == MOVE_MODE_CARTESIAN:
                 # TODO translate other movement modes into cartesian points so they can be filtered too.
                 if self.debug: print("Unfiltered coordinates: {}".format(self.target))
                 (self.target.x, self.target.y) = filter_coordinate((self.target.x, self.target.y), ENCLOSURE_VERTICES)
@@ -284,7 +286,7 @@ class cnc():
             self.origin.set_zero()
         if done:
             # Was our last movement directly to the end point of the move?
-            if self.target != self.origin and self.move_mode == 2:
+            if self.target != self.origin and self.move_mode == MOVE_MODE_CARTESIAN:
                 # Check distance to final target:
                 if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
                     # We're near enough to the end of the move. Go straight there.
