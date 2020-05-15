@@ -47,6 +47,7 @@ def main():
     while True:
         mqtt = mqtt_check(mqtt)
         last_pattern_check_ticks_ms = ticks_ms()
+        # TODO Put these global checking thingers in the my_cnc.tick loop below
         if G_PATTERN != "":
             generator = ""
             print(G_PATTERN)
