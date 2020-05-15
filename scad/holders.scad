@@ -398,9 +398,22 @@ module assembled()
     }
 }
 
+module ball_skid()
+{
+    ball_r = 9.5/2;
+
+    difference()
+    {
+        cylinder(r2=0, r1=ball_r*1.5, h = ball_r);
+        translate([0,0,ball_r]) sphere(r=ball_r);
+    }
+}
+
+ball_skid();
+
 // arm2optoarm();
 // translate([0,-60,0]) assembled();
-rotate([90,0,0]) optoswitch_holder();
+// rotate([90,0,0]) optoswitch_holder();
 
 // optoflag();
 // translate([0,30,0]) arm2();
