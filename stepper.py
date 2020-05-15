@@ -15,8 +15,7 @@ class stepper():
     last_o = 1 # Used for detecting the rising edge of the opto pin
     high_low = 0 # The state of the step pin. 0: low, 1: high
     homing = True
-    homed = False
-    home_correction = False # Are we doing that little move between the opto and angle=0?
+    indexed = False # Do we know the index of our stepper position?
     stepping = True
     debug = True
     seeking = False # Moving towards target_index
@@ -71,7 +70,7 @@ class stepper():
             print("step_interval: {}".format(self.step_interval))
             print("Stepping: {}".format(self.stepping))
             print("homing: {}".format(self.homing))
-            print("homed: {}".format(self.homed))
+            print("indexed: {}".format(self.indexed))
             print("seeking: {}".format(self.seeking))
             print("Index: {}".format(self.index))
             print("target index: {}".format(self.target_index))
@@ -84,8 +83,8 @@ class stepper():
         self.d.value(1-self.dir)
 
     def set_angle(self, angle, speed=DEFAULT_MOVE_SPEED, pwm_motion=False):
-        if not self.homed:
-            print("Cannot set angle. Not homed.")
+        if not self.indexed:
+            print("Cannot set angle. Not indexed.")
             return
         angle %= 360
         self.target_index = int(angle*REAL_STEPS_PER_DEGREE)
@@ -113,9 +112,17 @@ class stepper():
                 self.set_speed(speed, pwm_motion=pwm_motion)
 
     def home(self):
-        self.homed = False
+        self.indexed = False
         self.homing = True
         self.set_speed(HOME_SPEED)
+
+    def opto_rise(self):
+        # Returns true if the optoswitch went high since the last check
+        returnVal = False
+        if self.last_o == 0 and self.o.value() == 1:
+            returnVal = True
+        self.last_o = self.o.value()
+        return returnVal
 
     def update_index(self, ticks, last_step_ticks_us):
         # On a rising edge increase the index by 1 if going clockwise,
@@ -140,7 +147,6 @@ class stepper():
             return True
         if ticks_diff(ticks, self.last_step) <= self.step_interval:
             return False
-        # if self.debug: print(ticks_diff(ticks, self.last_step))
         self.high_low = 1 - self.high_low
         last_step_ticks_us = self.last_step
         self.last_step = ticks
@@ -149,26 +155,13 @@ class stepper():
             if not self.high_low:
                 return False
         delta_index = self.update_index(ticks, last_step_ticks_us)
-        if self.homing:
-            if self.last_o == 0 and self.o.value() == 1 and self.dir == 0 and not self.home_correction:
-                # Rising edge opto when rotating clockwise. We're at self.home_index.
-                self.index = self.home_index
-                self.home_correction = True
-                self.homed = True
-                self.set_angle(self.home_angle, HOME_SPEED)
-                print("{} zeroed".format(self.name))
-            elif self.homed and self.home_correction and self.index == 0:
-                self.home_correction = False
-                print("{} home correction done".format(self.name))
-            elif self.homed and not self.home_correction:
-                if self.debug:
-                    print("homed")
-                print("{} homed".format(self.name))
-                done_flag = True
-                return True
-            self.last_o = self.o.value()
-        if not self.homed:
-            return done_flag
+
+        if self.homing and not self.indexed and self.opto_rise() and self.dir == 0:
+            # Rising edge opto when rotating clockwise. We're at self.home_index.
+            self.index = self.home_index
+            self.indexed = True
+            self.set_angle(self.home_angle, HOME_SPEED)
+            if self.debug: print("{} indexed".format(self.name))
 
         if self.pwm == None:
             if self.target_index == self.index:
@@ -182,8 +175,9 @@ class stepper():
                 self.set_speed(0)
                 done_flag = True
                 self.prev_err = REAL_STEPS_PER_REV
-            # if self.debug: print("Prev Err: {} Err: {}".format(self.prev_err,err))
             self.prev_err = err
 
+        if done_flag and self.homing:
+            self.homing = False
 
         return done_flag

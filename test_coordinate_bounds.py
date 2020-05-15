@@ -14,3 +14,5 @@ print(filter_coordinate((150,180), ENCLOSURE_VERTICES))
 # print(filter_coordinate((200,-150), ENCLOSURE_VERTICES))
 # print(filter_coordinate((-200,-150), ENCLOSURE_VERTICES))
 # print(filter_coordinate((-200,150), ENCLOSURE_VERTICES))
+
+# G28 X, G28 Y,G1 X0 Y175,G1 X123 Y123,G1 X175 Y0,G1 X123 Y-123,G1 X0 Y-175,G1 X-123 Y-123,G1 X-175 Y0,G1 X-123 Y123, J0 2
