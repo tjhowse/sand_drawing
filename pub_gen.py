@@ -31,21 +31,23 @@ generator_string = """
 def generator():
     yield HOME_X
     yield HOME_Y
-    for p in circle_points(EDGE_R, 8):
-        yield g(p)
-        yield g(vector2())
-    yield \"J0 2\"
-    """
-generator_string = """
-def generator():
-    yield "HOME_X"
-    yield HOME_y
+    while True:
+        for p in circle_points(EDGE_R, 8):
+            yield g(p)
+            yield g(vector2())
 """
-generator_string = """
-def generator():
-    yield "G28 X"
-    yield "G28 Y"
-"""
+# generator_string = """
+# def generator():
+#     yield HOME_X
+#     yield HOME_Y
+# """
+# generator_string = """
+# def generator():
+#     print("First call")
+#     yield "G28 X"
+#     print("Second call")
+#     yield "G28 Y"
+# """
 pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
 pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 # print(generator_string)

@@ -33,12 +33,15 @@ class cnc():
 
     def set_generator(self, new_generator):
         self.generator = None
+        self.pattern = []
+        self.pattern_step = 0
         try:
             # This should set "generator" to a... generator
             exec(new_generator)
             # Don't ask me why this is neccessary. The generator in the string
             # wasn't showing up in scope properly? Iunno.
             self.generator = locals()['generator']()
+            self.set_gcode(next(self.generator))
         except Exception as e:
             print("Failed to exec the generator: {}".format(e))
             self.generator = None
@@ -174,10 +177,9 @@ class cnc():
                     self.start_move_to_point(self.intermediate_target)
                 return False
             if self.generator != None:
-                gcode = next(self.generator, None)
-                if gcode:
-                    self.set_gcode(gcode)
-                else:
+                try:
+                    self.set_gcode(next(self.generator))
+                except StopIteration:
                     print("Done running generator")
                     self.gcode = None
             else:
