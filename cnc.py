@@ -177,11 +177,20 @@ class cnc():
                     self.start_move_to_point(self.intermediate_target)
                 return False
             if self.generator != None:
-                try:
-                    self.set_gcode(next(self.generator))
-                except StopIteration:
+                self.gcode = next(self.generator)
+                self.set_gcode(self.gcode)
+                if self.gcode == "END":
                     print("Done running generator")
                     self.gcode = None
+
+                # OK this is weird. Micropython really doesn't like this exception handler here.
+                # I get weird movement on my Y axis...
+                # TODO add the youtube link here.
+                # try:
+                #     self.set_gcode(next(self.generator))
+                # except StopIteration:
+                #     print("Done running generator")
+                #     self.gcode = None
             else:
                 self.pattern_step += 1
                 if self.pattern_step < len(self.pattern):

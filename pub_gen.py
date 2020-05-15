@@ -14,28 +14,28 @@ def pub(topic, payload):
                     hostname=secrets.mqtt_host,
                     port=1883,
                     auth={"username":secrets.mqtt_username, "password":secrets.mqtt_password})
-
-def inward_spiral():
-    # yield HOME_X
-    # yield HOME_Y
-    starting_r = 175
-    for r in range(175, 0, -1):
-        for p in circle_points(r, 8):
-            yield g(p)
-    for r in range(175):
-        for p in circle_points(r, 8):
-            yield g(p)
-    yield "J0 0"
-
 generator_string = """
 def generator():
-    yield HOME_X
-    yield HOME_Y
+    starting_r = 175
+    step = 5
     while True:
-        for p in circle_points(EDGE_R, 8):
-            yield g(p)
-            yield g(vector2())
+        for r in range(starting_r, 0, -step):
+            for p in circle_points(r, 8):
+                yield g(p)
+        for r in range(0, starting_r, step):
+            for p in circle_points(r, 8):
+                yield g(p)
 """
+
+# generator_string = """
+# def generator():
+#     yield HOME_X
+#     yield HOME_Y
+#     while True:
+#         for p in circle_points(EDGE_R, 8):
+#             yield g(p)
+#             yield g(vector2())
+# """
 # generator_string = """
 # def generator():
 #     yield HOME_X
