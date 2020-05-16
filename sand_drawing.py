@@ -47,23 +47,23 @@ def main():
     while True:
         mqtt = mqtt_check(mqtt)
         last_pattern_check_ticks_ms = ticks_ms()
-        # TODO Put these global checking thingers in the my_cnc.tick loop below
-        if G_PATTERN != "":
-            generator = ""
-            print(G_PATTERN)
-            pattern = G_PATTERN.split(',')
-            pattern = [a.strip() for a in pattern]
-            G_PATTERN = ""
-            my_cnc.set_pattern(pattern)
-        if G_GENERATOR != "":
-            generator = G_GENERATOR
-            pattern = []
-            my_cnc.set_generator(generator)
-            G_GENERATOR = ""
         while not my_cnc.tick():
             if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
                 mqtt = mqtt_check(mqtt)
                 last_pattern_check_ticks_ms = ticks_ms()
+                if G_PATTERN != "":
+                    generator = ""
+                    print(G_PATTERN)
+                    pattern = G_PATTERN.split(',')
+                    pattern = [a.strip() for a in pattern]
+                    G_PATTERN = ""
+                    my_cnc.set_pattern(pattern)
+                if G_GENERATOR != "":
+                    if generator != G_GENERATOR:
+                        generator = G_GENERATOR
+                        pattern = []
+                        my_cnc.set_generator(generator)
+                    G_GENERATOR = ""
 
 def mqtt_check(mqtt):
     if not MQTT_ENABLED:
