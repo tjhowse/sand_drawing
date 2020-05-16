@@ -14,11 +14,10 @@ class stepper():
     index = -1 # 0-x the number of steps
     last_o = 1 # Used for detecting the rising edge of the opto pin
     high_low = 0 # The state of the step pin. 0: low, 1: high
-    homing = True
+    homing = False
     indexed = False # Do we know the index of our stepper position?
-    stepping = True
+    stepping = False
     debug = True
-    seeking = False # Moving towards target_index
     target_index = -1
     pwm = None
     prev_err = 0
@@ -48,7 +47,6 @@ class stepper():
             if self.pwm:
                 self.pwm.duty(0)
             self.stepping = False
-            self.seeking = False
         else:
             if new_speed < 0:
                 self.set_dir(1)
@@ -71,7 +69,6 @@ class stepper():
             print("Stepping: {}".format(self.stepping))
             print("homing: {}".format(self.homing))
             print("indexed: {}".format(self.indexed))
-            print("seeking: {}".format(self.seeking))
             print("Index: {}".format(self.index))
             print("target index: {}".format(self.target_index))
             if self.pwm != None:
@@ -95,8 +92,6 @@ class stepper():
         if abs(diff) < INDEX_CLOSE_ENOUGH:
             self.set_speed(0)
             return
-        else:
-            self.seeking = True
         # If you can think of a cleaner, more readable version of this please let me know.
         if abs(diff) < REAL_STEPS_PER_REV/2:
             # Going straight there is faster.
