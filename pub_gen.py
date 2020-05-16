@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import paho.mqtt.publish as publish
+import matplotlib.pyplot as plt
 from constants import *
 from generator_libs import *
 
@@ -14,18 +15,86 @@ def pub(topic, payload):
                     hostname=secrets.mqtt_host,
                     port=1883,
                     auth={"username":secrets.mqtt_username, "password":secrets.mqtt_password})
-generator_string = """
+
+def visualise(generator_string, n):
+    exec(generator_string)
+    g = locals()['generator']()
+    x_dots = []
+    y_dots = []
+    for x, y in ENCLOSURE_VERTICES:
+        x_dots += [x]
+        y_dots += [y]
+    x_dots += [ENCLOSURE_VERTICES[0][0]]
+    y_dots += [ENCLOSURE_VERTICES[0][1]]
+    plt.plot(x_dots, y_dots, linewidth=2, color="red")
+    x_dots = []
+    y_dots = []
+    for i in range(n):
+        p = next(g, None)
+        if p is None:
+            break
+        if not p.startswith("G1"):
+            continue
+        p = p.split(' ')
+        x_dots += [float(p[1][1:])]
+        y_dots += [float(p[2][1:])]
+    plt.plot(x_dots, y_dots, linewidth=2)
+    plt.title("Pattern visualisation")
+    plt.xlabel("X")
+    plt.xlim(-200,200)
+    plt.ylabel("Y")
+    plt.ylim(-200,200)
+    plt.axes().set_aspect('equal')
+    plt.show()
+
+def publish_octagonal_spiral():
+    generator_string = """
+    def generator():
+        yield HOME_X
+        yield HOME_Y
+        starting_r = 175
+        step = 5
+        while True:
+            for r in range(starting_r, 0, -step):
+                for p in circle_points(r, 8):
+                    yield g(p)
+            for r in range(0, starting_r, step):
+                for p in circle_points(r, 8):
+                    yield g(p)
+    """
+    pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+
+def publish_spirograph():
+    generator_string = """
 def generator():
-    starting_r = 175
-    step = 5
+    yield HOME_X
+    yield HOME_Y
+    max_r = 165
+    big_r = int((2*max_r)/4)
+    big_angle = 0
+    big_step = 1
+    little_r = int(max_r/2)
+    little_angle = 0
+    little_step = 20
+    big_centre = vector2()
+    little_centre = vector2()
     while True:
-        for r in range(starting_r, 0, -step):
-            for p in circle_points(r, 8):
-                yield g(p)
-        for r in range(0, starting_r, step):
-            for p in circle_points(r, 8):
-                yield g(p)
-"""
+        big_angle += big_step
+        big_centre.x = big_r*math.sin(math.radians(big_angle))
+        big_centre.y = big_r*math.cos(math.radians(big_angle))
+
+        little_angle -= little_step
+        little_centre.x = little_r*math.sin(math.radians(little_angle))
+        little_centre.y = little_r*math.cos(math.radians(little_angle))
+
+        yield g(big_centre + little_centre)
+    """
+    visualise(generator_string,1000)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+
+publish_spirograph()
 
 # generator_string = """
 # def generator():
@@ -48,8 +117,6 @@ def generator():
 #     print("Second call")
 #     yield "G28 Y"
 # """
-pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 # print(generator_string)
 
 # exec(generator_string)
