@@ -185,7 +185,7 @@ class cnc():
 
                 # OK this is weird. Micropython really doesn't like this exception handler here.
                 # I get weird movement on my Y axis...
-                # TODO add the youtube link here.
+                # https://youtu.be/p-L5uvPJ5N0
                 # try:
                 #     self.set_gcode(next(self.generator))
                 # except StopIteration:
