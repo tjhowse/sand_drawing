@@ -62,26 +62,31 @@ class stepper():
                 self.pwm.freq(self.freq)
                 self.pwm.duty(int(self.freq/2))
 
-        if self.debug:
-            if self.name: print("Name: {}".format(self.name))
-            print("New speed: {}".format(new_speed))
-            print("step_interval: {}".format(self.step_interval))
-            print("Stepping: {}".format(self.stepping))
-            print("homing: {}".format(self.homing))
-            print("indexed: {}".format(self.indexed))
-            print("Index: {}".format(self.index))
-            print("target index: {}".format(self.target_index))
-            if self.pwm != None:
-                print("Freq: {}".format(self.freq))
-            print("--------------------")
+        if self.debug: print("New speed: {}".format(new_speed))
+        self.debug_blast()
 
     def set_dir(self, new_dir):
         self.dir = new_dir
         self.d.value(1-self.dir)
 
+    def debug_blast(self):
+        if not self.debug:
+            return
+        if self.name: print("Name: {}".format(self.name))
+        print("step_interval: {}".format(self.step_interval))
+        print("Stepping: {}".format(self.stepping))
+        print("homing: {}".format(self.homing))
+        print("indexed: {}".format(self.indexed))
+        print("Index: {}".format(self.index))
+        print("target index: {}".format(self.target_index))
+        if self.pwm != None:
+            print("Freq: {}".format(self.freq))
+        print("--------------------")
+
     def set_angle(self, angle, speed=DEFAULT_MOVE_SPEED, pwm_motion=False):
         if not self.indexed:
             print("Cannot set angle. Not indexed.")
+            self.debug_blast()
             return
         angle %= 360
         self.target_index = int(angle*REAL_STEPS_PER_DEGREE)
@@ -108,6 +113,8 @@ class stepper():
 
     def home(self):
         self.indexed = False
+        self.index = -1
+        self.target_index = -1
         self.homing = True
         self.set_speed(HOME_SPEED)
 
@@ -122,10 +129,9 @@ class stepper():
     def update_index(self, ticks, last_step_ticks_us):
         # On a rising edge increase the index by 1 if going clockwise,
         # or decrement by 1 if going anti-clockwise.
-        delta_index = 0
+        delta_index = 1
         if self.pwm == None:
             self.index += 1 + self.dir*-2
-            delta_index = 1
         else:
             # We have to update the index based on the amount of time elapsed since
             # the start of this movement and the speed of the movement. Eugh, a bit.
@@ -149,7 +155,9 @@ class stepper():
             self.s.value(self.high_low)
             if not self.high_low:
                 return False
-        delta_index = self.update_index(ticks, last_step_ticks_us)
+        delta_index = 0
+        if self.indexed:
+            delta_index = self.update_index(ticks, last_step_ticks_us)
 
         if self.homing and not self.indexed and self.opto_rise() and self.dir == 0:
             # Rising edge opto when rotating clockwise. We're at self.home_index.
@@ -157,6 +165,12 @@ class stepper():
             self.indexed = True
             self.set_angle(self.home_angle, HOME_SPEED)
             if self.debug: print("{} indexed".format(self.name))
+        else:
+            # Keep self.last_o updated
+            self.opto_rise()
+
+        if not self.indexed:
+            return False
 
         if self.pwm == None:
             if self.target_index == self.index:

@@ -151,51 +151,47 @@ class cnc():
         self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
         self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
 
+    def get_next_gcode(self):
+        if self.generator != None:
+            gcode = next(self.generator)
+            if gcode != "END":
+                self.set_gcode(gcode)
+            else:
+                print("Done running generator")
+                self.gcode = None
+        else:
+            self.pattern_step += 1
+            if self.pattern_step < len(self.pattern):
+                self.set_gcode(self.pattern[self.pattern_step])
+            elif self.gcode != None:
+                print("Done running pattern")
+                self.gcode = None
+
     def tick(self):
         ticks = ticks_us()
         # Shortcut lazy-evaluation
         done1 = self.s1.go(ticks)
         done2 = self.s2.go(ticks)
         done = done1 and done2
-        # TODO Not very happy about this. Revisit it.
-        if self.gcode and self.gcode[0] == "G28" and done:
-            self.s1.homing = False
-            self.s2.homing = False
-            # self.start_move_to_point(vector2())
         if done:
-            # Was our last movement directly to the end point of the move?
-            if self.target != self.origin and self.move_mode == MOVE_MODE_CARTESIAN:
-                # Check distance to final target:
-                if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
-                    # We're near enough to the end of the move. Go straight there.
-                    if self.debug: print("Moving to final target {}".format(self.target))
-                    self.start_move_to_point(self.target)
-                else:
-                    # We need to take another step towards the target.
-                    self.intermediate_target = self.origin + self.move_vector
-                    if self.debug: print("Moving to intermediate target {}".format(self.intermediate_target))
-                    self.start_move_to_point(self.intermediate_target)
-                return False
-            if self.generator != None:
-                self.gcode = next(self.generator)
-                self.set_gcode(self.gcode)
-                if self.gcode == "END":
-                    print("Done running generator")
-                    self.gcode = None
-
-                # OK this is weird. Micropython really doesn't like this exception handler here.
-                # I get weird movement on my Y axis...
-                # https://youtu.be/p-L5uvPJ5N0
-                # try:
-                #     self.set_gcode(next(self.generator))
-                # except StopIteration:
-                #     print("Done running generator")
-                #     self.gcode = None
-            else:
-                self.pattern_step += 1
-                if self.pattern_step < len(self.pattern):
-                    self.set_gcode(self.pattern[self.pattern_step])
-                elif self.gcode != None:
-                    print("Done running pattern")
-                    self.gcode = None
+            # Did we just finish a G0 or G1 instruction? If so, can we calculate the next step
+            # or do we need to get a new gcode?
+            if self.gcode and self.gcode[0] in ["G0", "G1"]:
+                # Was our last movement directly to the end point of the move?
+                if self.target != self.origin and self.move_mode == MOVE_MODE_CARTESIAN:
+                    # Check distance to final target:
+                    if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
+                        # We're near enough to the end of the move. Go straight there.
+                        if self.debug: print("Moving to final target {}".format(self.target))
+                        self.start_move_to_point(self.target)
+                    else:
+                        # We need to take another step towards the target.
+                        self.intermediate_target = self.origin + self.move_vector
+                        if self.debug: print("Moving to intermediate target {}".format(self.intermediate_target))
+                        self.start_move_to_point(self.intermediate_target)
+                    return False
+            elif self.gcode and self.gcode[0] == "G28":
+                if self.s1.indexed and self.s2.indexed:
+                    self.start_move_to_point(vector2())
+            self.get_next_gcode()
         return done
