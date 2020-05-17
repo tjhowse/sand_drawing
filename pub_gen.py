@@ -210,27 +210,53 @@ def generator():
     # yield HOME_X
     # yield HOME_Y
     max_r = 165
-    shrink_step = 30
+    shrink_step = 40
     little_r = shrink_step/2
-    big_r = int(max_r - shrink_step)
+    big_r = int(max_r - little_r)
 
     big_circle_angle_step = 5
-    little_circle_angle_step = 5
+    little_circle_angle_step = 20
 
     little_centre = vector2()
     little_offset = vector2()
     while True:
-        for r in range(big_r, 0, -shrink_step):
-            for j in range(0, 360, big_circle_angle_step):
-                little_centre.x = r*math.sin(math.radians(j))
-                little_centre.y = r*math.cos(math.radians(j))
+        r = big_r
+        j = 0
+        while r > 0:
+            little_circle_count = (math.pi*r*2)/(little_r)
+            big_circle_angle_step = (360/little_circle_count)
+            j += big_circle_angle_step
+            little_centre.x = r*math.sin(math.radians(j))
+            little_centre.y = r*math.cos(math.radians(j))
 
-                for i in range(0, 360, little_circle_angle_step):
-                    little_offset.x = little_r*math.sin(math.radians(i))
-                    little_offset.y = little_r*math.cos(math.radians(i))
-                    yield g(little_centre + little_offset)
+            for i in range(0, 360, little_circle_angle_step):
+                little_offset.x = little_r*math.sin(math.radians(i+j))
+                little_offset.y = little_r*math.cos(math.radians(i+j))
+                yield g(little_centre + little_offset)
+
+            r -= shrink_step/int(360/big_circle_angle_step)
+            # Circumference divided by the radius of the little circle gives
+            # the number of circles we want at each layer
+        r = little_r
+        while r < big_r:
+            little_circle_count = (math.pi*r*2)/(little_r)
+            big_circle_angle_step = (360/little_circle_count)
+            j += big_circle_angle_step
+            little_centre.x = r*math.sin(math.radians(j))
+            little_centre.y = r*math.cos(math.radians(j))
+
+            for i in range(0, 360, little_circle_angle_step):
+                little_offset.x = little_r*math.sin(math.radians(i+j))
+                little_offset.y = little_r*math.cos(math.radians(i+j))
+                yield g(little_centre + little_offset)
+
+            r += shrink_step/int(360/big_circle_angle_step)
+            # Circumference divided by the radius of the little circle gives
+            # the number of circles we want at each layer
+        r = big_r
+
     """
-    visualise(generator_string,10000)
+    visualise(generator_string,200000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 publish_contracting_swirls()
