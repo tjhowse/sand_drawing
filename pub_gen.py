@@ -100,46 +100,56 @@ def generator():
 def publish_grid():
     generator_string = """
 def generator():
-    # yield HOME_X
-    # yield HOME_Y
+    yield HOME_X
+    yield HOME_Y
     max_r = 165
+    max_r_sq = max_r**2
     p = vector2()
-    step_size = 10
+    step_size = 15
+    y = 0
+    def seq():
+        y = 0
+        while True:
+            p.x = 0
+            p.y = y
+            yield p
+            p.x = math.sqrt(abs(max_r_sq-y**2))
+            p.y = y
+            yield p
+            y += step_size
+            if y > max_r: break
+            p.x = math.sqrt(abs(max_r_sq-y**2))
+            p.y = y
+            yield p
+            p.x = 0
+            p.y = y
+            yield p
+            y += step_size
+            if y > max_r: break
+        yield vector2(0,y)
     while True:
-        for y in range(-200, 0, step_size):
-            for x in range(-200, 0, step_size):
-                p.x = x
-                p.y = y
-                if p.magnitude() > max_r:
-                    continue
-                yield g(p)
-        for x in range(0, 200, step_size):
-            for y in range(0, 200, step_size):
-                p.x = x
-                p.y = y
-                if p.magnitude() > max_r:
-                    continue
-                yield g(p)
-        for y in range(0, -200, -step_size):
-            for x in range(0, 200, step_size):
-                p.x = x
-                p.y = y
-                if p.magnitude() > max_r:
-                    continue
-                yield g(p)
-        for x in range(0, -200, -step_size):
-            for y in range(0, 200, step_size):
-                p.x = x
-                p.y = y
-                if p.magnitude() > max_r:
-                    continue
-                yield g(p)
-        yield g(vector2())
-        yield g(vector2(0,-max_r))
+        s = seq()
+        for p in s:
+            yield g(p)
+        s = seq()
+        for p in s:
+            p.x, p.y = -p.x, -p.y
+            yield g(p)
+            yield g(p)
+        s = seq()
+        for p in s:
+            p.x, p.y = p.y, -p.x
+            yield g(p)
+            yield g(p)
+        s = seq()
+        for p in s:
+            p.x, p.y = -p.y, p.x
+            yield g(p)
+
     """
-    visualise(generator_string,10000)
+    # visualise(generator_string,300)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 publish_grid()
 # publish_spirograph()
 # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
