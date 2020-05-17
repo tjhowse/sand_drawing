@@ -128,23 +128,21 @@ def generator():
             if y > max_r: break
         yield vector2(0,y)
     while True:
-        s = seq()
-        for p in s:
-            yield g(p)
-        s = seq()
-        for p in s:
-            p.x, p.y = -p.x, -p.y
-            yield g(p)
-            yield g(p)
-        s = seq()
-        for p in s:
-            p.x, p.y = p.y, -p.x
-            yield g(p)
-            yield g(p)
-        s = seq()
-        for p in s:
-            p.x, p.y = -p.y, p.x
-            yield g(p)
+        for rotate in [True, False]:
+            for i,j,flip in [(1,1,False), (-1,-1,False), (1,-1,True),(-1,1,True)]:
+                s = seq()
+                for p in s:
+                    if flip:
+                        if rotate:
+                            p.y, p.x = i*p.y, j*p.x
+                        else:
+                            p.x, p.y = i*p.y, j*p.x
+                    else:
+                        if rotate:
+                            p.y, p.x = i*p.x, j*p.y
+                        else:
+                            p.x, p.y = i*p.x, j*p.y
+                    yield g(p)
 
     """
     # visualise(generator_string,300)
