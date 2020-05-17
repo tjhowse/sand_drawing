@@ -68,8 +68,8 @@ def generator():
 def publish_spirograph():
     generator_string = """
 def generator():
-    yield HOME_X
-    yield HOME_Y
+    # yield HOME_X
+    # yield HOME_Y
     max_r = 165
 
     big_r = int((2*max_r)/4)
@@ -93,9 +93,11 @@ def generator():
 
         yield g(little_centre + little_offset)
     """
-    # visualise(generator_string,1000)
-    pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    visualise(generator_string,1000)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+# publish_spirograph()
+# exit(0)
 
 def publish_grid():
     generator_string = """
@@ -145,10 +147,37 @@ def generator():
                     yield g(p)
 
     """
-    # visualise(generator_string,300)
+    visualise(generator_string,150)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+# publish_grid()
+# exit(0)
+
+def publish_wave():
+    generator_string = """
+def generator():
+    max_r = 165
+    big_r = int(max_r/2)
+    # yield HOME_X
+    # yield HOME_Y
+    yield g(vector2())
+
+    centre = vector2()
+    offset = vector2()
+    while True:
+        for j in range(0, 360, 10):
+            centre.x = big_r*math.sin(math.radians(j))
+            centre.y = big_r*math.cos(math.radians(j))
+            for i in range(0,180,3):
+                offset.x = big_r*math.sin(math.radians(i+j))
+                offset.y = big_r*math.cos(math.radians(i+j))
+                yield g(centre + offset)
+    """
+    # visualise(generator_string,10000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-publish_grid()
+
+publish_wave()
 # publish_spirograph()
 # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
 # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
