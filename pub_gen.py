@@ -65,6 +65,26 @@ def generator():
     pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 
+def publish_circular_spiral():
+    generator_string = """
+def generator():
+    # yield HOME_X
+    # yield HOME_Y
+    starting_r = 200
+    step = 5
+    while True:
+        for r in range(starting_r, 0, -step):
+            for p in circle_points(r, 128):
+                yield g(p)
+        for r in range(0, starting_r, step):
+            for p in circle_points(r, 128):
+                yield g(p)
+"""
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+# publish_circular_spiral()
+# exit(0)
+
 def publish_spirograph():
     generator_string = """
 def generator():
@@ -197,12 +217,12 @@ def generator():
                 print(corner)
                 yield g(corner)
     """
-    visualise(generator_string,100)
+    # visualise(generator_string,100)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 
-# publish_rotating_poly()
-# exit(0)
+publish_rotating_poly()
+exit(0)
 
 def publish_contracting_swirls():
     generator_string = """
@@ -256,8 +276,8 @@ def generator():
         r = big_r
 
     """
-    visualise(generator_string,200000)
+    # visualise(generator_string,200000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-publish_contracting_swirls()
-exit(0)
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+# publish_contracting_swirls()
+# exit(0)
