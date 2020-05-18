@@ -32,6 +32,7 @@ class cnc():
         self.set_gcode(self.pattern[self.pattern_step])
 
     def set_generator(self, new_generator):
+        print("Received new generator.")
         self.generator = None
         self.pattern = []
         self.pattern_step = 0
@@ -42,6 +43,7 @@ class cnc():
             # wasn't showing up in scope properly? Iunno.
             self.generator = locals()['generator']()
             self.set_gcode(next(self.generator))
+            print("Successfully loaded new generator.")
         except Exception as e:
             print("Failed to exec the generator: {}".format(e))
             self.generator = None

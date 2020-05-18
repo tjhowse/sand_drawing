@@ -40,30 +40,28 @@ def main():
                 "G1 X1000 Y1000",
                 "J0 3",
                 ]
-    last_pattern_check_ticks_ms = ticks_ms()
+    last_pattern_check_ticks_ms = 0
     print("about to loop")
     my_cnc.set_pattern(pattern)
 
     while True:
-        mqtt = mqtt_check(mqtt)
-        last_pattern_check_ticks_ms = ticks_ms()
-        while not my_cnc.tick():
-            if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
-                mqtt = mqtt_check(mqtt)
-                last_pattern_check_ticks_ms = ticks_ms()
-                if G_PATTERN != "":
-                    generator = ""
-                    print(G_PATTERN)
-                    pattern = G_PATTERN.split(',')
-                    pattern = [a.strip() for a in pattern]
-                    G_PATTERN = ""
-                    my_cnc.set_pattern(pattern)
-                if G_GENERATOR != "":
-                    if generator != G_GENERATOR:
-                        generator = G_GENERATOR
-                        pattern = []
-                        my_cnc.set_generator(generator)
-                    G_GENERATOR = ""
+        if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
+            mqtt = mqtt_check(mqtt)
+            last_pattern_check_ticks_ms = ticks_ms()
+            if G_PATTERN != "":
+                generator = ""
+                print(G_PATTERN)
+                pattern = G_PATTERN.split(',')
+                pattern = [a.strip() for a in pattern]
+                G_PATTERN = ""
+                my_cnc.set_pattern(pattern)
+            if G_GENERATOR != "":
+                if generator != G_GENERATOR:
+                    generator = G_GENERATOR
+                    pattern = []
+                    my_cnc.set_generator(generator)
+                G_GENERATOR = ""
+        my_cnc.tick()
 
 def mqtt_check(mqtt):
     if not MQTT_ENABLED:
@@ -129,6 +127,7 @@ def load_pattern(id):
         return ""
 
 def wifi_connect():
+    # Lots of potential for improvement here. We should cache the wifi object, for starters.
     sta_if = network.WLAN(network.STA_IF)
     if sta_if.isconnected():
         return
