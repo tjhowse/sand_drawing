@@ -2,7 +2,8 @@
 
 So you've been reading about all the benefits of this "mindfulness" thing and you want to give it a try.
 You do some research and learn it requires "meditation", "introspection" and other kinds of tedious woo.
-Who has time for that? It's {current_year} for christ's sake! Surely there's some turn-key solution to this problem already.
+Who has time for that? It's {current_year} for christ's sake! I don't want a tiny tray of rocks and sand
+on my desk to rake around. Surely there's some turn-key solution to this problem already.
 
 That's what this project is for. Outsource responsibility for an ordered mind to make more time for the important things, like hedonism.
 
