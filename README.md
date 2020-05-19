@@ -10,6 +10,10 @@ That's what this project is for. Outsource responsibility for an ordered mind to
 
 This project contains all you need to build your own sand drawing robot. Heavily inspired by the likes of [Sandsara](https://www.kickstarter.com/projects/edcano/sandsara) and [Sisyphus](https://sisyphus-industries.com/). It's a robot that moves a ball around in a bed of sand to draw cool patterns. The patterns can be updated via wifi, and it can cycle through them, you can create your own, etc, etc. This project is open source, cheap, and hopefully as easy as possible to build.
 
+# Videos
+
+[Playlist on Youtube.](https://www.youtube.com/playlist?list=PLT7ckgz8vcoY2YFqqQTA0kUofwehtqQul) Maybe worth watching.
+
 # Build logs
 
 For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=projects:sand_drawing:overview). Over time they'll morph into actual instructions and end up in this repo.
