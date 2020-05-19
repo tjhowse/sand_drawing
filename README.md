@@ -60,7 +60,7 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 | Sand | Sand | 31378908 | < 100 μm grains, dry.
 
 # Communication
-Currently the robot receives patterns via MQTT. Bluetooth should also be possible in the future.
+The ESP-WROOM-32 has wifi and BLE built in. Currently the robot connects to a wifi network, then an MQTT server, to receive commands. Bluetooth should also be possible in the future.
 
 # Pattern definition
 
