@@ -67,46 +67,15 @@ There are currently two ways to design patterns for the robot.
 
 ## GCODEs
 
-This is a sequence of coordinates that define the path of the ball, as well as changing modes and looping. The following GCODES are currently supported.
+This is a sequence of coordinates that define the path of the ball, as well as changing modes and looping. The following GCODES are currently supported. GCODES are separated by a comma.
 
-### G28
-```
-G28 X
-G28 Y
-```
-
-Home either the X or Y axis. Any command that needs an absolute position reference will fail unless both axes have been homed first.
-
-### G1
-```
-G1 X10 Y50 S100
-```
-
-Go to the X and Y coordinates specified at 100mm/s. Currently the [speed field is ignored](https://github.com/tjhowse/sand_drawing/issues/4). The G1 movement mode carefully tracks every step and should be perfectly accurate if your steppers do not slip.
-
-### G0
-```
-G0 X10 Y50 S100
-```
-
-Same as G1 however the step signal square wave is generated using PWM so some resolution is lost. At time of writing it is not well-supported. It's really fast though.
-
-### G16
-```
-G16 0 - Raw speed
-G16 1 - Raw angle
-G16 2 - Cartesian (Default)
-G16 3 - Polar (Unimplemented)
-```
-
-This setting is used to control the interpretation of the `X` and `Y` parameters in the G0 and G1 commands.
-
-### J0
-```
-J0 3
-```
-
-This jumps to the specified line in the GCODE-defined pattern. Used for creating loops.
+| Name | GCODE | Example | Description |
+| ---- | ----- | ------- | ----------- |
+| Home axis| G28 | `G28 X,G28 Y,` | Home either the X or Y axis. Any command that needs an absolute position reference will fail unless both axes have been homed first. |
+| Move | G1 | `G1 X10 Y50 S100,` | Go to the X and Y coordinates specified at 100mm/s. Currently the [speed field is ignored](https://github.com/tjhowse/sand_drawing/issues/4). The G1 movement mode carefully tracks every step and should be perfectly accurate if your steppers do not slip. |
+| Fast move | G0 |  `G0 X10 Y50 S100,` | Same as G1 however the step signal square wave is generated using PWM so some resolution is lost. At time of writing it is not well-supported. It's really fast though. |
+| Coordinate mode | G16 | `G16 0,` | This setting is used to control the interpretation of the `X` and `Y` parameters in the G0 and G1 commands. `0`: Raw speed, `1`: Raw angle, `2`: Cartesian (Default), `3`: Polar (unimplemented) |
+| Jump | J0 | `J0 3,` | This jumps to the specified line in the GCODE-defined pattern. Used for creating loops. |
 
 ## Generators
 
