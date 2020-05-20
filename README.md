@@ -5,7 +5,7 @@ You do some research and learn it requires "meditation", "introspection" and oth
 Who has time for that? It's {current_year} for christ's sake! I don't want a tiny tray of rocks and sand
 on my desk to rake around. Surely there's some turn-key solution to this problem already.
 
-That's what this project is for. Outsource responsibility for an ordered mind to make more time for the important things, like hedonism.
+That's what this project is for. Outsource responsibility for an ordered mind to make more time for the important things, like computer games. And croissants.
 
 # Oh
 
