@@ -63,12 +63,24 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 # Communication
 The ESP-WROOM-32 has wifi and BLE built in. Currently the robot connects to a wifi network, then an MQTT server, to receive commands. Bluetooth should also be possible in the future.
 
-# Pattern definition
+## MQTT Topics
+There are a few topics that the robot listens to. Each topic starts with `{secrets.mqtt_root}/sand_drawing/`. I suggest you publish patterns/generators with the retain bit so the robot starts up and then begins that pattern.
+| Topic | Example | Description |
+| ----  | ------- | ----------- |
+| `pattern` | `G28 X,G28 Y,G1 X0 Y175,G1 X123 Y123,G1 X175 Y0,J0 2` | Starts drawing the pattern defined by the GCODE in the payload. |
+| `generator` | [Here](./pub_gen.py) | Starts drawing the pattern defined by the generator in the payload. See below for details on generators. |
+| `save_generator` | `1.pat {generator string}` | [(Unimplemented)](https://github.com/tjhowse/sand_drawing/issues/12) Saves the generator to a file in the robot's flash storage. The file extension must be `.pat`. |
+| `run_generator` | `1.pat` | [(Unimplemented)](https://github.com/tjhowse/sand_drawing/issues/12) Starts drawing the previously saved pattern. |
+| `shuffle_generators` | N/A | [(Unimplemented)](https://github.com/tjhowse/sand_drawing/issues/12) Starts randomly drawing patterns one after another. |
 
+# Configuration
+There are some files you'll need to edit before your robot will work for you, probably.
+[#TODO populate this section.](https://github.com/tjhowse/sand_drawing/issues/13)
+
+# Pattern definition
 There are currently two ways to design patterns for the robot.
 
 ## GCODEs
-
 This is a sequence of coordinates that define the path of the ball, as well as changing modes and looping. The following GCODES are currently supported. GCODES are separated by a comma.
 
 | Name | GCODE | Example | Description |
@@ -82,7 +94,6 @@ This is a sequence of coordinates that define the path of the ball, as well as c
 | Relative coordinate mode | G91 | `G91` | Puts the robot into relative movement mode. Coordinates in G0/G1 commands are interpreted as movement vectors from the previous position. |
 
 ## Generators
-
 You can define a pattern using a python generator function. [Examples here](./pub_gen.py). This is probably the best option for non-trivial patterns.
 
 ### Tread lightly
