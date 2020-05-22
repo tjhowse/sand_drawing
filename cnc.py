@@ -26,14 +26,20 @@ class cnc():
         self.s1 = s1
         self.s2 = s2
 
+    def set_default_modes(self):
+        self.move_mode = MOVE_MODE_CARTESIAN
+        self.coord_mode = COORD_MODE_ABSOLUTE
+
     def set_pattern(self, new_pattern):
         print(new_pattern)
+        self.set_default_modes()
         self.pattern = new_pattern
         self.pattern_step = 0
         self.set_gcode(self.pattern[self.pattern_step])
 
     def set_generator(self, new_generator):
         print("Received new generator.")
+        self.set_default_modes()
         self.generator = None
         self.pattern = []
         self.pattern_step = 0
