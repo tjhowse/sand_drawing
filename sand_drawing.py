@@ -4,7 +4,7 @@ from umqtt.simple import MQTTClient
 import time
 import os
 import random
-from utime import ticks_us, ticks_ms, sleep_ms, sleep_us, ticks_diff
+from utime import ticks_us, ticks_ms, sleep_ms, sleep_us, ticks_diff, time
 import machine
 import network
 import secrets
@@ -22,13 +22,18 @@ NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
 SAND_DRAWING_TOPIC = secrets.mqtt_root+"/sand_drawing"
 
+shuffle_generator_interval_s = -1
+last_generator_shuffle_s = 0
+
 def do_pattern(msg):
     global G_PATTERN
     G_PATTERN = str(bytearray(msg), "utf-8")
+    shuffle_generator_interval_s = -1
 
 def do_generator(msg):
     global G_GENERATOR
     G_GENERATOR = str(bytearray(msg), "utf-8")
+    shuffle_generator_interval_s = -1
 
 def do_save_generator(msg):
     filename, generator = msg.split(' ',1)
@@ -45,12 +50,14 @@ def do_run_generator(filename):
     with open(str(filename), 'r') as f:
         G_GENERATOR = f.read()
 
-def do_shuffle_generators(msg):
-    #TODO consider accepting a parameter here for the maximum runtime of a pattern.
+def do_shuffle_generators(msg=''):
+    last_generator_shuffle_s = time()
     generators = [filename for filename in os.listdir() if filename.endswith(".pat")]
     if not generators:
         return
     do_run_generator(random.choice(generators))
+    if len(msg) > 0:
+        shuffle_generator_interval_s = int(msg)
 
 def save_pattern(id, pattern):
     with open("pattern_"+str(id), 'w') as f:
@@ -94,6 +101,8 @@ def main():
     my_cnc.set_pattern(pattern)
 
     while True:
+        if (time() - last_generator_shuffle_s) > shuffle_generator_interval_s:
+            do_shuffle_generators()
         if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
             mqtt = mqtt_check(mqtt)
             last_pattern_check_ticks_ms = ticks_ms()

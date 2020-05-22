@@ -65,13 +65,13 @@ The ESP-WROOM-32 has wifi and BLE built in. Currently the robot connects to a wi
 
 ## MQTT Topics
 There are a few topics that the robot listens to. Each topic starts with `{secrets.mqtt_root}/sand_drawing/`. I suggest you publish patterns/generators with the retain bit so the robot starts up and then begins that pattern.
-| Topic | Example | Description |
+| Topic | Example payload | Description |
 | ----  | ------- | ----------- |
 | `pattern` | `G28 X,G28 Y,G1 X0 Y175,G1 X123 Y123,G1 X175 Y0,J0 2` | Starts drawing the pattern defined by the GCODE in the payload. |
 | `generator` | [Here](./pub_gen.py) | Starts drawing the pattern defined by the generator in the payload. See below for details on generators. |
-| `save_generator` | `1.pat {generator string}` | [(Unimplemented)](https://github.com/tjhowse/sand_drawing/issues/12) Saves the generator to a file in the robot's flash storage. The file extension must be `.pat`. |
-| `run_generator` | `1.pat` | [(Unimplemented)](https://github.com/tjhowse/sand_drawing/issues/12) Starts drawing the previously saved pattern. |
-| `shuffle_generators` | N/A | [(Unimplemented)](https://github.com/tjhowse/sand_drawing/issues/12) Starts randomly drawing patterns one after another. |
+| `save_generator` | `1.pat {generator string}` | [(Untested)](https://github.com/tjhowse/sand_drawing/issues/12) Saves the generator to a file in the robot's flash storage. The file extension must be `.pat`. |
+| `run_generator` | `1.pat` | [(Untested)](https://github.com/tjhowse/sand_drawing/issues/12) Starts drawing the previously saved pattern. |
+| `shuffle_generators` | `3600` | [(Untested)](https://github.com/tjhowse/sand_drawing/issues/12) Randomly picks a saved generator and starts drawing it. Optionally provide a number of seconds before choosing another random generator |
 
 # Configuration
 There are some files you'll need to edit before your robot will work for you, probably.
