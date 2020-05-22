@@ -19,8 +19,42 @@ WIFI_CONNECT_WAIT_MAX_S = 10
 NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
 SAND_DRAWING_TOPIC = secrets.mqtt_root+"/sand_drawing"
-PATTERN_TOPIC = bytes(SAND_DRAWING_TOPIC+"/pattern", "utf-8")
-GENERATOR_TOPIC = bytes(SAND_DRAWING_TOPIC+"/generator", "utf-8")
+
+def do_pattern(msg):
+    global G_PATTERN
+    G_PATTERN = str(bytearray(msg), "utf-8")
+
+def do_generator(msg):
+    global G_GENERATOR
+    G_GENERATOR = str(bytearray(msg), "utf-8")
+
+def do_save_generator(msg):
+    pass
+
+def do_run_generator(msg):
+    pass
+
+def do_shuffle_generators(msg):
+    pass
+
+def save_pattern(id, pattern):
+    with open("pattern_"+str(id), 'w') as f:
+        f.write(pattern)
+
+def load_pattern(id):
+    try:
+        with open("pattern_"+str(id), 'r') as f:
+            return f.read()
+    except:
+        return ""
+
+# A list of tuples of (<topic>, <callback function>)
+SUBSCRIPTIONS = []
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/pattern", "utf-8"), do_pattern)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/generator", "utf-8"), do_generator)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/save_generator", "utf-8"), do_save_generator)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/run_generator", "utf-8"), do_run_generator)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/shuffle_generators", "utf-8"), do_shuffle_generators)]
 
 G_PATTERN = ""
 G_GENERATOR = ""
@@ -99,32 +133,17 @@ def mqtt_connect():
                     secrets.mqtt_password, 0, ssl=False)
     c.set_callback(mqtt_callback)
     c.connect(clean_session=False)
-    c.subscribe(PATTERN_TOPIC)
-    c.subscribe(GENERATOR_TOPIC)
+    for topic, callback in SUBSCRIPTIONS:
+        c.subscribe(topic)
     c.check_msg()
     return c
 
 def mqtt_callback(topic, msg):
     print("Got callback: {} {}".format(topic, msg))
-    if topic == PATTERN_TOPIC:
-        print("New pattern!")
-        global G_PATTERN
-        G_PATTERN = str(bytearray(msg), "utf-8")
-    elif topic == GENERATOR_TOPIC:
-        print("New generator!")
-        global G_GENERATOR
-        G_GENERATOR = str(bytearray(msg), "utf-8")
-
-def save_pattern(id, pattern):
-    with open("pattern_"+str(id), 'w') as f:
-        f.write(pattern)
-
-def load_pattern(id):
-    try:
-        with open("pattern_"+str(id), 'r') as f:
-            return f.read()
-    except:
-        return ""
+    for cb_topic, callback in SUBSCRIPTIONS:
+        if cb_topic == topic:
+            callback(msg)
+            return
 
 def wifi_connect():
     # Lots of potential for improvement here. We should cache the wifi object, for starters.
