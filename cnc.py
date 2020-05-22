@@ -146,18 +146,14 @@ class cnc():
             return
         # Manage the cartesian translation
         (a1, a2) = cartesian_calc(p.x, p.y)
-        if self.debug: print("Arm1: {} Arm2: {}".format(a1,a2))
-        if self.debug: print("old arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
         # Work out which arm 1 angle difference is smaller.
         diff_1 = abs(wrapping_diff(a1, self.arm_1_angle))
         diff_2 = abs(wrapping_diff(a2, self.arm_1_angle))
-        if self.debug: print("diff_1: {} diff_2: {}".format(diff_1, diff_2))
         if diff_1 > diff_2:
             # Swap a1 and a2
             a1, a2 = a2, a1
         self.arm_1_angle = a1
         self.arm_2_angle = a2
-        if self.debug: print("new arm_1_angle: {} arm_2_angle: {}".format(self.arm_1_angle, self.arm_2_angle))
         self.s1.set_angle(self.arm_1_angle, pwm_motion=self.pwm_move)
         self.s2.set_angle(self.arm_2_angle, pwm_motion=self.pwm_move)
 
@@ -192,12 +188,10 @@ class cnc():
                     # Check distance to final target:
                     if self.target.distance_to(self.origin) < PATH_SPLIT_SIZE:
                         # We're near enough to the end of the move. Go straight there.
-                        if self.debug: print("Moving to final target {}".format(self.target))
                         self.start_move_to_point(self.target)
                     else:
                         # We need to take another step towards the target.
                         self.intermediate_target = self.origin + self.move_vector
-                        if self.debug: print("Moving to intermediate target {}".format(self.intermediate_target))
                         self.start_move_to_point(self.intermediate_target)
                     return False
             elif self.gcode and self.gcode[0] == "G28":
