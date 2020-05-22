@@ -2,6 +2,8 @@
 
 from umqtt.simple import MQTTClient
 import time
+import os
+import random
 from utime import ticks_us, ticks_ms, sleep_ms, sleep_us, ticks_diff
 import machine
 import network
@@ -29,13 +31,26 @@ def do_generator(msg):
     G_GENERATOR = str(bytearray(msg), "utf-8")
 
 def do_save_generator(msg):
-    pass
+    filename, generator = msg.split(' ',1)
+    if not filename.endswith(".pat"):
+        return
+    with open(str(filename), 'w') as f:
+        f.write(generator)
 
-def do_run_generator(msg):
-    pass
+def do_run_generator(filename):
+    global G_GENERATOR
+    filename = str(filename)
+    if not filename.endswith(".pat"):
+        return
+    with open(str(filename), 'r') as f:
+        G_GENERATOR = f.read()
 
 def do_shuffle_generators(msg):
-    pass
+    #TODO consider accepting a parameter here for the maximum runtime of a pattern.
+    generators = [filename for filename in os.listdir() if filename.endswith(".pat")]
+    if not generators:
+        return
+    do_run_generator(random.choice(generators))
 
 def save_pattern(id, pattern):
     with open("pattern_"+str(id), 'w') as f:
