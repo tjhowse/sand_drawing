@@ -10,6 +10,7 @@ except ImportError:
 
 class cnc():
     move_mode = MOVE_MODE_CARTESIAN
+    coord_mode = COORD_MODE_ABSOLUTE
     debug = False
     gcode = None
     origin = vector2()
@@ -101,6 +102,8 @@ class cnc():
             if self.move_mode == MOVE_MODE_CARTESIAN:
                 # TODO translate other movement modes into cartesian points so they can be filtered too.
                 if self.debug: print("Unfiltered coordinates: {}".format(self.target))
+                if self.coord_mode == COORD_MODE_RELATIVE:
+                    self.target += self.origin
                 (self.target.x, self.target.y) = filter_coordinate((self.target.x, self.target.y), ENCLOSURE_VERTICES)
                 if self.debug: print("Filtered coordinates: {}".format(self.target))
                 if self.debug: print("self.origin: {}".format(self.origin))
@@ -126,6 +129,11 @@ class cnc():
             if 0 <= step < len(self.pattern):
                 self.pattern_step = step
                 self.set_gcode(self.pattern[self.pattern_step])
+        elif self.gcode[0] == "G90":
+            # Absolute movement mode (default)
+            self.coord_mode = COORD_MODE_ABSOLUTE
+        elif self.gcode[0] == "G91":
+            self.coord_mode = COORD_MODE_RELATIVE
 
     def start_move_to_point(self, p):
         if self.debug: print("Setting origin to {}".format(p))

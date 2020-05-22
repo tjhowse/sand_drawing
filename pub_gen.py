@@ -18,6 +18,7 @@ def pub(topic, payload):
 
 def visualise(generator_string, n):
     exec(generator_string)
+    coord_mode = COORD_MODE_ABSOLUTE
     g = locals()['generator']()
     x_dots = []
     y_dots = []
@@ -33,11 +34,20 @@ def visualise(generator_string, n):
         p = next(g, None)
         if p is None:
             break
+        if p.startswith("G90"):
+            coord_mode = COORD_MODE_ABSOLUTE
+        elif p.startswith("G91"):
+            coord_mode = COORD_MODE_RELATIVE
         if not p.startswith("G1"):
             continue
         p = p.split(' ')
-        x_dots += [float(p[1][1:])]
-        y_dots += [float(p[2][1:])]
+        x = float(p[1][1:])
+        y = float(p[2][1:])
+        if coord_mode == COORD_MODE_RELATIVE and len(x_dots) > 0:
+            x += x_dots[-1]
+            y += y_dots[-1]
+        x_dots += [x]
+        y_dots += [y]
     plt.plot(x_dots, y_dots, linewidth=1)
     plt.title("Pattern visualisation")
     plt.xlabel("X")
@@ -221,8 +231,8 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 
-publish_rotating_poly()
-exit(0)
+# publish_rotating_poly()
+# exit(0)
 
 def publish_contracting_swirls():
     generator_string = """
@@ -281,3 +291,25 @@ def generator():
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 # publish_contracting_swirls()
 # exit(0)
+
+
+def publish_relative_motion_test():
+    generator_string = """
+def generator():
+    yield HOME_X
+    yield HOME_Y
+    yield "G91"
+    while True:
+        yield g(vector2(0,0))
+        yield g(vector2(0,10))
+        yield g(vector2(10,0))
+        yield g(vector2(10,10))
+        yield g(vector2(50,50))
+        yield g(vector2(0,-100))
+        yield g(vector2(-70,30))
+    """
+    # visualise(generator_string,200000)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+
+publish_relative_motion_test()
