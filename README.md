@@ -9,7 +9,7 @@ That's what this project is for. Outsource responsibility for an ordered mind to
 
 # Oh
 
-This project (will contain/contains) all the knowledge need to build your own sand drawing robot. Heavily inspired by the likes of [Sandsara](https://www.kickstarter.com/projects/edcano/sandsara) and [Sisyphus](https://sisyphus-industries.com/). It's a robot that moves a ball around in a bed of sand to draw cool patterns. The patterns can be updated via wifi, and it can cycle through them, you can create your own, etc, etc. This project is open source, cheap, and hopefully as easy as possible to build.
+This project (will contain/contains) all the knowledge you will need to build your own sand drawing robot. Heavily inspired by the likes of [Sandsara](https://www.kickstarter.com/projects/edcano/sandsara) and [Sisyphus](https://sisyphus-industries.com/). It's a robot that moves a ball around in a bed of sand to draw cool patterns. The patterns can be updated via wifi, and it can cycle through them, you can create your own, etc, etc. This project is open source, cheap, and hopefully as easy as possible to build.
 
 # Videos
 
