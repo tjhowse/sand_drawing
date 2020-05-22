@@ -78,8 +78,8 @@ This is a sequence of coordinates that define the path of the ball, as well as c
 | Fast move | G0 |  `G0 X10 Y50 S100,` | Same as G1 however the step signal square wave is generated using PWM so some resolution is lost. At time of writing it is not well-supported. It's really fast though. |
 | Coordinate mode | G16 | `G16 0,` | This setting is used to control the interpretation of the `X` and `Y` parameters in the G0 and G1 commands. `0`: Raw speed, `1`: Raw angle, `2`: Cartesian (Default), `3`: Polar (unimplemented) |
 | Jump | J0 | `J0 3,` | This jumps to the specified line in the GCODE-defined pattern. Used for creating loops. |
-| Absolute coordinate mode | G90 | `G90` | ([Unimplemented](https://github.com/tjhowse/sand_drawing/issues/11)) Puts the robot into absolute movement mode. Coordinates in G0/G1 commands are interpreted as absolute position references. (Default) |
-| Relative coordinate mode | G91 | `G91` | ([Unimplemented](https://github.com/tjhowse/sand_drawing/issues/11)) Puts the robot into relative movement mode. Coordinates in G0/G1 commands are interpreted as movement vectors from the previous position. |
+| Absolute coordinate mode | G90 | `G90` | Puts the robot into absolute movement mode. Coordinates in G0/G1 commands are interpreted as absolute position references. (Default) |
+| Relative coordinate mode | G91 | `G91` | Puts the robot into relative movement mode. Coordinates in G0/G1 commands are interpreted as movement vectors from the previous position. |
 
 ## Generators
 
