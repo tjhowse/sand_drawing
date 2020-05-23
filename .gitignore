@@ -1,2 +1,3 @@
 secrets.py
-.pyc
+*.pyc
+*.stl
