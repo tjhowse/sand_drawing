@@ -8,10 +8,10 @@ import secrets
 if secrets.wifi_ssid == 'my_ssid':
     import secrets_real as secrets
 
-def pub(topic, payload):
+def pub(topic, payload, retain=True):
     publish.single( topic=topic,
                     payload=payload,
-                    retain=True,
+                    retain=retain,
                     hostname=secrets.mqtt_host,
                     port=1883,
                     auth={"username":secrets.mqtt_username, "password":secrets.mqtt_password})
@@ -72,8 +72,12 @@ def generator():
             for p in circle_points(r, 8):
                 yield g(p)
 """
-    pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
+
+# publish_octagonal_spiral()
 
 def publish_circular_spiral():
     generator_string = """
@@ -91,7 +95,8 @@ def generator():
                 yield g(p)
 """
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "circular_spiral.pat {}".format(generator_string), False)
 # publish_circular_spiral()
 # exit(0)
 
@@ -126,6 +131,7 @@ def generator():
     # visualise(generator_string,1000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "spirograph.pat {}".format(generator_string), False)
 # publish_spirograph()
 # exit(0)
 
@@ -179,7 +185,8 @@ def generator():
     """
     # visualise(generator_string,150)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "grid.pat {}".format(generator_string), False)
 # publish_grid()
 # exit(0)
 
@@ -205,7 +212,8 @@ def generator():
     """
     # visualise(generator_string,10000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "wave.pat {}".format(generator_string), False)
 
 # publish_wave()
 # exit(0)
@@ -229,7 +237,8 @@ def generator():
     """
     # visualise(generator_string,100)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotpoly.pat {}".format(generator_string), False)
 
 # publish_rotating_poly()
 # exit(0)
@@ -288,7 +297,8 @@ def generator():
     """
     # visualise(generator_string,200000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contraswirls.pat {}".format(generator_string), False)
 # publish_contracting_swirls()
 # exit(0)
 
@@ -312,4 +322,4 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 
-publish_relative_motion_test()
+# publish_relative_motion_test()

@@ -69,9 +69,11 @@ There are a few topics that the robot listens to. Each topic starts with `{secre
 | ----  | ------- | ----------- |
 | `pattern` | `G28 X,G28 Y,G1 X0 Y175,G1 X123 Y123,G1 X175 Y0,J0 2` | Starts drawing the pattern defined by the GCODE in the payload. |
 | `generator` | [Here](./pub_gen.py) | Starts drawing the pattern defined by the generator in the payload. See below for details on generators. |
-| `save_generator` | `1.pat {generator string}` | [(Untested)](https://github.com/tjhowse/sand_drawing/issues/12) Saves the generator to a file in the robot's flash storage. The file extension must be `.pat`. |
-| `run_generator` | `1.pat` | [(Untested)](https://github.com/tjhowse/sand_drawing/issues/12) Starts drawing the previously saved pattern. |
-| `shuffle_generators` | `3600` | [(Untested)](https://github.com/tjhowse/sand_drawing/issues/12) Randomly picks a saved generator and starts drawing it. Optionally provide a number of seconds before choosing another random generator |
+| `save_generator` | `1.pat {generator string}` | Saves the generator to a file in the robot's flash storage. The file extension must be `.pat`. A blank string will erase the generator. |
+| `run_generator` | `1.pat` | Starts drawing the previously saved generators. |
+| `delete_generator` | `1.pat` | Deletes a generator saved to the robot. |
+| `list_generators` | N/A | Publishes a list of filenames to `generator_list` topic. |
+| `shuffle_generators` | `3600` | Randomly picks a saved generator and starts drawing it. Optionally provide a number of seconds before choosing another random generator |
 
 # Configuration
 There are some files you'll need to edit before your robot will work for you, probably.

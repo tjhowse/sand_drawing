@@ -22,42 +22,63 @@ NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
 SAND_DRAWING_TOPIC = secrets.mqtt_root+"/sand_drawing"
 
-shuffle_generator_interval_s = -1
-last_generator_shuffle_s = 0
+g_shuffle_generator_interval_s = -1
+g_last_generator_shuffle_s = 0
+
+def get_generator_file_list():
+    return [filename for filename in os.listdir() if filename.endswith(".pat")]
 
 def do_pattern(msg):
     global G_PATTERN
+    global g_shuffle_generator_interval_s
     G_PATTERN = str(bytearray(msg), "utf-8")
-    shuffle_generator_interval_s = -1
+    g_shuffle_generator_interval_s = -1
 
 def do_generator(msg):
     global G_GENERATOR
+    global g_shuffle_generator_interval_s
     G_GENERATOR = str(bytearray(msg), "utf-8")
-    shuffle_generator_interval_s = -1
+    g_shuffle_generator_interval_s = -1
 
 def do_save_generator(msg):
+    msg = str(bytearray(msg), "utf-8")
     filename, generator = msg.split(' ',1)
     if not filename.endswith(".pat"):
         return
-    with open(str(filename), 'w') as f:
+    with open(str(filename), 'wb') as f:
         f.write(generator)
 
 def do_run_generator(filename):
     global G_GENERATOR
-    filename = str(filename)
-    if not filename.endswith(".pat"):
+    filename = str(bytearray(filename), "utf-8")
+    if not filename in get_generator_file_list():
         return
+    print("Running generator from flash {}".format(filename))
     with open(str(filename), 'r') as f:
         G_GENERATOR = f.read()
 
+def do_list_generators(filename):
+    global G_PUBLISH
+    gen_list = str(get_generator_file_list())
+    G_PUBLISH = (bytes(SAND_DRAWING_TOPIC+"/generator_list", "utf-8"), bytes(gen_list, "utf-8"))
+
+def do_delete_generator(filename):
+    if not filename.endswith(".pat"):
+        return
+    os.remove(filename)
+
 def do_shuffle_generators(msg=''):
-    last_generator_shuffle_s = time()
-    generators = [filename for filename in os.listdir() if filename.endswith(".pat")]
+    print("Shuffling generators")
+    global g_shuffle_generator_interval_s
+    global g_last_generator_shuffle_s
+    g_last_generator_shuffle_s = time()
+    generators = get_generator_file_list()
     if not generators:
         return
     do_run_generator(random.choice(generators))
     if len(msg) > 0:
-        shuffle_generator_interval_s = int(msg)
+        g_shuffle_generator_interval_s = int(msg)
+    print("Shuffle interval: {}".format(g_shuffle_generator_interval_s))
 
 def save_pattern(id, pattern):
     with open("pattern_"+str(id), 'w') as f:
@@ -75,15 +96,21 @@ SUBSCRIPTIONS = []
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/pattern", "utf-8"), do_pattern)]
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/generator", "utf-8"), do_generator)]
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/save_generator", "utf-8"), do_save_generator)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/list_generators", "utf-8"), do_list_generators)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/delete_generator", "utf-8"), do_delete_generator)]
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/run_generator", "utf-8"), do_run_generator)]
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/shuffle_generators", "utf-8"), do_shuffle_generators)]
 
 G_PATTERN = ""
 G_GENERATOR = ""
+G_PUBLISH = ('','')
 
 def main():
     global G_PATTERN
     global G_GENERATOR
+    global G_PUBLISH
+    global g_shuffle_generator_interval_s
+    global g_last_generator_shuffle_s
     mqtt = None
     generator = None
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN, False, "X", ARM1_HOME_INDEX, ARM1_HOME_ANGLE)
@@ -101,8 +128,9 @@ def main():
     my_cnc.set_pattern(pattern)
 
     while True:
-        if (time() - last_generator_shuffle_s) > shuffle_generator_interval_s:
-            do_shuffle_generators()
+        if g_shuffle_generator_interval_s > 0:
+            if (time() - g_last_generator_shuffle_s) > g_shuffle_generator_interval_s:
+                do_shuffle_generators()
         if ticks_diff(ticks_ms(), last_pattern_check_ticks_ms) > NEW_PATTERN_CHECK_INTERVAL_MS:
             mqtt = mqtt_check(mqtt)
             last_pattern_check_ticks_ms = ticks_ms()
@@ -119,6 +147,11 @@ def main():
                     pattern = []
                     my_cnc.set_generator(generator)
                 G_GENERATOR = ""
+            if G_PUBLISH != ('',''):
+                try:
+                    mqtt.publish(G_PUBLISH[0], G_PUBLISH[1])
+                finally:
+                    G_PUBLISH = ('','')
         my_cnc.tick()
 
 def mqtt_check(mqtt):
