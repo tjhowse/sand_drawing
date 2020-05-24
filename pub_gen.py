@@ -323,3 +323,47 @@ def generator():
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 
 # publish_relative_motion_test()
+
+
+def publish_contracting_waves():
+    generator_string = """
+def generator():
+    # yield HOME_X
+    # yield HOME_Y
+    min_r = 10
+    r_rate = 0.03
+    a = 0
+    a_rate = 1
+    point = vector2()
+    wave_size = 5
+    wave_rate = 30 # Waves per revolution
+    max_r = 165-wave_size
+    r = max_r
+
+    while True:
+        while r > min_r:
+            r -= r_rate
+            a = (a+a_rate)%360
+            r_mod = wave_size*math.cos(math.radians(a*wave_rate))
+
+            point.x = (r+r_mod)*math.cos(math.radians(a))
+            point.y = (r+r_mod)*math.sin(math.radians(a))
+
+            yield g(point)
+        while r < max_r:
+            r += r_rate
+            a = (a+a_rate)%360
+            r_mod = wave_size*math.cos(math.radians(a*wave_rate))
+
+            point.x = (r+r_mod)*math.cos(math.radians(a))
+            point.y = (r+r_mod)*math.sin(math.radians(a))
+
+            yield g(point)
+
+    """
+    # visualise(generator_string,1000)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
+
+publish_contracting_waves()
