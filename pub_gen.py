@@ -363,7 +363,85 @@ def generator():
     """
     # visualise(generator_string,1000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
 
-publish_contracting_waves()
+# publish_contracting_waves()
+
+
+def publish_rotating_shrinking_poly():
+    generator_string = """
+def generator():
+    max_r = 168
+    vertex_count = 4
+    # yield HOME_X
+    # yield HOME_Y
+    corner = vector2()
+    r = max_r
+    r_step = 5
+    min_r = 10
+
+    while True:
+        while r > min_r:
+            for j in range(0, 360, 10):
+                r -= r_step
+                for i in range(vertex_count):
+                    corner.x = r*math.sin(math.radians(j+i*(360/vertex_count)))
+                    corner.y = r*math.cos(math.radians(j+i*(360/vertex_count)))
+                    yield g(corner)
+        while r < max_r:
+            for j in range(0, 360, 10):
+                r += r_step
+                for i in range(vertex_count):
+                    corner.x = r*math.sin(math.radians(j+i*(360/vertex_count)))
+                    corner.y = r*math.cos(math.radians(j+i*(360/vertex_count)))
+                    yield g(corner)
+
+    """
+    # visualise(generator_string,100)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotshinkpoly.pat {}".format(generator_string), False)
+
+# publish_rotating_shrinking_poly()
+# exit(0)
+
+def publish_circle_grid():
+    generator_string = """
+def generator():
+    max_r = 168
+    vertex_count = 4
+    # yield HOME_X
+    # yield HOME_Y
+    centre = vector2()
+    offset = vector2()
+    circles_n = 4
+    small_r = max_r/(circles_n*2-1)
+    # big_r
+    a = 0
+    big_a = 0
+    big_a_step = 45
+
+    while True:
+        for i in range(circles_n):
+            for a in range(180):
+                offset.x = small_r*math.sin(math.radians(a))
+                offset.y = small_r*math.cos(math.radians(a))
+                yield g((centre+offset).rotate(big_a))
+            centre.y -= small_r*2
+        centre.y += small_r*2
+        for i in range(circles_n):
+            for a in range(180,360,1):
+                offset.x = small_r*math.sin(math.radians(a))
+                offset.y = small_r*math.cos(math.radians(a))
+                yield g((centre+offset).rotate(big_a))
+            centre.y += small_r*2
+        centre.y -= small_r*2
+        big_a = (big_a+big_a_step)%360
+    """
+    # visualise(generator_string,20000)
+    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotshinkpoly.pat {}".format(generator_string), False)
+
+publish_circle_grid()
