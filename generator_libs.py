@@ -121,6 +121,13 @@ class vector2():
     def cap_magnitude(self, m):
         if self.magnitude() > m:
             self.set_magnitude(m)
+    def rotate(self, degrees):
+        rad = math.radians(degrees)
+        x_temp = self.x
+        y_temp = self.y
+        self.x = x_temp*math.cos(rad)-y_temp*math.sin(rad)
+        self.y = x_temp*math.sin(rad)+y_temp*math.cos(rad)
+        return self
     def __add__(self, p):
         return vector2(p.x+self.x, p.y+self.y)
     def __sub__(self, p):
