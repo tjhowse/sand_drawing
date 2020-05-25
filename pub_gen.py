@@ -451,7 +451,7 @@ def publish_random_spiral_start():
     generator_string = """
 def generator():
     import random
-    min_r = 10
+    min_r = 5
     max_r = 168
     r_rate = 0.01
 
