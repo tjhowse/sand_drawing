@@ -444,4 +444,33 @@ def generator():
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotshinkpoly.pat {}".format(generator_string), False)
 
-publish_circle_grid()
+# This needs more work. Rotation is not the way.
+#publish_circle_grid()
+
+def publish_random_spiral_start():
+    generator_string = """
+def generator():
+    import random
+    min_r = 10
+    max_r = 168
+    r_rate = 0.01
+
+    centre = vector2()
+    offset = vector2()
+    while True:
+        r = random.randint(0, max_r)
+        a = random.uniform(0,360)
+        centre.x = r*math.sin(a)
+        centre.y = r*math.cos(a)
+        r = min_r
+        offset = vector2(min_r,0)
+        mag = min_r
+        while inside_convex_polygon(centre+offset, ENCLOSURE_VERTICES):
+            yield g(centre+offset)
+            offset.rotate(1)
+            mag += r_rate
+            offset.set_magnitude(mag)
+    """
+    visualise(generator_string,100000)
+
+publish_random_spiral_start()
