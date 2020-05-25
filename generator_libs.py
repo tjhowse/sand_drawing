@@ -138,6 +138,14 @@ class vector2():
         return not self.__eq__(p)
     def __str__(self):
         return "({},{})".format(self.x, self.y)
+    def __getitem__(self, key):
+        if key == 0:
+            return self.x
+        elif key == 1:
+            return self.y
+        else:
+            raise ValueError()
+
 
 HOME_X = "G28 X"
 HOME_Y = "G28 Y"
