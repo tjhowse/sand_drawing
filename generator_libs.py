@@ -145,6 +145,13 @@ class vector2():
             return self.y
         else:
             raise ValueError()
+    def __setitem__(self, key, value):
+        if key == 0:
+            self.x = value
+        elif key == 1:
+            self.y = value
+        else:
+            raise ValueError()
 
 
 HOME_X = "G28 X"
