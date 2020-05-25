@@ -454,11 +454,13 @@ def generator():
     min_r = 5
     max_r = 168
     r_rate = 0.01
+    # Don't start a spiral this close to the centre
+    keepout_r = 30
 
     centre = vector2()
     offset = vector2()
     while True:
-        r = random.randint(0, max_r)
+        r = random.randint(keepout_r, max_r)
         a = random.uniform(0,360)
         centre.x = r*math.sin(a)
         centre.y = r*math.cos(a)
@@ -471,6 +473,8 @@ def generator():
             mag += r_rate
             offset.set_magnitude(mag)
     """
-    visualise(generator_string,100000)
+    # visualise(generator_string,10000)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)
 
 publish_random_spiral_start()
