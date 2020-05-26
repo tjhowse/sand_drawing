@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name pololu_breakout_tmc2100)(type Legacy)(uri ${KIPRJMOD}/modules/pololu_breakout_tmc2100.lib)(options "")(descr ""))
+)
