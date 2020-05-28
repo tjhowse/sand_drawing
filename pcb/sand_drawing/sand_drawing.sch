@@ -952,7 +952,7 @@ NoConn ~ 4000 3750
 NoConn ~ 4000 3850
 NoConn ~ 4000 3950
 NoConn ~ 4000 4050
-Text Notes 4300 6900 0    50   ~ 0
+Text Notes 4350 6900 0    50   ~ 0
 Stepper pinout order:\nEN\nCFG1\nCFG2\nCFG3\nNC\nNC\nSTEP\nDIR
 $Bitmap
 Pos 2200 3650
