@@ -41,7 +41,7 @@ U 1 1 5E98CB20
 P 9600 1750
 F 0 "J1" H 9572 1632 50  0000 R CNN
 F 1 "Stepper1" H 9572 1723 50  0000 R CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x04_Pitch2.54mm" H 9600 1750 50  0001 C CNN
+F 2 "Connectors_Phoenix:PhoenixContact_MCV-G_04x3.50mm_Vertical" H 9600 1750 50  0001 C CNN
 F 3 "~" H 9600 1750 50  0001 C CNN
 	1    9600 1750
 	-1   0    0    1   
@@ -52,7 +52,7 @@ U 1 1 5E98E54C
 P 9600 4500
 F 0 "J2" H 9572 4382 50  0000 R CNN
 F 1 "Stepper2" H 9572 4473 50  0000 R CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x04_Pitch2.54mm" H 9600 4500 50  0001 C CNN
+F 2 "Connectors_Phoenix:PhoenixContact_MCV-G_04x3.50mm_Vertical" H 9600 4500 50  0001 C CNN
 F 3 "~" H 9600 4500 50  0001 C CNN
 	1    9600 4500
 	-1   0    0    1   
@@ -139,7 +139,7 @@ U 1 1 5E9E0F06
 P 2250 6950
 F 0 "J3" H 2222 6882 50  0000 R CNN
 F 1 "Opto 1" H 2222 6973 50  0000 R CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 2250 6950 50  0001 C CNN
+F 2 "Connectors_Phoenix:PhoenixContact_MCV-G_03x3.50mm_Vertical" H 2250 6950 50  0001 C CNN
 F 3 "~" H 2250 6950 50  0001 C CNN
 	1    2250 6950
 	-1   0    0    1   
@@ -150,7 +150,7 @@ U 1 1 5E9E28A1
 P 2250 7250
 F 0 "J4" H 2222 7182 50  0000 R CNN
 F 1 "Opto 2" H 2222 7273 50  0000 R CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x03_Pitch2.54mm" H 2250 7250 50  0001 C CNN
+F 2 "Connectors_Phoenix:PhoenixContact_MCV-G_03x3.50mm_Vertical" H 2250 7250 50  0001 C CNN
 F 3 "~" H 2250 7250 50  0001 C CNN
 	1    2250 7250
 	-1   0    0    1   
@@ -323,7 +323,7 @@ U 1 1 5EA53D0B
 P 1400 2450
 F 0 "J0" H 1508 2631 50  0000 C CNN
 F 1 "12V GND" H 1508 2540 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x02_Pitch2.54mm" H 1400 2450 50  0001 C CNN
+F 2 "Connectors_Phoenix:PhoenixContact_MCV-G_02x3.50mm_Vertical" H 1400 2450 50  0001 C CNN
 F 3 "~" H 1400 2450 50  0001 C CNN
 	1    1400 2450
 	1    0    0    -1  
@@ -2967,4 +2967,15 @@ Wire Wire Line
 	3150 1700 3150 1600
 Wire Wire Line
 	3150 1300 3150 1200
+$Comp
+L power:GND #PWR?
+U 1 1 5ED1FCFC
+P 1800 7500
+F 0 "#PWR?" H 1800 7250 50  0001 C CNN
+F 1 "GND" H 1805 7327 50  0000 C CNN
+F 2 "" H 1800 7500 50  0001 C CNN
+F 3 "" H 1800 7500 50  0001 C CNN
+	1    1800 7500
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
