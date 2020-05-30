@@ -477,4 +477,31 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)
 
-publish_random_spiral_start()
+# publish_random_spiral_start()
+
+
+def publish_publish_spirograph2():
+    # http://www.personal.psu.edu/dpl14/java/parametricequations/spirograph/index.html
+    # Oooh: http://www.davekoelle.com/spiral.html
+    generator_string = """
+def generator():
+    import random
+    t = 0
+    t_rate = 0.005
+    max_r = 165
+    point = vector2()
+    R = 100
+    r = 61
+    p = 66
+    while True:
+        point.x = (R+r)*math.cos(t) + p*math.cos((R+r)*t/r)
+        point.y = (R+r)*math.sin(t) + p*math.sin((R+r)*t/r)
+        point.cap_magnitude(max_r)
+        yield g(point)
+        t += t_rate
+    """
+    visualise(generator_string,100000)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)
+
+publish_publish_spirograph2()
