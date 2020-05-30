@@ -21,6 +21,8 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 
 # Bill of materials
 
+None of these parts are particularly hard to find. Check ebay and whatnot. Try to buy local if you can. It's hard to guess how much it will all cost in total, but I've tried to design everything to be as economical as possible. Excluding the housing I would (very roughly) estimate the BoM to come out to around AUD$200. The housing could be as cheap as AUD$50 (Melamine board, polycarbonate) or as expensive as you want, with lacquered hardwood and tempered glass.
+
 ## Mechanical
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
