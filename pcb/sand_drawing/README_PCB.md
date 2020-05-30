@@ -33,3 +33,6 @@ of the ordering process and you should be OK.
 
 See also https://support.jlcpcb.com/article/84-how-to-generate-the-bom-and-centroid-file-from-kicad for
 instructions on how to properly format the BOM spreadsheet for JLC PCB to ingest.
+
+As of 2020-05-30 the price to have five of these boards made, with VREG, resistors, capacitors and diodes
+populated was AUD$22.60. This included some discounts and whatnot. Express postage to Australia was AUD$28.03.

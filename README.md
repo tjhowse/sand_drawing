@@ -46,10 +46,18 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 | Microcontroller | ESP-WROOM-32 | 1 | The brains |
 | Stepper motor | NEMA-17 | 2 | The brawn |
 | Stepper driver | Pololu pinout | 2 | A4988, DRV8825 or TMC2100 in [increasing order of preference](https://github.com/tjhowse/sand_drawing/issues/6) |
-| PCB | Custom made | 1 | The design is [here](./pcb/sand_drawing). It's easier and cheaper to have one made than you might imagine.
+| PCB | Custom made | 1 | The design is [here](./pcb/sand_drawing). It's easier and cheaper to have one made than you [might imagine](./pcb/sand_drawing/README_PCB.md).
 | Optoswitch | ?? | 2 | Used for detecting arm position. Current design uses slotted optoswitches, but reflective might be better? Watch this space. |
-| 12v PSU | ?? | 1 | A wall wart should be fine. |
-| Other bits | ?? | ? | Voltage regulators, capacitors, etc. Watch this space. |
+| PSU | 12v DC 1A | 1 | A wall wart should be fine. |
+| Stepper driver socket | 16x1 2.54mm female | 2 | ??? |
+| Stepper motor socket | 4x1 3.5mm | 2 | https://au.rs-online.com/web/p/pcb-headers/8971039/ |
+| Stepper motor plug | 4x1 3.5mm | 2 | https://au.rs-online.com/web/p/pcb-terminal-blocks/8971004/ |
+| Optoswitch socket | 3x1 3.5mm | 2 | https://au.rs-online.com/web/p/pcb-headers/8971020/ |
+| Optoswitch plug | 3x1 3.5mm | 2 | https://au.rs-online.com/web/p/pcb-terminal-blocks/8971001/ |
+| Power socket | 2x1 3.5mm | 1 | https://au.rs-online.com/web/p/pcb-headers/8971026/ |
+| Power plug | 2x1 3.5mm | 1 | https://au.rs-online.com/web/p/pcb-terminal-blocks/8970998/ |
+| Buttons | 6mm | 2 | https://au.rs-online.com/web/p/tactile-switches/1359534/ |
+| UART Header | 3x1 2.54mm male | ??? |
 
 ## Enclosure
 | Item | Type | Count | Note |
