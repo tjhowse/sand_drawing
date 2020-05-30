@@ -57,7 +57,7 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 | Power socket | 2x1 3.5mm | 1 | https://au.rs-online.com/web/p/pcb-headers/8971026/ |
 | Power plug | 2x1 3.5mm | 1 | https://au.rs-online.com/web/p/pcb-terminal-blocks/8970998/ |
 | Buttons | 6mm | 2 | https://au.rs-online.com/web/p/tactile-switches/1359534/ |
-| UART Header | 3x1 2.54mm male | ??? |
+| UART Header | 3x1 2.54mm male | 1 | https://au.rs-online.com/web/p/pcb-headers/8967364/ |
 
 ## Enclosure
 | Item | Type | Count | Note |
