@@ -11,19 +11,33 @@ That's what this project is for. Outsource responsibility for an ordered mind to
 
 This project (will contain/contains) all the knowledge you will need to build your own sand drawing robot. Heavily inspired by the likes of [Sandsara](https://www.kickstarter.com/projects/edcano/sandsara) and [Sisyphus](https://sisyphus-industries.com/). It's a robot that moves a ball around in a bed of sand to draw cool patterns. The patterns can be updated via wifi, and it can cycle through them, you can create your own, etc, etc. This project is open source, cheap, and hopefully as easy as possible to build.
 
-# Videos
+# Building it
+
+## Skills required
+
+This isn't a Lego set. You'll need to have access to the following skills:
+
+* Basic woodworking,
+* Intermediate soldering,
+* Following technical instructions,
+* Drilling a hole sideways through steel rod,
+* Recovering from setbacks.
+
+I'll do my best to make the instructions as comprehensive and comphrehensible as I can. I appreciate any and all feedback.
+
+## Videos
 
 [Playlist on Youtube.](https://www.youtube.com/playlist?list=PLT7ckgz8vcoY2YFqqQTA0kUofwehtqQul) Maybe worth watching.
 
-# Build logs
+## Build logs
 
 For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=projects:sand_drawing:overview). Over time they'll morph into actual instructions and end up in this repo.
 
-# Bill of materials
+## Bill of materials
 
 None of these parts are particularly hard to find. Check ebay and whatnot. Try to buy local if you can. It's hard to guess how much it will all cost in total, but I've tried to design everything to be as economical as possible. Excluding the housing I would (very roughly) estimate the BoM to come out to around AUD$200. The housing could be as cheap as AUD$50 (Melamine board, polycarbonate) or as expensive as you want, with lacquered hardwood and tempered glass.
 
-## Mechanical
+### Mechanical
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
 | Printed parts | Various | 8? | Basic parts. Small and easy to print. |
@@ -42,7 +56,7 @@ None of these parts are particularly hard to find. Check ebay and whatnot. Try t
 | Magnets | 12mm diameter, 2mm high neodymium | 2 | Dimensions not critical. |
 | Cable ties | 200mm x 4.6mm Nylon | 2 | Dimensions not critical. |
 
-## Electrical
+### Electrical
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
 | Microcontroller | ESP-WROOM-32D | 1 | Wifi and bluetooth built-in |
@@ -60,8 +74,9 @@ None of these parts are particularly hard to find. Check ebay and whatnot. Try t
 | Power plug | 2x1 3.5mm | 1 | https://au.rs-online.com/web/p/pcb-terminal-blocks/8970998/ |
 | Buttons | 6mm | 2 | https://au.rs-online.com/web/p/tactile-switches/1359534/ |
 | UART Header | 3x1 2.54mm male | 1 | https://au.rs-online.com/web/p/pcb-headers/8967364/ |
+| 12VDC Barrel socket | 2.1mm pin | 1 | https://au.rs-online.com/web/p/dc-power-sockets/0448370/ |
 
-## Enclosure
+### Enclosure
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
 | Base | Wooood? | 1 | Holds the steppers and circuitry. |
