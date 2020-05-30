@@ -43,8 +43,8 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 ## Electrical
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
-| Microcontroller | ESP-WROOM-32 | 1 | The brains |
-| Stepper motor | NEMA-17 | 2 | The brawn |
+| Microcontroller | ESP-WROOM-32D | 1 | Wifi and bluetooth built-in |
+| Stepper motor | NEMA-17 | 2 | 200 steps/revolution, around 40mm long, at least 30 N.cm of holding torque. It's not critical, really. |
 | Stepper driver | Pololu pinout | 2 | A4988, DRV8825 or TMC2100 in [increasing order of preference](https://github.com/tjhowse/sand_drawing/issues/6) |
 | PCB | Custom made | 1 | The design is [here](./pcb/sand_drawing). It's easier and cheaper to have one made than you [might imagine](./pcb/sand_drawing/README_PCB.md).
 | Optoswitch | ?? | 2 | Used for detecting arm position. Current design uses slotted optoswitches, but reflective might be better? Watch this space. |
