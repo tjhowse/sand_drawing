@@ -21,11 +21,13 @@ are set up for easy manufacture. You should only need to solder on the ESP-WROOM
 All the fiddly little SMD stuff can be done for you, quite cheaply.
 
 If you regenerate the footprint position files you'll need to manually change the header line from:
-
+```
 Ref,Val,Package,PosX,PosY,Rot,Side
+```
 To:
+```
 Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
-
+```
 as per https://support.jlcpcb.com/article/84-how-to-generate-the-bom-and-centroid-file-from-kicad
 
 Odds are you'll need to change the rotation of U2 to 180 degrees, too. Be SUPER CAREFUL at EACH STEP
