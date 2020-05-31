@@ -74,10 +74,11 @@ def generator():
 """
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
+    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
 
 # publish_octagonal_spiral()
+# exit(0)
 
 def publish_circular_spiral():
     generator_string = """
@@ -483,25 +484,38 @@ def generator():
 def publish_publish_spirograph2():
     # http://www.personal.psu.edu/dpl14/java/parametricequations/spirograph/index.html
     # Oooh: http://www.davekoelle.com/spiral.html
+    # Params is a list of 2-tuples containing the radius of the arm and the speed at which
+    # it rotates relative to the other arms.
     generator_string = """
 def generator():
-    import random
-    t = 0
-    t_rate = 0.005
     max_r = 165
     point = vector2()
-    R = 100
-    r = 61
-    p = 66
+    step = 0
+    # Saved as spirograph_2
+    params = [(80,0.025), (20,-0.15), (50,0.23)]
+    # params = [(40,0.05), (50,-0.25), (30,0.12), (80,-0.1)]
+    # params = [(90,0.05), (40,-0.07), (50,-0.12), (30,-0.2)]
+
+    # Get the sum of all the radii
+    total_rad = 0
+    for rad, speed in params:
+        total_rad += rad
+    # Use this to scale each radius so we don't draw outside the bed even when
+    # all the radii line up straight.
+    scale = max_r/total_rad
+
     while True:
-        point.x = (R+r)*math.cos(t) + p*math.cos((R+r)*t/r)
-        point.y = (R+r)*math.sin(t) + p*math.sin((R+r)*t/r)
-        point.cap_magnitude(max_r)
+        point.x = 0
+        point.y = 0
+        for rad, speed in params:
+            point.x += (rad*scale)*math.sin(speed*step)
+            point.y += (rad*scale)*math.cos(speed*step)
         yield g(point)
-        t += t_rate
+        step += 1
     """
     visualise(generator_string,100000)
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "spirograph_2.pat {}".format(generator_string), False)
 
-publish_publish_spirograph2()
+# publish_publish_spirograph2()
