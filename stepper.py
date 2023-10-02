@@ -26,8 +26,8 @@ class stepper():
         self.s = machine.Pin(s_pin, machine.Pin.OUT)
         self.d = machine.Pin(d_pin, machine.Pin.OUT)
         # This is declared an output so we can use the internal pull-up.
-        self.o = machine.Pin(o_pin, machine.Pin.OUT)
-        self.o.value(1)
+        self.o = machine.Pin(o_pin, machine.Pin.IN)
+        # self.o.value(1)
         self.set_dir(0)
         self.debug = debug
         self.name = name

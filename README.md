@@ -125,3 +125,9 @@ You can define a pattern using a python generator function. [Examples here](./pu
 
 ### Tread lightly
 Keep the target hardware in mind when writing generators. It's very resource-constrained. Try to limit RAM usage, and think hard before `import`ing anything. There are some [helper functions](./generator_libs.py) and [constants](./constants.py) in-scope that you can use.
+
+### PCB v2 notes
+
+Pin 35 is input-only, can't use that for A2D. Use 12 instead.
+Must pull SLP and RST high.
+vreg too small, or wired wrong? Only outputs 2.7 Vout at 12 Vin

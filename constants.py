@@ -1,5 +1,6 @@
 import math
-MICROCONTROLLER = "atom"
+import machine
+MICROCONTROLLER = "board_v1"
 PWM_STEPPING = False
 if MICROCONTROLLER == "d1mini":
     A1S_PIN = 16
@@ -15,6 +16,27 @@ elif MICROCONTROLLER == "atom":
     A2D_PIN = 22
     A1O_PIN = 21
     A2O_PIN = 25
+elif MICROCONTROLLER == "board_v1":
+    A1S_PIN = 16
+    A1D_PIN = 4
+    A1CFG1_PIN = 18
+    A1CFG2_PIN = 5
+    A1CFG3_PIN = 17
+    machine.Pin(A1CFG1_PIN, machine.Pin.OUT).value(1)
+    machine.Pin(A1CFG2_PIN, machine.Pin.OUT).value(1)
+    machine.Pin(A1CFG3_PIN, machine.Pin.OUT).value(1)
+    A1O_PIN = 36
+
+    A2S_PIN = 32
+    A2D_PIN = 12
+    # A2D_PIN = 34 # 35 is input-only
+    A2O_PIN = 39
+    A2CFG1_PIN = 26
+    A2CFG2_PIN = 25
+    A2CFG3_PIN = 33
+    machine.Pin(A2CFG1_PIN, machine.Pin.OUT).value(1)
+    machine.Pin(A2CFG2_PIN, machine.Pin.OUT).value(1)
+    machine.Pin(A2CFG3_PIN, machine.Pin.OUT).value(1)
 
 STEPS_PER_REV = 200
 WILD_MODE = False
