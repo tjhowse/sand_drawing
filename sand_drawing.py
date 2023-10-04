@@ -50,14 +50,21 @@ def do_save_generator(msg):
     with open(str(filename), 'wb') as f:
         f.write(generator)
 
-def do_run_generator(filename):
+def do_run_generator(msg):
+    filename = str(bytearray(msg), "utf-8")
+    return do_run_generator_internal(filename)
+
+def do_run_generator_internal(filename):
     global G_GENERATOR
-    filename = str(bytearray(filename), "utf-8")
+    print("Running generator: "+filename)
+    print("Running generator decoded: "+filename)
     if not filename in get_generator_file_list():
+        print("Generator not found")
         return
     print("Running generator from flash {}".format(filename))
     with open(str(filename), 'r') as f:
         G_GENERATOR = f.read()
+
 
 def do_list_generators(filename):
     global G_PUBLISH
@@ -75,10 +82,17 @@ def do_shuffle_generators(msg=''):
     global g_last_generator_shuffle_s
     g_last_generator_shuffle_s = time()
     generators = get_generator_file_list()
+    print("Got list")
     if not generators:
+        print("No generators found")
         return
-    do_run_generator(random.choice(generators))
+    print("picking random generator")
+    random_generator = random.choice(generators)
+    print("Random generator: "+random_generator)
+    do_run_generator_internal(random_generator)
+    print("Ran generator")
     if len(msg) > 0:
+        print("Set shuffle interval: "+str(msg))
         g_shuffle_generator_interval_s = int(msg)
     print("Shuffle interval: {}".format(g_shuffle_generator_interval_s))
 

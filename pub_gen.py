@@ -74,10 +74,10 @@ def generator():
 """
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
+    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
 
-# publish_octagonal_spiral()
+publish_octagonal_spiral()
 # exit(0)
 
 def publish_circular_spiral():
@@ -188,7 +188,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "grid.pat {}".format(generator_string), False)
-# publish_grid()
+publish_grid()
 # exit(0)
 
 def publish_wave():
@@ -216,7 +216,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "wave.pat {}".format(generator_string), False)
 
-# publish_wave()
+publish_wave()
 # exit(0)
 
 def publish_rotating_poly():
@@ -241,7 +241,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotpoly.pat {}".format(generator_string), False)
 
-# publish_rotating_poly()
+publish_rotating_poly()
 # exit(0)
 
 def publish_contracting_swirls():
@@ -300,7 +300,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contraswirls.pat {}".format(generator_string), False)
-# publish_contracting_swirls()
+publish_contracting_swirls()
 # exit(0)
 
 
@@ -367,7 +367,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
 
-# publish_contracting_waves()
+publish_contracting_waves()
 
 
 def publish_rotating_shrinking_poly():
@@ -404,7 +404,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotshinkpoly.pat {}".format(generator_string), False)
 
-# publish_rotating_shrinking_poly()
+publish_rotating_shrinking_poly()
 # exit(0)
 
 def publish_circle_grid():
