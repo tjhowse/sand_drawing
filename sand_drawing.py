@@ -22,8 +22,10 @@ NEW_PATTERN_CHECK_INTERVAL_MS = 2000
 
 SAND_DRAWING_TOPIC = secrets.mqtt_root+"/sand_drawing"
 
+# These are volatile variables written to from callbacks.
 g_shuffle_generator_interval_s = -1
 g_last_generator_shuffle_s = 0
+g_stepper_config = ''
 
 def get_generator_file_list():
     return [filename for filename in os.listdir() if filename.endswith(".pat")]
@@ -80,6 +82,15 @@ def do_shuffle_generators(msg=''):
         g_shuffle_generator_interval_s = int(msg)
     print("Shuffle interval: {}".format(g_shuffle_generator_interval_s))
 
+def do_stepper_config(msg=''):
+    if not MICROCONTROLLER.startswith("sand_drawing"):
+        return
+    print("Controling a stepper config {}".format(msg))
+    global g_stepper_config
+    g_stepper_config = str(bytearray(msg), "utf-8").split(',')
+    if len(g_stepper_config) != 3:
+        g_stepper_config = ''
+
 def save_pattern(id, pattern):
     with open("pattern_"+str(id), 'w') as f:
         f.write(pattern)
@@ -100,6 +111,7 @@ SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/list_generators", "utf-8"), do_lis
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/delete_generator", "utf-8"), do_delete_generator)]
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/run_generator", "utf-8"), do_run_generator)]
 SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/shuffle_generators", "utf-8"), do_shuffle_generators)]
+SUBSCRIPTIONS += [(bytes(SAND_DRAWING_TOPIC+"/stepper_config", "utf-8"), do_stepper_config)]
 
 G_PATTERN = ""
 G_GENERATOR = ""
@@ -111,6 +123,7 @@ def main():
     global G_PUBLISH
     global g_shuffle_generator_interval_s
     global g_last_generator_shuffle_s
+    global g_stepper_config
     mqtt = None
     generator = None
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN, False, "X", ARM1_HOME_INDEX, ARM1_HOME_ANGLE)
@@ -152,6 +165,14 @@ def main():
                     mqtt.publish(G_PUBLISH[0], G_PUBLISH[1])
                 finally:
                     G_PUBLISH = ('','')
+            if g_stepper_config != ''
+                try:
+                    if g_stepper_config[0] == '1':
+                        s1.config(g_stepper_config[1:])
+                    elif g_stepper_config[0] == '2':
+                        s2.config(g_stepper_config[1:])
+                finally:
+                    g_stepper_config = ''
         my_cnc.tick()
 
 def mqtt_check(mqtt):
