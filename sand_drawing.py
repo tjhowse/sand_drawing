@@ -165,14 +165,14 @@ def main():
                     mqtt.publish(G_PUBLISH[0], G_PUBLISH[1])
                 finally:
                     G_PUBLISH = ('','')
-            if g_stepper_config != '':
-                try:
-                    if g_stepper_config[0] == '1':
-                        s1.config(g_stepper_config[1:])
-                    elif g_stepper_config[0] == '2':
-                        s2.config(g_stepper_config[1:])
-                finally:
-                    g_stepper_config = ''
+            # if g_stepper_config != ''
+            #     try:
+            #         if g_stepper_config[0] == '1':
+            #             s1.config(g_stepper_config[1:])
+            #         elif g_stepper_config[0] == '2':
+            #             s2.config(g_stepper_config[1:])
+            #     finally:
+            #         g_stepper_config = ''
         my_cnc.tick()
 
 def mqtt_check(mqtt):

@@ -61,7 +61,7 @@ HALF_REAL_STEPS_PER_REV = REAL_STEPS_PER_REV/2
 INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = 180
 
-# You'll have to tweak these to suite the exact placement of your optoswitches.
+# You'll have to tweak these to suit the exact placement of your optoswitches.
 ARM1_HOME_INDEX = 30
 ARM1_HOME_ANGLE = 0
 ARM2_HOME_INDEX = REAL_STEPS_PER_REV/2-250
