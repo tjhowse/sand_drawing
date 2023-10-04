@@ -70,7 +70,11 @@ class cnc():
             elif self.gcode[1] == 'X':
                 if self.debug:
                     print("Homing X axis")
+                # Disable arm 2 while homing arm 1 so if it bonks into
+                # the enclosure it pivots.
+                self.s2.set_enabled(0)
                 self.s1.home()
+                self.s2.set_enabled(1)
             return
 
         elif self.gcode[0] in ["G0", "G1"]:

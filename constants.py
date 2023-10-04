@@ -1,6 +1,15 @@
 import math
 MICROCONTROLLER = "board_v1"
 PWM_STEPPING = False
+
+class StepperPins:
+    step = 0
+    dir = 0
+    enable = 0
+    cfg1 = 0
+    cfg2 = 0
+    cfg3 = 0
+    opto = 0
 if MICROCONTROLLER == "d1mini":
     A1S_PIN = 16
     A1D_PIN = 5
@@ -16,22 +25,24 @@ elif MICROCONTROLLER == "atom":
     A1O_PIN = 21
     A2O_PIN = 25
 elif MICROCONTROLLER == "board_v1":
-    A1S_PIN = 16
-    A1D_PIN = 4
-    A1CFG1_PIN = 18
-    A1CFG2_PIN = 5
-    A1CFG3_PIN = 17
-    A1O_PIN = 36
-    A1EN_PIN = 19
+    A1PINS = StepperPins()
+    A1PINS.step = 16
+    A1PINS.dir = 4
+    A1PINS.enable = 19
+    A1PINS.cfg1 = 18
+    A1PINS.cfg2 = 5
+    A1PINS.cfg3 = 17
+    A1PINS.opto = 36
 
-    A2S_PIN = 32
-    A2D_PIN = 12
-    # A2D_PIN = 34 # 35 is input-only
-    A2O_PIN = 39
-    A2CFG1_PIN = 26
-    A2CFG2_PIN = 25
-    A2CFG3_PIN = 33
-    A2EN_PIN = 27
+    A2PINS = StepperPins()
+    A2PINS.step = 32
+    A2PINS.dir = 12
+    A2PINS.enable = 27
+    A2PINS.cfg1 = 26
+    A2PINS.cfg2 = 25
+    A2PINS.cfg3 = 33
+    A2PINS.opto = 39
+
 
 STEPS_PER_REV = 200
 WILD_MODE = False

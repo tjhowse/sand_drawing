@@ -22,12 +22,17 @@ class stepper():
     pwm = None
     prev_err = 0
 
-    def __init__(self, s_pin, d_pin, o_pin, debug=False, name='', home_index=0, home_angle=0):
-        self.s = machine.Pin(s_pin, machine.Pin.OUT)
-        self.d = machine.Pin(d_pin, machine.Pin.OUT)
-        # This is declared an output so we can use the internal pull-up.
-        self.o = machine.Pin(o_pin, machine.Pin.IN)
-        # self.o.value(1)
+    def __init__(self, pinconfig, debug=False, name='', home_index=0, home_angle=0):
+        self.s = machine.Pin(pinconfig.step, machine.Pin.OUT)
+        self.d = machine.Pin(pinconfig.dir, machine.Pin.OUT)
+        self.o = machine.Pin(pinconfig.opto, machine.Pin.IN)
+        self.cfg1 = machine.Pin(pinconfig.cfg1, machine.Pin.OUT)
+        self.cfg2 = machine.Pin(pinconfig.cfg2, machine.Pin.OUT)
+        self.cfg3 = machine.Pin(pinconfig.cfg3, machine.Pin.OUT)
+        self.cfg1.value(1) # 101 - 32x microstepping
+        self.cfg2.value(0)
+        self.cfg3.value(1)
+        self.enabled = machine.Pin(pinconfig.enable, machine.Pin.OUT)
         self.set_dir(0)
         self.debug = debug
         self.name = name
@@ -110,6 +115,11 @@ class stepper():
                 self.set_speed(-speed, pwm_motion=pwm_motion)
             else:
                 self.set_speed(speed, pwm_motion=pwm_motion)
+
+    def set_enabled(self, enabled):
+        # The stepper is enabled on logical 0.
+        enabled = 1 - enabled
+        self.enabled.value(enabled)
 
     def home(self):
         self.indexed = False
