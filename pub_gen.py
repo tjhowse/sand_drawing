@@ -60,8 +60,8 @@ def visualise(generator_string, n):
 def publish_octagonal_spiral():
     generator_string = """
 def generator():
-    # yield HOME_X
-    # yield HOME_Y
+    yield HOME_X
+    yield HOME_Y
     starting_r = 175
     step = 5
     while True:
@@ -77,8 +77,8 @@ def generator():
     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
 
-# publish_octagonal_spiral()
-# exit(0)
+publish_octagonal_spiral()
+exit(0)
 
 def publish_circular_spiral():
     generator_string = """
