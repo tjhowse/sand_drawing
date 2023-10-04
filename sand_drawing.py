@@ -115,6 +115,15 @@ def main():
     generator = None
     s1 = stepper(A1S_PIN, A1D_PIN, A1O_PIN, False, "X", ARM1_HOME_INDEX, ARM1_HOME_ANGLE)
     s2 = stepper(A2S_PIN, A2D_PIN, A2O_PIN, False, "Y", ARM2_HOME_INDEX, ARM2_HOME_ANGLE)
+    # TODO Move these into the stepper init
+    machine.Pin(A1CFG1_PIN, machine.Pin.OUT).value(1)
+    machine.Pin(A1CFG2_PIN, machine.Pin.OUT).value(0)
+    machine.Pin(A1CFG3_PIN, machine.Pin.OUT).value(1)
+    
+    machine.Pin(A2CFG1_PIN, machine.Pin.OUT).value(1)
+    machine.Pin(A2CFG2_PIN, machine.Pin.OUT).value(0)
+    machine.Pin(A2CFG3_PIN, machine.Pin.OUT).value(1)
+
     my_cnc = cnc(s1, s2)
     pattern = [ "G28 X",
                 "G28 Y",
