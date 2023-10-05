@@ -62,9 +62,9 @@ INDEX_CLOSE_ENOUGH = 3
 HOME_SPEED = 180
 
 # You'll have to tweak these to suit the exact placement of your optoswitches.
-ARM1_HOME_INDEX = 30
+ARM1_HOME_INDEX = 0
 ARM1_HOME_ANGLE = 0
-ARM2_HOME_INDEX = REAL_STEPS_PER_REV/2-250
+ARM2_HOME_INDEX = REAL_STEPS_PER_REV/2-120
 ARM2_HOME_ANGLE = 180
 
 # This may need adjustment for your enclosure. Mine's a regular octagon.
