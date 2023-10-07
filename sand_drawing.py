@@ -143,15 +143,20 @@ def main():
     s1 = stepper(A1PINS, False, "X", ARM1_HOME_INDEX, ARM1_HOME_ANGLE)
     s2 = stepper(A2PINS, False, "Y", ARM2_HOME_INDEX, ARM2_HOME_ANGLE)
     my_cnc = cnc(s1, s2)
-    pattern = [ "G28 X",
-                "G28 Y",
-                "G16 2",
-                "G1 X1 Y1",
+    pattern = [ "G1 X1 Y1",
                 "G1 X1000 Y1000",
-                "J0 3",
+                "J0 0",
                 ]
     last_pattern_check_ticks_ms = 0
     print("about to loop")
+    # Force a home on startup
+    my_cnc.set_gcode("G28 X")
+    my_cnc.block_until_done()
+    my_cnc.set_gcode("G28 Y")
+    my_cnc.block_until_done()
+    # Set cartesian mode
+    my_cnc.set_gcode("G16 2")
+
     my_cnc.set_pattern(pattern)
 
     while True:

@@ -54,14 +54,15 @@ def visualise(generator_string, n):
     plt.xlim(-200,200)
     plt.ylabel("Y")
     plt.ylim(-200,200)
-    plt.axes().set_aspect('equal')
+    # plt.axes().set_aspect('equal')
+    plt.gca().set_aspect("equal")
     plt.show()
 
 def publish_octagonal_spiral():
     generator_string = """
 def generator():
-    yield HOME_X
-    yield HOME_Y
+    # yield HOME_X
+    # yield HOME_Y
     starting_r = 175
     step = 5
     while True:
@@ -77,7 +78,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
 
-publish_octagonal_spiral()
+# publish_octagonal_spiral()
 # exit(0)
 
 def publish_circular_spiral():
@@ -188,7 +189,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "grid.pat {}".format(generator_string), False)
-publish_grid()
+# publish_grid()
 # exit(0)
 
 def publish_wave():
@@ -216,7 +217,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "wave.pat {}".format(generator_string), False)
 
-publish_wave()
+# publish_wave()
 # exit(0)
 
 def publish_rotating_poly():
@@ -241,7 +242,7 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotpoly.pat {}".format(generator_string), False)
 
-publish_rotating_poly()
+# publish_rotating_poly()
 # exit(0)
 
 def publish_contracting_swirls():
@@ -296,12 +297,12 @@ def generator():
         r = big_r
 
     """
-    # visualise(generator_string,200000)
+    visualise(generator_string,200000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contraswirls.pat {}".format(generator_string), False)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contraswirls.pat {}".format(generator_string), False)
 publish_contracting_swirls()
-# exit(0)
+exit(0)
 
 
 def publish_relative_motion_test():
@@ -362,10 +363,10 @@ def generator():
             yield g(point)
 
     """
-    # visualise(generator_string,1000)
+    visualise(generator_string,1000)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
 
 publish_contracting_waves()
 

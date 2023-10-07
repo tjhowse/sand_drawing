@@ -21,6 +21,8 @@ class cnc():
     arm_2_angle = 0
     pwm_move = False # Movement modes using PWM to drive steppers. Faster, less precise.
     generator = None
+    pattern = []
+    pattern_step = 0
 
     def __init__(self, s1, s2):
         self.s1 = s1
@@ -182,6 +184,10 @@ class cnc():
             elif self.gcode != None:
                 print("Done running pattern")
                 self.gcode = None
+
+    def block_until_done(self):
+        while not self.tick():
+            pass
 
     def tick(self):
         ticks = ticks_us()
