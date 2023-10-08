@@ -58,6 +58,7 @@ arm1_x = 2*wt+608_od+arm1_axis_offset+608_id;
 arm1_y = 2*wt+608_od;
 
 pin_r = 1;
+pin_x = 20;
 
 
 module n17_holes(slot = 0)
@@ -117,14 +118,18 @@ module bearing_holder()
 
 // bearing(0);
 
-module shaft_1_drive_pulley()
+module shaft_1_drive_pulley(fast=false)
 {
-    difference()
+    if (!fast)
     {
-        translate([0,0,shaft_1_drive_pulley_z_top_belt_guide]) pulley ( "GT2 2mm" , GT2_2mm_pulley_dia , 0.764 , 1.494, belt_z, shaft_1_drive_pulley_z_bottom_belt_guide, shaft_1_drive_pulley_z_top_belt_guide);
-        translate([0,0,shaft_1_drive_pulley_z/2])rotate([90,0,0]) translate([0,0,-50]) #cylinder(r=pin_r,h=100);
+        difference()
+        {
+            translate([0,0,shaft_1_drive_pulley_z_top_belt_guide]) pulley ( "GT2 2mm" , GT2_2mm_pulley_dia , 0.764 , 1.494, belt_z, shaft_1_drive_pulley_z_bottom_belt_guide, shaft_1_drive_pulley_z_top_belt_guide);
+            translate([0,0,shaft_1_drive_pulley_z/2])rotate([90,0,0]) translate([0,0,-50]) cylinder(r=pin_r,h=100);
+        }
+    } else {
+        cylinder(r=shaft_1_drive_pulley_dia/2, h = shaft_1_drive_pulley_z);
     }
-    %cylinder(r=shaft_1_drive_pulley_dia/2, h = shaft_1_drive_pulley_z);
 }
 
 module shaft_2_drive_pulley()
@@ -398,18 +403,93 @@ module assembled()
     }
 }
 
-module ball_skid()
-{
-    ball_r = 9.5/2;
 
-    difference()
+laser_kerf = 0.3;
+alignment_pin_offset = (2/3)*shaft_1_drive_pulley_dia;
+
+// We'll need two of these.
+module top_holder_lasercut()
+{
+    projection(cut=true) translate([0,0,-1]) top_holder();
+}
+
+// We'll need two of these with the pin slot and two without.
+module shaft_1_drive_pulley_lasercut(pin_slot=false)
+{
+    projection(cut=true) difference ()
     {
-        cylinder(r2=0, r1=ball_r*1.5, h = ball_r);
-        translate([0,0,ball_r]) sphere(r=ball_r);
+        translate([0,0,-1]) shaft_1_drive_pulley();
+        // Add a slot in the middle for a pin that fixes the pulley to the shaft
+        if (pin_slot) cube([pin_r*2, pin_x, 100], center=true);
+        // Add a pair of vertical alignment holes that can be used to clock
+        // the pulleys together during the glue-up.
+        translate([-alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
+        translate([alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
+
     }
 }
 
-ball_skid();
+
+module arm_1_pulley_lasercut()
+{
+    projection(cut=true) translate([0,0,-1]) shaft_2_drive_pulley();
+}
+
+module arm_1_lasercut()
+{
+    projection()
+    {
+        difference()
+        {
+            union()
+            {
+                // The centre end of the arm, glued to the drive pulley
+                cylinder(r=shaft_1_drive_pulley_dia/2, h = 10);
+                // The length of the arm
+                translate([arm1_axis_offset/2,0,5]) cube([arm1_axis_offset, 10, 10], center=true);
+                // The bearing holder at the far end of arm1
+                translate([arm1_axis_offset,0,0]) cylinder(r=shaft_1_drive_pulley_dia/2, h = 10);
+
+            }
+            cylinder(r=608_od/2-laser_kerf, h = 10);
+            translate([arm1_axis_offset,0,0]) cylinder(r=608_od/2-laser_kerf, h = 10);
+        }
+
+    }
+}
+
+module arm_2_lasercut()
+{
+    projection(cut=true) difference ()
+    {
+        union()
+        {
+            hull()
+            {
+                cylinder(r=5, h = 10);
+                translate([arm1_axis_offset,0,0]) cylinder(r=5, h = 10);
+            }
+            cylinder(r=shaft_1_drive_pulley_dia/2, h=10);
+        }
+        translate([-alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
+        translate([alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
+        cylinder(r=608_id/2-laser_kerf,h=10);
+    }
+}
+
+// Lasercut design
+// shaft_1_drive_pulley_lasercut(true); // x2
+// shaft_1_drive_pulley_lasercut(false); // x4
+// top_holder_lasercut(); // x2
+// arm_1_pulley_lasercut(); // x2
+// arm_1_lasercut(); // x2
+arm_2_lasercut(); // x1
+
+
+
+// top_holder();
+// echo(holder_z);
+// ball_skid();
 
 // arm2optoarm();
 // translate([0,-60,0]) assembled();
