@@ -404,7 +404,7 @@ module assembled()
 }
 
 
-laser_kerf = 0.3;
+laser_kerf = 0.2;
 alignment_pin_offset = (2/3)*shaft_1_drive_pulley_dia;
 
 // We'll need two of these.
@@ -418,9 +418,17 @@ module shaft_1_drive_pulley_lasercut(pin_slot=false)
 {
     projection(cut=true) difference ()
     {
-        translate([0,0,-1]) shaft_1_drive_pulley();
+        union() 
+        {
+            translate([0,0,-1]) shaft_1_drive_pulley();
+            // Add a disc in the centre that fills up the original shaft hole
+            cylinder(r=5, h=10);
+        }
+        // Add the shaft back in.
+        // Kerf/2 because smaller holes need less of a kerf (?!?)
+        cylinder(r=608_id/2-laser_kerf/2, h=100);
         // Add a slot in the middle for a pin that fixes the pulley to the shaft
-        if (pin_slot) cube([pin_r*2, pin_x, 100], center=true);
+        if (pin_slot) cube([pin_r, pin_x, 100], center=true);
         // Add a pair of vertical alignment holes that can be used to clock
         // the pulleys together during the glue-up.
         translate([-alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
@@ -432,7 +440,11 @@ module shaft_1_drive_pulley_lasercut(pin_slot=false)
 
 module arm_1_pulley_lasercut()
 {
-    projection(cut=true) translate([0,0,-1]) shaft_2_drive_pulley();
+    projection(cut=true) difference()
+    {
+        translate([0,0,-1]) shaft_1_drive_pulley();
+        cylinder(r=608_od/2-laser_kerf,h=10);
+    }
 }
 
 module arm_1_lasercut()
@@ -473,7 +485,7 @@ module arm_2_lasercut()
         }
         translate([-alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
         translate([alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
-        cylinder(r=608_id/2-laser_kerf,h=10);
+        cylinder(r=608_id/2-laser_kerf/2,h=10);
     }
 }
 
@@ -482,10 +494,10 @@ module arm_2_lasercut()
 // shaft_1_drive_pulley_lasercut(false); // x4
 // top_holder_lasercut(); // x2
 // arm_1_pulley_lasercut(); // x2
-// arm_1_lasercut(); // x2
-arm_2_lasercut(); // x1
+arm_1_lasercut(); // x2
+// arm_2_lasercut(); // x1
 
-
+// shaft_1_drive_pulley();
 
 // top_holder();
 // echo(holder_z);
