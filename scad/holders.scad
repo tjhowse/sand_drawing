@@ -13,7 +13,8 @@ wt = 3;
 n17_hole_spacing = 31;
 n17_hole_dia = 3+id_fudge;
 n17_center_hole_dia = 22+id_fudge;
-n17_xy = 42.5;
+n17_xy = 42;
+n17_z = 37.5;
 n17_pulley_d = 12.25;
 n17_pulley_z = 10.7;
 n17_pulley_z_offset = 6.8;
@@ -418,7 +419,7 @@ module shaft_1_drive_pulley_lasercut(pin_slot=false)
 {
     projection(cut=true) difference ()
     {
-        union() 
+        union()
         {
             translate([0,0,-1]) shaft_1_drive_pulley();
             // Add a disc in the centre that fills up the original shaft hole
@@ -489,12 +490,80 @@ module arm_2_lasercut()
     }
 }
 
+base_x = 100;
+base_y = 60;
+layer_thickness_nominal = 3;
+base_layers = 3;
+base_guide_layers = 2;
+base_guide_edge = (base_y-n17_xy)/2;
+base_guide_z = base_guide_layers*layer_thickness_nominal;
+base_z = base_layers*layer_thickness_nominal;
+stepper_separation_x = 11;
+stepper_separation_y = (base_y-608_od)/2;
+
+
+// This part sits under the steppers.
+module base_lasercut()
+{
+    projection() difference()
+    {
+        translate([0,0,base_z]) cube([base_x, base_y, base_z], center=true);
+        cylinder(r=608_od/2-laser_kerf, h = 100);
+        translate([-(base_x/2-10),-(base_y/2-base_guide_edge/2),0]) cylinder(r=pin_r, h = 100);
+        translate([(base_x/2-10),-(base_y/2-base_guide_edge/2),0]) cylinder(r=pin_r, h = 100);
+        translate([-(base_x/2-10),(base_y/2-base_guide_edge/2),0]) cylinder(r=pin_r, h = 100);
+        translate([(base_x/2-10),(base_y/2-base_guide_edge/2),0]) cylinder(r=pin_r, h = 100);
+    }
+
+}
+
+// These are glued on the base to stop the steppers twisting
+// or getting too close.
+module base_guide_lasercut()
+{
+    projection() difference ()
+    {
+        union()
+        {
+            cube([base_x, base_guide_edge, base_guide_z], center=true);
+            translate([-stepper_separation_x/2,+base_guide_edge/2,-base_guide_z/2]) cube([stepper_separation_x, stepper_separation_y-base_guide_edge, base_guide_z]);
+        }
+        translate([-(base_x/2-10),0,-50]) cylinder(r=pin_r, h = 100);
+        translate([(base_x/2-10),0,-50]) cylinder(r=pin_r, h = 100);
+    }
+}
+
+module base_lasercut_assembled()
+{
+    translate([0,0,-0]) base_lasercut(); // x3
+    translate([0,-n17_xy/2-base_guide_edge/2,base_guide_z/2]) base_guide_lasercut(); // x3
+    translate([0,n17_xy/2+base_guide_edge/2,base_guide_z/2]) rotate([0,0,180]) base_guide_lasercut(); // x3
+}
+
+ring_wt = 10;
+
+
+module big_ring()
+{
+    difference()
+    {
+        cylinder(r=ring_wt+arm1_x*2, h = 50, $fn=120);
+        cylinder(r=arm1_x*2, h = 50, $fn=120);
+    }
+}
+
 // Lasercut design
 // shaft_1_drive_pulley_lasercut(true); // x2
 // shaft_1_drive_pulley_lasercut(false); // x5
 // top_holder_lasercut(); // x2
 // arm_1_pulley_lasercut(); // x2
-arm_1_lasercut(); // x2
+// arm_1_lasercut(); // x2
+// arm_2_lasercut(); // x1
+// base_lasercut(); // x3
+// base_guide_lasercut(); // x4
+// base_lasercut_assembled(); // x3
+// big_ring();
+// arm_1_lasercut(); // x2
 // arm_2_lasercut(); // x1
 
 // shaft_1_drive_pulley();
