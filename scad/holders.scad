@@ -99,11 +99,11 @@ module n17_holes(slot = 0)
 }
 
 
-module bearing(fill)
+module bearing(fill, cut_kerf=0)
 {
     difference()
     {
-        cylinder(h = 608_z, r = 608_od/2);
+        cylinder(h = 608_z, r = 608_od/2-cut_kerf);
         if (fill != 0) cylinder(h = 608_z, r = 608_id/2);
     }
 }
@@ -155,7 +155,7 @@ module shaft_2_driven_pulley()
     %cylinder(r=shaft_1_drive_pulley_dia/2, h = shaft_2_driven_pulley_z);
 }
 
-module top_holder()
+module top_holder(bearing_cut_kerf=0)
 {
     difference()
     {
@@ -166,7 +166,7 @@ module top_holder()
         }
         translate([stepper_1_offset,0,0]) n17_holes(stepper_slot);
         translate([-stepper_2_offset,0,0]) n17_holes(stepper_slot);
-        translate([0,0,bearing_retain_lip]) bearing(0);
+        translate([0,0,bearing_retain_lip]) bearing(0, bearing_cut_kerf);
         cylinder(r=608_od/2-wt, h = 100);
         #cylinder(r=608_id/2, h = 100);
     }
@@ -405,13 +405,13 @@ module assembled()
 }
 
 
-laser_kerf = 0.2;
+laser_kerf = 0.15;
 alignment_pin_offset = (2/3)*shaft_1_drive_pulley_dia;
 
 // We'll need two of these.
 module top_holder_lasercut()
 {
-    projection(cut=true) translate([0,0,-1]) top_holder();
+    projection(cut=true) translate([0,0,-1]) top_holder(laser_kerf);
 }
 
 // We'll need two of these with the pin slot and two without.
@@ -557,9 +557,9 @@ module big_ring()
 // shaft_1_drive_pulley_lasercut(false); // x5
 top_holder_lasercut(); // x2
 
-.. TODO incorporate laser kerf into top holder bearing hole
+// .. TODO incorporate laser kerf into top holder bearing hole
 // arm_1_pulley_lasercut(); // x2
-// arm_1_lasercut(); // x2
+// arm_1_lasercut(); // x3
 // arm_2_lasercut(); // x1
 // base_lasercut(); // x3
 // base_guide_lasercut(); // x4
