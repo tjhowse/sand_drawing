@@ -185,12 +185,12 @@ def generator():
                     yield g(p)
 
     """
-    # visualise(generator_string,150)
+    visualise(generator_string,150)
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "grid.pat {}".format(generator_string), False)
-# publish_grid()
-# exit(0)
+    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "grid.pat {}".format(generator_string), False)
+publish_grid()
+exit(0)
 
 def publish_wave():
     generator_string = """
@@ -301,9 +301,27 @@ def generator():
     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
     # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contraswirls.pat {}".format(generator_string), False)
-publish_contracting_swirls()
-exit(0)
 
+# publish_contracting_swirls()
+# exit(0)
+
+# def publish_chatgpt1():
+#     generator_string = """
+# def generator():
+#     angle = 0
+#     center_x = 0
+#     center_y = 0
+#     radius = 165
+#     while True:
+#         angle = (angle + 1) % 360
+#         x = center_x + radius * math.cos(angle)
+#         y = center_y + radius * math.sin(angle)
+#         yield g(vector2(x, y))
+#     """
+#     visualise(generator_string,100)
+
+# publish_chatgpt1()
+# exit(0)
 
 def publish_relative_motion_test():
     generator_string = """
