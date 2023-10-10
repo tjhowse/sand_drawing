@@ -491,7 +491,7 @@ module arm_2_lasercut()
 
 // Lasercut design
 // shaft_1_drive_pulley_lasercut(true); // x2
-// shaft_1_drive_pulley_lasercut(false); // x4
+// shaft_1_drive_pulley_lasercut(false); // x5
 // top_holder_lasercut(); // x2
 // arm_1_pulley_lasercut(); // x2
 arm_1_lasercut(); // x2
