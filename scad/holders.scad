@@ -552,56 +552,82 @@ module big_ring()
     }
 }
 
-// Lasercut design
-// shaft_1_drive_pulley_lasercut(true); // x2
-// shaft_1_drive_pulley_lasercut(false); // x5
-top_holder_lasercut(); // x2
+batch_export = false;
+part_revision_number = 1;
+// These are load-bearing comments. The make script awks this file for
+// lines between these markers to determine what it needs to render to a file.
+// PARTSMARKERSTART
+export_shaft_1_drive_pulley_slot = false; // 3
+export_shaft_1_drive_pulley_noslot = false; // 3
+export_top_holder_lasercut = false; // 2
+export_arm_1_pulley_lasercut = false; // 2
+export_arm_1_lasercut = false; // 3
+export_arm_2_lasercut = false; // 1
+export_base_lasercut = false; // 3
+export_base_guide_lasercut = false; // 2
+// PARTSMARKEREND
 
-// .. TODO incorporate laser kerf into top holder bearing hole
-// arm_1_pulley_lasercut(); // x2
-// arm_1_lasercut(); // x3
-// arm_2_lasercut(); // x1
-// base_lasercut(); // x3
-// base_guide_lasercut(); // x4
-// base_lasercut_assembled(); // x3
-// big_ring();
-// arm_1_lasercut(); // x2
-// arm_2_lasercut(); // x1
+if (batch_export) {
+    if (export_shaft_1_drive_pulley_slot) shaft_1_drive_pulley_lasercut(true);
+    if (export_shaft_1_drive_pulley_noslot) shaft_1_drive_pulley_lasercut(false);
+    if (export_top_holder_lasercut) top_holder_lasercut();
+    if (export_arm_1_pulley_lasercut) arm_1_pulley_lasercut();
+    if (export_arm_1_lasercut) arm_1_lasercut();
+    if (export_arm_2_lasercut) arm_2_lasercut();
+    if (export_base_lasercut) base_lasercut();
+    if (export_base_guide_lasercut) base_guide_lasercut();
 
-// shaft_1_drive_pulley();
+} else {
 
-// top_holder();
-// echo(holder_z);
-// ball_skid();
+    // Lasercut design
+    // shaft_1_drive_pulley_lasercut(true); // x2
+    // shaft_1_drive_pulley_lasercut(false); // x5
+    top_holder_lasercut(); // x2
+    // arm_1_pulley_lasercut(); // x2
+    // arm_1_lasercut(); // x3
+    // arm_2_lasercut(); // x1
+    // base_lasercut(); // x3
+    // base_guide_lasercut(); // x4
+    // base_lasercut_assembled(); // x3
+    // big_ring();
+    // arm_1_lasercut(); // x2
+    // arm_2_lasercut(); // x1
 
-// arm2optoarm();
-// translate([0,-60,0]) assembled();
-// rotate([90,0,0]) optoswitch_holder();
+    // shaft_1_drive_pulley();
 
-// optoflag();
-// translate([0,30,0]) arm2();
-// arm1();
-// arm2();
+    // top_holder();
+    // echo(holder_z);
+    // ball_skid();
 
-// %bottom_hardware();
-// bottom_bearing_holder();
+    // arm2optoarm();
+    // translate([0,-60,0]) assembled();
+    // rotate([90,0,0]) optoswitch_holder();
 
-// bottom_holder();
+    // optoflag();
+    // translate([0,30,0]) arm2();
+    // arm1();
+    // arm2();
 
-// echo (holder_z);
-// top_holder();
-// shaft_2_drive_pulley();
-// translate([0,0,-3]) %cube([100,30,4], center=true);
-// translate([0,0,-9]) %cube([100,30,4], center=true);
-// shaft_1_drive_pulley();
-// translate([0,30,0]) arm1();
-// translate([-arm_slot_width_total,-5,0]) arm1_split_base();
-// #arm1();
+    // %bottom_hardware();
+    // bottom_bearing_holder();
 
-// translate([0,0,arm1_z]) rotate([180,0,0]) arm1_split_base();
-// rotate([0,0,180]) arm1_split_end();
-// translate([0,-20,0]) arm1_split_base();
-// rotate([0,0,180]) arm1_split_end();
-// shaft_2_driven_pulley();
-// slot();
+    // bottom_holder();
+
+    // echo (holder_z);
+    // top_holder();
+    // shaft_2_drive_pulley();
+    // translate([0,0,-3]) %cube([100,30,4], center=true);
+    // translate([0,0,-9]) %cube([100,30,4], center=true);
+    // shaft_1_drive_pulley();
+    // translate([0,30,0]) arm1();
+    // translate([-arm_slot_width_total,-5,0]) arm1_split_base();
+    // #arm1();
+
+    // translate([0,0,arm1_z]) rotate([180,0,0]) arm1_split_base();
+    // rotate([0,0,180]) arm1_split_end();
+    // translate([0,-20,0]) arm1_split_base();
+    // rotate([0,0,180]) arm1_split_end();
+    // shaft_2_driven_pulley();
+    // slot();
+}
 
