@@ -540,8 +540,35 @@ module base_lasercut_assembled()
     translate([0,n17_xy/2+base_guide_edge/2,base_guide_z/2]) rotate([0,0,180]) base_guide_lasercut(); // x3
 }
 
+module belt_splitter()
+{
+    // This is a little jig for splitting 6mm wide timing belts into 2x3mm belts.
+    blade_x = 0.4;
+    blade_y = 9.14;
+    belt_x = 6;
+    extra_x = 10;
+    extra_y_before_blade = 8;
+    extra_y_after_blade = 5;
+    total_x = belt_x+extra_x*2;
+    difference()
+    {
+        cube([total_x, blade_y+extra_y_before_blade+extra_y_after_blade, 3*layer_thickness_nominal]);
 
-
+        union()
+        {
+            translate([-belt_x/2+(total_x/2),0,layer_thickness_nominal]) cube([belt_x, extra_y_before_blade, layer_thickness_nominal]);
+            translate([-(belt_x+blade_x)/2+(total_x/2),extra_y_before_blade,layer_thickness_nominal]) cube([belt_x+blade_x, blade_y+extra_y_after_blade, layer_thickness_nominal]);
+            translate([total_x/2,extra_y_before_blade,-50]) cube([blade_x, blade_y, 100]);
+        }
+    }
+}
+module belt_splitter_lasercut(layer)
+{
+    projection(cut=true) translate([0,0,-layer*layer_thickness_nominal]) belt_splitter();
+}
+// !belt_splitter();
+// !belt_splitter_lasercut(0); // 2
+// !belt_splitter_lasercut(1); // 1
 ring_wt = 10;
 
 
@@ -567,6 +594,8 @@ export_arm_1_lasercut = false; // 3
 export_arm_2_lasercut = false; // 1
 export_base_lasercut = false; // 3
 export_base_guide_lasercut = false; // 2
+export_belt_splitter_outer = false; // 2
+export_belt_splitter_inner = false; // 1
 // PARTSMARKEREND
 
 if (batch_export) {
@@ -578,6 +607,8 @@ if (batch_export) {
     if (export_arm_2_lasercut) arm_2_lasercut();
     if (export_base_lasercut) base_lasercut();
     if (export_base_guide_lasercut) base_guide_lasercut();
+    if (export_belt_splitter_outer) belt_splitter_lasercut(0);
+    if (export_belt_splitter_inner) belt_splitter_lasercut(1);
 
 } else {
 
