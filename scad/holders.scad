@@ -540,6 +540,8 @@ module base_lasercut_assembled()
     translate([0,n17_xy/2+base_guide_edge/2,base_guide_z/2]) rotate([0,0,180]) base_guide_lasercut(); // x3
 }
 
+
+
 ring_wt = 10;
 
 
