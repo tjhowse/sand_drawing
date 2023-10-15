@@ -1,5 +1,7 @@
 # Huh?
 
+![a photo of the sand drawing robot](./images/sand_drawing.jpg)
+
 So you've been reading about all the benefits of this "mindfulness" thing and you want to give it a try.
 You do some research and learn it requires "meditation", "introspection" and other kinds of tedious woo.
 Who has time for that? It's {current_year} for christ's sake! I don't want a tiny tray of rocks and sand
