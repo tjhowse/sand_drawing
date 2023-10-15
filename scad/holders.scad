@@ -53,6 +53,12 @@ washer_d = 18.8;
 // Slightly undersized for two 27mm pulleys and a 278mm belt, but the tensioner
 // will let us expand it to perfection.
 // https://www.omnicalculator.com/physics/belt-length
+// Belt length = π/2 × (DL + DS) + 2L + (DL - DS)^2/(4L)
+
+// DL is the diameter of the larger pulley (here 20 inches);
+// DS is the diameter of the smaller pulley (here 6 inches); and
+// L is the distance between the center of the pulleys.
+
 arm1_axis_offset = 95;
 arm1_z = 608_z*2+bearing_retain_lip;
 arm1_x = 2*wt+608_od+arm1_axis_offset+608_id;
@@ -448,7 +454,7 @@ module arm_1_pulley_lasercut()
     }
 }
 
-module arm_1_lasercut()
+module arm_1_lasercut_whole()
 {
     projection()
     {
@@ -457,17 +463,47 @@ module arm_1_lasercut()
             union()
             {
                 // The centre end of the arm, glued to the drive pulley
-                cylinder(r=shaft_1_drive_pulley_dia/2, h = 10);
+                cylinder(r=shaft_1_drive_pulley_dia/2+wt, h = 10);
                 // The length of the arm
                 translate([arm1_axis_offset/2,0,5]) cube([arm1_axis_offset, 10, 10], center=true);
                 // The bearing holder at the far end of arm1
-                translate([arm1_axis_offset,0,0]) cylinder(r=shaft_1_drive_pulley_dia/2, h = 10);
+                translate([arm1_axis_offset,0,0]) cylinder(r=shaft_1_drive_pulley_dia/2+wt, h = 10);
 
             }
             cylinder(r=608_od/2-laser_kerf, h = 10);
             translate([arm1_axis_offset,0,0]) cylinder(r=608_od/2-laser_kerf, h = 10);
         }
 
+    }
+}
+
+arm_1_adjustment_range = 2;
+arm_1_adjustment_slot_length = arm_1_adjustment_range*2;
+
+module arm_1_adjustment_cutouts()
+{
+    translate([0,-5,0]) cube([arm_1_adjustment_range, 10, 100]);
+    hull()
+    {
+        translate([arm_1_adjustment_range+wt,0,0]) cylinder(r=1.5, h=100);
+        translate([arm_1_adjustment_range*2+wt,0,0]) cylinder(r=1.5, h=100);
+    }
+}
+!arm_1_adjustment_cutouts();
+module arm_1_lasercut_adjustable(end)
+{
+    projection() difference()
+    {
+        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole();
+        translate([arm1_axis_offset/2,0,-50])
+        {
+            if (end == 1)
+            {
+                arm_1_adjustment_cutouts();
+            } else {
+                translate([arm_1_adjustment_range+arm_1_adjustment_slot_length*2,0,0]) rotate([0,0,180]) arm_1_adjustment_cutouts();
+            }
+        }
     }
 }
 
@@ -540,6 +576,25 @@ module base_lasercut_assembled()
     translate([0,n17_xy/2+base_guide_edge/2,base_guide_z/2]) rotate([0,0,180]) base_guide_lasercut(); // x3
 }
 
+module lasercut_assembled()
+{
+    washer_z = 1;
+    translate([0,0,layer_thickness_nominal]) rotate([180,0,0]) linear_extrude(layer_thickness_nominal) top_holder_lasercut();
+    translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) shaft_1_drive_pulley_lasercut(true); // x2
+    translate([0,0,layer_thickness_nominal*2]) linear_extrude(layer_thickness_nominal) shaft_1_drive_pulley_lasercut(false); // x2
+    translate([0,0,washer_z+layer_thickness_nominal*3]) linear_extrude(layer_thickness_nominal) arm_1_pulley_lasercut(); // x2
+    translate([0,0,washer_z+layer_thickness_nominal*4]) linear_extrude(layer_thickness_nominal) arm_1_pulley_lasercut(); // x2
+    translate([0,0,washer_z+layer_thickness_nominal*5]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1); // x2
+    translate([0,0,washer_z+layer_thickness_nominal*6]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(2); // x2
+    translate([0,0,washer_z+layer_thickness_nominal*7]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1); // x2
+    translate([0,0,washer_z+layer_thickness_nominal*8]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(2); // x2
+    translate([0,0,washer_z*2+layer_thickness_nominal*9]) linear_extrude(layer_thickness_nominal) shaft_1_drive_pulley_lasercut(true); // x2
+    translate([0,0,washer_z*2+layer_thickness_nominal*10]) linear_extrude(layer_thickness_nominal) shaft_1_drive_pulley_lasercut(false); // x2
+    translate([arm1_axis_offset,0,washer_z*2+layer_thickness_nominal*9]) linear_extrude(layer_thickness_nominal) shaft_1_drive_pulley_lasercut(true); // x2
+    translate([arm1_axis_offset,0,washer_z*2+layer_thickness_nominal*10]) linear_extrude(layer_thickness_nominal) shaft_1_drive_pulley_lasercut(false); // x2
+    translate([arm1_axis_offset,0,washer_z*2+layer_thickness_nominal*11]) linear_extrude(layer_thickness_nominal) rotate([0,0,160]) arm_2_lasercut();
+}
+
 module belt_splitter()
 {
     // This is a little jig for splitting 6mm wide timing belts into 2x3mm belts.
@@ -566,11 +621,7 @@ module belt_splitter_lasercut(layer)
 {
     projection(cut=true) translate([0,0,-layer*layer_thickness_nominal]) belt_splitter();
 }
-// !belt_splitter();
-// !belt_splitter_lasercut(0); // 2
-// !belt_splitter_lasercut(1); // 1
 ring_wt = 10;
-
 
 module big_ring()
 {
@@ -590,7 +641,7 @@ export_shaft_1_drive_pulley_slot = false; // 3
 export_shaft_1_drive_pulley_noslot = false; // 3
 export_top_holder_lasercut = false; // 2
 export_arm_1_pulley_lasercut = false; // 2
-export_arm_1_lasercut = false; // 3
+export_arm_1_lasercut_whole = false; // 3
 export_arm_2_lasercut = false; // 1
 export_base_lasercut = false; // 3
 export_base_guide_lasercut = false; // 2
@@ -603,7 +654,7 @@ if (batch_export) {
     if (export_shaft_1_drive_pulley_noslot) shaft_1_drive_pulley_lasercut(false);
     if (export_top_holder_lasercut) top_holder_lasercut();
     if (export_arm_1_pulley_lasercut) arm_1_pulley_lasercut();
-    if (export_arm_1_lasercut) arm_1_lasercut();
+    if (export_arm_1_lasercut_whole) arm_1_lasercut_whole();
     if (export_arm_2_lasercut) arm_2_lasercut();
     if (export_base_lasercut) base_lasercut();
     if (export_base_guide_lasercut) base_guide_lasercut();
@@ -611,19 +662,25 @@ if (batch_export) {
     if (export_belt_splitter_inner) belt_splitter_lasercut(1);
 
 } else {
+    lasercut_assembled();
+
+    // linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
+    // translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(2);
+    // translate([0,0,layer_thickness_nominal*2])linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
+    // translate([0,0,layer_thickness_nominal*3]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(2);
 
     // Lasercut design
     // shaft_1_drive_pulley_lasercut(true); // x2
     // shaft_1_drive_pulley_lasercut(false); // x5
-    top_holder_lasercut(); // x2
+    // top_holder_lasercut(); // x2
     // arm_1_pulley_lasercut(); // x2
-    // arm_1_lasercut(); // x3
+    // arm_1_lasercut_whole(); // x3
     // arm_2_lasercut(); // x1
     // base_lasercut(); // x3
     // base_guide_lasercut(); // x4
     // base_lasercut_assembled(); // x3
     // big_ring();
-    // arm_1_lasercut(); // x2
+    // arm_1_lasercut_whole(); // x2
     // arm_2_lasercut(); // x1
 
     // shaft_1_drive_pulley();
