@@ -529,8 +529,9 @@ module arm_1_lasercut_flexure1()
 module arm_1_lasercut_flexure2()
 {
     gap_x = 2;
-    gap_y = 3;
-    flexure_arm_y = 1.5;
+    gap_y = 4;
+    flexure_arm_y = 1;
+    flexure_arm_n = 5;
 
     projection() difference()
     {
@@ -540,10 +541,20 @@ module arm_1_lasercut_flexure2()
         translate([arm1_axis_offset/2,0,0]) union()
         {
             translate([-long_slot_x/2-gap_x/2,0,0]) cube([gap_x, short_slot_y, 100],center=true);
-            translate([0,-short_slot_y/2+gap_y/2,0]) cube([long_slot_x-flexure_arm_y, gap_y, 100],center=true);
-            translate([0,arm_1_lasercut_width/3-gap_y/2,0]) cube([long_slot_x-flexure_arm_y, gap_y, 100],center=true);
             translate([long_slot_x/2+gap_x/2,short_slot_y-gap_y,0]) cube([gap_x, short_slot_y, 100],center=true);
             translate([long_slot_x/2+gap_x/2,-short_slot_y+gap_y,0]) cube([gap_x, short_slot_y, 100],center=true);
+            difference()
+            {
+                union()
+                {
+                    translate([0,-short_slot_y/2+gap_y/2,0]) cube([long_slot_x-flexure_arm_y*2, gap_y, 100],center=true);
+                    translate([0,arm_1_lasercut_width/3-gap_y/2,0]) cube([long_slot_x-flexure_arm_y*2, gap_y, 100],center=true);
+                }
+                translate([-long_slot_x/2,0,0]) for (i = [1:flexure_arm_n-2])
+                {
+                    translate([i*long_slot_x/(flexure_arm_n-1),0,0]) cube([flexure_arm_y, 100, 100],center=true);
+                }
+            }
         }
     }
 }
