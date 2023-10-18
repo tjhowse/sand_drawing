@@ -413,6 +413,7 @@ module assembled()
 
 laser_kerf = 0.15;
 alignment_pin_offset = (2/3)*shaft_1_drive_pulley_dia;
+cross_pin_d = 1.3;
 
 // We'll need two of these.
 module top_holder_lasercut()
@@ -435,7 +436,7 @@ module shaft_1_drive_pulley_lasercut(pin_slot=false)
         // Kerf/2 because smaller holes need less of a kerf (?!?)
         cylinder(r=608_id/2-laser_kerf/2, h=100);
         // Add a slot in the middle for a pin that fixes the pulley to the shaft
-        if (pin_slot) cube([pin_r, pin_x, 100], center=true);
+        if (pin_slot) cube([cross_pin_d, pin_x, 100], center=true);
         // Add a pair of vertical alignment holes that can be used to clock
         // the pulleys together during the glue-up.
         translate([-alignment_pin_offset/2,0,-50]) cylinder(r=pin_r, h=100);
@@ -765,12 +766,12 @@ if (batch_export) {
     if (export_enc_little_ring_segment) projection() enc_little_ring_third();
 
 } else {
-    enc_big_ring();
     // lasercut_assembled();
 
     // linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // translate([arm1_axis_offset,0,0]) rotate([0,0,180]) translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
-
+    shaft_1_drive_pulley_lasercut(true);
+    // arm_1_pulley_lasercut();
     // Lasercut design
     // shaft_1_drive_pulley_lasercut(true); // x2
     // shaft_1_drive_pulley_lasercut(false); // x5
