@@ -455,7 +455,7 @@ module arm_1_pulley_lasercut()
     }
 }
 
-module arm_1_lasercut_whole()
+module arm_1_lasercut_whole(arm_width=10)
 {
     projection()
     {
@@ -466,7 +466,7 @@ module arm_1_lasercut_whole()
                 // The centre end of the arm, glued to the drive pulley
                 cylinder(r=shaft_1_drive_pulley_dia/2+wt, h = 10);
                 // The length of the arm
-                translate([arm1_axis_offset/2,0,5]) cube([arm1_axis_offset, 10, 10], center=true);
+                translate([arm1_axis_offset/2,0,5]) cube([arm1_axis_offset, arm_width, 10], center=true);
                 // The bearing holder at the far end of arm1
                 translate([arm1_axis_offset,0,0]) cylinder(r=shaft_1_drive_pulley_dia/2+wt, h = 10);
 
@@ -481,10 +481,11 @@ module arm_1_lasercut_whole()
 arm_1_adjustment_range = 2;
 arm_1_adjustment_slot_length = arm_1_adjustment_range*3;
 arm_1_adjustment_slot_r = 1.5;
+arm_1_lasercut_width = 608_od;
 
 module arm_1_adjustment_cutouts()
 {
-    translate([arm_1_adjustment_slot_length/2+arm_1_adjustment_slot_r+arm_1_adjustment_range/2+wt,0,50]) cube([arm_1_adjustment_range, 10, 100],center=true);
+    translate([arm_1_adjustment_slot_length/2+arm_1_adjustment_slot_r+arm_1_adjustment_range/2+wt,0,50]) cube([arm_1_adjustment_range, arm_1_lasercut_width, 100],center=true);
     hull()
     {
         translate([-arm_1_adjustment_slot_length/2,0,0]) cylinder(r=arm_1_adjustment_slot_r, h=100);
@@ -492,12 +493,37 @@ module arm_1_adjustment_cutouts()
     }
 }
 // !arm_1_adjustment_cutouts();
-module arm_1_lasercut_adjustable(end)
+module arm_1_lasercut_adjustable()
 {
     projection() difference()
     {
-        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole();
+        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole(arm_1_lasercut_width);
         translate([arm1_axis_offset/2,0,-50]) arm_1_adjustment_cutouts();
+    }
+}
+!arm_1_lasercut_adjustable();
+
+// This is a bad idea, I think.
+flexure_slot_x = 0.5;
+// The flexure slot stops at least this far short of an edge;
+flexure_min_y = 4;
+flexure_slot_spacing = 2;
+
+module arm_1_lasercut_flexure()
+{
+    arm_width = (shaft_1_drive_pulley_dia/2+wt)*2;
+    projection() difference()
+    {
+        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole(arm_width);
+        for (i = [shaft_1_drive_pulley_dia/2+wt:flexure_slot_spacing*2:arm1_axis_offset-shaft_1_drive_pulley_dia/2+wt-flexure_slot_spacing])
+        {
+            translate([i,0,0]) cube([flexure_slot_x, arm_width-2*flexure_min_y, 100],center=true);
+        }
+        for (i = [shaft_1_drive_pulley_dia/2+wt+flexure_slot_spacing:flexure_slot_spacing*2:arm1_axis_offset-shaft_1_drive_pulley_dia/2+wt-flexure_slot_spacing])
+        {
+            translate([i,flexure_min_y+(arm_width-2*flexure_min_y)/2,0]) cube([flexure_slot_x, arm_width-2*flexure_min_y, 100],center=true);
+            translate([i,-flexure_min_y-(arm_width-2*flexure_min_y)/2,0]) cube([flexure_slot_x, arm_width-2*flexure_min_y, 100],center=true);
+        }
     }
 }
 
@@ -619,7 +645,7 @@ module belt_splitter_lasercut(layer)
 
 enc_lt = layer_thickness_nominal;
 // Increase this to 128 for the final render.
-enclosure_facets = 32;
+enclosure_facets = 256;
 enc_wt = 8;
 // These are all layer counts
 enc_base_l = 2;
