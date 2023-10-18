@@ -638,7 +638,11 @@ echo("Cut ", enc_mechanism_z_layers*3, " pieces of enc_little_ring_third");
 // This is the number of vertical alignment pins used to join segements
 // of the enclosure rings together for the glue-up.
 enc_ring_pin_n = 6;
-enc_arms_z = 30;
+enc_arms_z_desired = 30;
+enc_arms_z_layers = ceil(enc_arms_z_desired/layer_thickness_nominal);
+enc_arms_z = enc_arms_z_layers*layer_thickness_nominal;
+echo("Cut ", enc_arms_z_layers*3, " pieces of enc_big_ring_third");
+
 
 enc_bed_r = arm1_axis_offset*2;
 
@@ -691,6 +695,11 @@ module enc_platform()
     }
 }
 
+module enc_platform_slice(n)
+{
+    projection(cut=true) translate([0,0,-(n+0.5)*enc_lt]) enc_platform();
+}
+
 // This is the bit that encloses the bottom half of the mechanism, I.E. stepper motors and electronics.
 module enc_little_ring()
 {
@@ -714,7 +723,19 @@ module enc_little_ring_third()
             rotate([0,0,120-90]) cube([1000,1000,1000]);
         }
         enc_little_ring();
-
+    }
+}
+// This is a 120 degree arc of enc_big_ring()
+module enc_big_ring_third()
+{
+    intersection()
+    {
+        rotate([0,0,15]) union()
+        {
+            cube([1000,1000,1000]);
+            rotate([0,0,120-90]) cube([1000,1000,1000]);
+        }
+        enc_big_ring();
     }
 }
 
@@ -725,12 +746,11 @@ module enclosure_assembled()
     translate([0,0,2*enc_lt]) enc_little_ring();
     translate([0,0,2*enc_lt+enc_mechanism_z]) enc_platform();
     translate([0,0,4*enc_lt+enc_mechanism_z]) enc_big_ring();
-
 }
 
-!enclosure_assembled();
 
-batch_export = true;
+
+batch_export = false;
 part_revision_number = 1;
 // These are load-bearing comments. The make script awks this file for
 // lines between these markers to determine what it needs to render to a file.
@@ -747,7 +767,10 @@ export_belt_splitter_outer = false; // 2
 export_belt_splitter_inner = false; // 1
 export_enc_base_1 = false; // 1
 export_enc_base_2 = false; // 1
-export_enc_little_ring_segment = true; // 60
+export_enc_little_ring_third = false; // 60
+export_enc_big_ring_third = false; // 30
+export_enc_platform_1 = false; // 1
+export_enc_platform_2 = false; // 1
 // PARTSMARKEREND
 
 if (batch_export) {
@@ -763,14 +786,20 @@ if (batch_export) {
     if (export_belt_splitter_inner) belt_splitter_lasercut(1);
     if (export_enc_base_1) enc_base_slice(0);
     if (export_enc_base_2) enc_base_slice(1);
-    if (export_enc_little_ring_segment) projection() enc_little_ring_third();
+    if (export_enc_little_ring_third) projection() enc_little_ring_third();
+    if (export_enc_big_ring_third) projection() enc_big_ring_third();
+    if (export_enc_platform_1) projection() enc_platform_slice(0);
+    if (export_enc_platform_2) projection() enc_platform_slice(1);
 
 } else {
     // lasercut_assembled();
 
     // linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // translate([arm1_axis_offset,0,0]) rotate([0,0,180]) translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
-    shaft_1_drive_pulley_lasercut(true);
+    // shaft_1_drive_pulley_lasercut(true);
+    enclosure_assembled();
+    // enc_base_slice(0);
+    // enc_big_ring_third();
     // arm_1_pulley_lasercut();
     // Lasercut design
     // shaft_1_drive_pulley_lasercut(true); // x2
