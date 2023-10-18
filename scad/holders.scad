@@ -527,7 +527,8 @@ base_guide_layers = 2;
 base_guide_edge = (base_y-n17_xy)/2;
 base_guide_z = base_guide_layers*layer_thickness_nominal;
 base_z = base_layers*layer_thickness_nominal;
-stepper_separation_x = 11;
+// This will depend on the belts connected to the stepper shafts.
+stepper_separation_x = 13.5;
 stepper_separation_y = (base_y-608_od)/2;
 
 
@@ -564,9 +565,9 @@ module base_guide_lasercut()
 
 module base_lasercut_assembled()
 {
-    translate([0,0,-0]) base_lasercut(); // x3
-    translate([0,-n17_xy/2-base_guide_edge/2,base_guide_z/2]) base_guide_lasercut(); // x3
-    translate([0,n17_xy/2+base_guide_edge/2,base_guide_z/2]) rotate([0,0,180]) base_guide_lasercut(); // x3
+    linear_extrude(layer_thickness_nominal) base_lasercut(); // x2
+    translate([0,-n17_xy/2-base_guide_edge/2,base_guide_z/2]) linear_extrude(layer_thickness_nominal) base_guide_lasercut(); // x2
+    translate([0,n17_xy/2+base_guide_edge/2,base_guide_z/2]) rotate([0,0,180]) linear_extrude(layer_thickness_nominal) base_guide_lasercut(); // x2
 }
 
 module lasercut_assembled()
@@ -614,18 +615,121 @@ module belt_splitter_lasercut(layer)
 {
     projection(cut=true) translate([0,0,-layer*layer_thickness_nominal]) belt_splitter();
 }
-ring_wt = 10;
 
-module big_ring()
+enc_lt = layer_thickness_nominal;
+// Increase this to 128 for the final render.
+enclosure_facets = 32;
+enc_wt = 8;
+// These are all layer counts
+enc_base_l = 2;
+// Extra space around the stepper motor mechanism for cables and whatnot.
+enc_base_extra_r = 10;
+enc_base_wt = enc_wt;
+enc_base_ir = sqrt(pow(base_x, 2)+pow(base_y,2))/2+enc_base_extra_r;
+// This is the distance from the top of the enc_base to the bottom of the
+// platform under the bed. It's the height of the vertical walls enclosing
+// the stepper motors.
+enc_mechanism_z_desired = 60;
+enc_mechanism_z_layers = ceil(enc_mechanism_z_desired/layer_thickness_nominal);
+enc_mechanism_z = enc_mechanism_z_layers*layer_thickness_nominal;
+echo("Cut ", enc_mechanism_z_layers*3, " pieces of enc_little_ring_third");
+
+// This is the number of vertical alignment pins used to join segements
+// of the enclosure rings together for the glue-up.
+enc_ring_pin_n = 6;
+enc_arms_z = 30;
+
+enc_bed_r = arm1_axis_offset*2;
+
+module alignment_pins(rad)
 {
-    difference()
+
+    for (i = [0:360/enc_ring_pin_n:360-360/enc_ring_pin_n])
     {
-        cylinder(r=ring_wt+arm1_x*2, h = 50, $fn=120);
-        cylinder(r=arm1_x*2, h = 50, $fn=120);
+        rotate([0,0,i]) translate([rad,0,0]) cylinder(r=pin_r, h=1000);
     }
 }
 
-batch_export = false;
+// This is the base of the enclosure that sits on the table.
+module enc_base()
+{
+    difference()
+    {
+        cylinder(r=enc_base_ir + enc_wt, h=enc_lt*2, $fn=enclosure_facets);
+        translate([0,0,enc_lt])cylinder(r=608_od/2,h=608_z);
+        // Pins for aligning the little ring to the top of the base slices.
+        translate([0,0,enc_lt]) alignment_pins(enc_base_ir + enc_base_wt/2);
+    }
+}
+
+module enc_base_slice(n)
+{
+    projection(cut=true) translate([0,0,-(n+0.5)*enc_lt]) enc_base();
+}
+
+module enc_ring(od, id, height)
+{
+    difference()
+    {
+        cylinder(r=od/2,h=height, $fn=enclosure_facets);
+        cylinder(r=id/2,h=1000, $fn=enclosure_facets);
+        alignment_pins((id+(od-id)/2)/2);
+    }
+}
+
+// This part sits atop the base and forms the floor under the arms.
+module enc_platform()
+{
+    difference()
+    {
+        cylinder(r=enc_bed_r + enc_base_wt,h=enc_lt*2, $fn=enclosure_facets);
+        cylinder(r=enc_base_ir,h=608_z);
+        // Pins for aligning the little ring to the top of the base slices.
+        translate([0,0,enc_lt]) alignment_pins(enc_base_ir + enc_base_wt/2);
+        translate([0,0,enc_lt]) alignment_pins(enc_bed_r + enc_base_wt/2);
+    }
+}
+
+// This is the bit that encloses the bottom half of the mechanism, I.E. stepper motors and electronics.
+module enc_little_ring()
+{
+    enc_ring((enc_base_ir + enc_base_wt)*2, enc_base_ir*2, enc_mechanism_z);
+}
+
+// This is the bit insides which the arms mode.
+module enc_big_ring()
+{
+    enc_ring((enc_bed_r + enc_base_wt)*2, enc_bed_r*2, enc_arms_z);
+}
+
+// This is a 120 degree arc of enc_little_ring()
+module enc_little_ring_third()
+{
+    intersection()
+    {
+        rotate([0,0,30]) union()
+        {
+            cube([1000,1000,1000]);
+            rotate([0,0,120-90]) cube([1000,1000,1000]);
+        }
+        enc_little_ring();
+
+    }
+}
+
+module enclosure_assembled()
+{
+    enc_base();
+    translate([0,0,2*enc_lt]) base_lasercut_assembled();
+    translate([0,0,2*enc_lt]) enc_little_ring();
+    translate([0,0,2*enc_lt+enc_mechanism_z]) enc_platform();
+    translate([0,0,4*enc_lt+enc_mechanism_z]) enc_big_ring();
+
+}
+
+!enclosure_assembled();
+
+batch_export = true;
 part_revision_number = 1;
 // These are load-bearing comments. The make script awks this file for
 // lines between these markers to determine what it needs to render to a file.
@@ -636,10 +740,13 @@ export_top_holder_lasercut = false; // 2
 export_arm_1_pulley_lasercut = false; // 2
 export_arm_1_lasercut_adjustable = false; // 4
 export_arm_2_lasercut = false; // 1
-export_base_lasercut = false; // 3
-export_base_guide_lasercut = false; // 2
+export_base_lasercut = false; // 2
+export_base_guide_lasercut = false; // 4
 export_belt_splitter_outer = false; // 2
 export_belt_splitter_inner = false; // 1
+export_enc_base_1 = false; // 1
+export_enc_base_2 = false; // 1
+export_enc_little_ring_segment = true; // 60
 // PARTSMARKEREND
 
 if (batch_export) {
@@ -653,9 +760,13 @@ if (batch_export) {
     if (export_base_guide_lasercut) base_guide_lasercut();
     if (export_belt_splitter_outer) belt_splitter_lasercut(0);
     if (export_belt_splitter_inner) belt_splitter_lasercut(1);
+    if (export_enc_base_1) enc_base_slice(0);
+    if (export_enc_base_2) enc_base_slice(1);
+    if (export_enc_little_ring_segment) projection() enc_little_ring_third();
 
 } else {
-    lasercut_assembled();
+    enc_big_ring();
+    // lasercut_assembled();
 
     // linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // translate([arm1_axis_offset,0,0]) rotate([0,0,180]) translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
