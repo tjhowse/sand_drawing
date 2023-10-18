@@ -501,31 +501,54 @@ module arm_1_lasercut_adjustable()
         translate([arm1_axis_offset/2,0,-50]) arm_1_adjustment_cutouts();
     }
 }
-!arm_1_lasercut_adjustable();
+// !arm_1_lasercut_adjustable();
 
-// This is a bad idea, I think.
 flexure_slot_x = 0.5;
 // The flexure slot stops at least this far short of an edge;
 flexure_min_y = 4;
 flexure_slot_spacing = 2;
 
-module arm_1_lasercut_flexure()
+// This is a bad idea, I think.
+module arm_1_lasercut_flexure1()
 {
-    arm_width = (shaft_1_drive_pulley_dia/2+wt)*2;
     projection() difference()
     {
-        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole(arm_width);
+        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole(arm_1_lasercut_width);
         for (i = [shaft_1_drive_pulley_dia/2+wt:flexure_slot_spacing*2:arm1_axis_offset-shaft_1_drive_pulley_dia/2+wt-flexure_slot_spacing])
         {
-            translate([i,0,0]) cube([flexure_slot_x, arm_width-2*flexure_min_y, 100],center=true);
+            translate([i,0,0]) cube([flexure_slot_x, arm_1_lasercut_width-2*flexure_min_y, 100],center=true);
         }
         for (i = [shaft_1_drive_pulley_dia/2+wt+flexure_slot_spacing:flexure_slot_spacing*2:arm1_axis_offset-shaft_1_drive_pulley_dia/2+wt-flexure_slot_spacing])
         {
-            translate([i,flexure_min_y+(arm_width-2*flexure_min_y)/2,0]) cube([flexure_slot_x, arm_width-2*flexure_min_y, 100],center=true);
-            translate([i,-flexure_min_y-(arm_width-2*flexure_min_y)/2,0]) cube([flexure_slot_x, arm_width-2*flexure_min_y, 100],center=true);
+            translate([i,flexure_min_y+(arm_1_lasercut_width-2*flexure_min_y)/2,0]) cube([flexure_slot_x, arm_1_lasercut_width-2*flexure_min_y, 100],center=true);
+            translate([i,-flexure_min_y-(arm_1_lasercut_width-2*flexure_min_y)/2,0]) cube([flexure_slot_x, arm_1_lasercut_width-2*flexure_min_y, 100],center=true);
         }
     }
 }
+
+module arm_1_lasercut_flexure2()
+{
+    gap_x = 2;
+    gap_y = 3;
+    flexure_arm_y = 1.5;
+
+    projection() difference()
+    {
+        linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole(arm_1_lasercut_width);
+        long_slot_x = arm1_axis_offset-(608_od)*2;
+        short_slot_y = 2*arm_1_lasercut_width/3;
+        translate([arm1_axis_offset/2,0,0]) union()
+        {
+            translate([-long_slot_x/2-gap_x/2,0,0]) cube([gap_x, short_slot_y, 100],center=true);
+            translate([0,-short_slot_y/2+gap_y/2,0]) cube([long_slot_x-flexure_arm_y, gap_y, 100],center=true);
+            translate([0,arm_1_lasercut_width/3-gap_y/2,0]) cube([long_slot_x-flexure_arm_y, gap_y, 100],center=true);
+            translate([long_slot_x/2+gap_x/2,short_slot_y-gap_y,0]) cube([gap_x, short_slot_y, 100],center=true);
+            translate([long_slot_x/2+gap_x/2,-short_slot_y+gap_y,0]) cube([gap_x, short_slot_y, 100],center=true);
+        }
+    }
+}
+
+!arm_1_lasercut_flexure2();
 
 module arm_2_lasercut()
 {
