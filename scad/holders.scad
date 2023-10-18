@@ -641,10 +641,10 @@ enc_arms_z = 30;
 
 enc_bed_r = arm1_axis_offset*2;
 
-module alignment_pins(rad)
+module alignment_pins(rad, count=enc_ring_pin_n)
 {
 
-    for (i = [0:360/enc_ring_pin_n:360-360/enc_ring_pin_n])
+    for (i = [0:360/count:360-360/count])
     {
         rotate([0,0,i]) translate([rad,0,0]) cylinder(r=pin_r, h=1000);
     }
@@ -667,13 +667,13 @@ module enc_base_slice(n)
     projection(cut=true) translate([0,0,-(n+0.5)*enc_lt]) enc_base();
 }
 
-module enc_ring(od, id, height)
+module enc_ring(od, id, height, pin_count=enc_ring_pin_n)
 {
     difference()
     {
         cylinder(r=od/2,h=height, $fn=enclosure_facets);
         cylinder(r=id/2,h=1000, $fn=enclosure_facets);
-        alignment_pins((id+(od-id)/2)/2);
+        alignment_pins((id+(od-id)/2)/2, pin_count);
     }
 }
 
@@ -686,7 +686,7 @@ module enc_platform()
         cylinder(r=enc_base_ir,h=608_z);
         // Pins for aligning the little ring to the top of the base slices.
         translate([0,0,enc_lt]) alignment_pins(enc_base_ir + enc_base_wt/2);
-        translate([0,0,enc_lt]) alignment_pins(enc_bed_r + enc_base_wt/2);
+        translate([0,0,enc_lt]) alignment_pins(enc_bed_r + enc_base_wt/2, enc_ring_pin_n*2 );
     }
 }
 
@@ -699,7 +699,7 @@ module enc_little_ring()
 // This is the bit insides which the arms mode.
 module enc_big_ring()
 {
-    enc_ring((enc_bed_r + enc_base_wt)*2, enc_bed_r*2, enc_arms_z);
+    enc_ring((enc_bed_r + enc_base_wt)*2, enc_bed_r*2, enc_arms_z, enc_ring_pin_n*2);
 }
 
 // This is a 120 degree arc of enc_little_ring()
