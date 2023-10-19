@@ -529,9 +529,9 @@ module arm_1_lasercut_flexure1()
 module arm_1_lasercut_flexure2()
 {
     gap_x = 2;
-    gap_y = 5;
+    gap_y = 6;
     flexure_arm_y = 1;
-    flexure_arm_n = 4;
+    flexure_arm_n = 6;
 
     projection() difference()
     {
