@@ -498,7 +498,8 @@ module arm_1_lasercut_adjustable()
     projection() difference()
     {
         linear_extrude(layer_thickness_nominal) arm_1_lasercut_whole(arm_1_lasercut_width);
-        translate([arm1_axis_offset/2,0,-50]) arm_1_adjustment_cutouts();
+        translate([arm1_axis_offset/2,arm_1_lasercut_width/4,-50]) arm_1_adjustment_cutouts();
+        translate([arm1_axis_offset/2,-arm_1_lasercut_width/4,-50]) arm_1_adjustment_cutouts();
     }
 }
 // !arm_1_lasercut_adjustable();
@@ -529,9 +530,9 @@ module arm_1_lasercut_flexure1()
 module arm_1_lasercut_flexure2()
 {
     gap_x = 2;
-    gap_y = 6;
-    flexure_arm_y = 1;
-    flexure_arm_n = 6;
+    gap_y = 7;
+    flexure_arm_y = 2;
+    flexure_arm_n = 3;
 
     projection() difference()
     {
@@ -559,7 +560,7 @@ module arm_1_lasercut_flexure2()
     }
 }
 
-!arm_1_lasercut_flexure2();
+// !arm_1_lasercut_flexure2();
 
 module arm_2_lasercut()
 {
@@ -708,10 +709,10 @@ enc_bed_r = arm1_axis_offset*2;
 
 module alignment_pins(rad, count=enc_ring_pin_n)
 {
-
+    alignment_pin_r = 1.4/2;
     for (i = [0:360/count:360-360/count])
     {
-        rotate([0,0,i]) translate([rad,0,0]) cylinder(r=pin_r, h=1000);
+        rotate([0,0,i]) translate([rad,0,0]) cylinder(r=alignment_pin_r, h=1000);
     }
 }
 
@@ -750,11 +751,11 @@ module enc_platform()
         cylinder(r=enc_bed_r + enc_base_wt,h=enc_lt*2, $fn=enclosure_facets);
         cylinder(r=enc_base_ir,h=608_z);
         // Pins for aligning the little ring to the top of the base slices.
-        translate([0,0,enc_lt]) alignment_pins(enc_base_ir + enc_base_wt/2);
+        alignment_pins(enc_base_ir + enc_base_wt/2);
         translate([0,0,enc_lt]) alignment_pins(enc_bed_r + enc_base_wt/2, enc_ring_pin_n*2 );
     }
 }
-
+// !enc_platform();
 module enc_platform_slice(n)
 {
     projection(cut=true) translate([0,0,-(n+0.5)*enc_lt]) enc_platform();
@@ -848,8 +849,8 @@ if (batch_export) {
     if (export_enc_base_2) enc_base_slice(1);
     if (export_enc_little_ring_third) projection() enc_little_ring_third();
     if (export_enc_big_ring_third) projection() enc_big_ring_third();
-    if (export_enc_platform_1) projection() enc_platform_slice(0);
-    if (export_enc_platform_2) projection() enc_platform_slice(1);
+    if (export_enc_platform_1) enc_platform_slice(0);
+    if (export_enc_platform_2) enc_platform_slice(1);
 
 } else {
     // lasercut_assembled();
@@ -857,7 +858,9 @@ if (batch_export) {
     // linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // translate([arm1_axis_offset,0,0]) rotate([0,0,180]) translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // shaft_1_drive_pulley_lasercut(true);
-    enclosure_assembled();
+    // enclosure_assembled();
+    // arm_1_lasercut_adjustable();
+    enc_platform_slice(0);
     // enc_base_slice(0);
     // enc_big_ring_third();
     // arm_1_pulley_lasercut();
