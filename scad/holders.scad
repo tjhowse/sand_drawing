@@ -859,8 +859,8 @@ if (batch_export) {
     // translate([arm1_axis_offset,0,0]) rotate([0,0,180]) translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // shaft_1_drive_pulley_lasercut(true);
     // enclosure_assembled();
-    // arm_1_lasercut_adjustable();
-    enc_platform_slice(0);
+    arm_1_lasercut_adjustable();
+    // enc_platform_slice(0);
     // enc_base_slice(0);
     // enc_big_ring_third();
     // arm_1_pulley_lasercut();
