@@ -799,7 +799,28 @@ module enc_big_ring_third()
         enc_big_ring();
     }
 }
+// This goes over the arms.
+module enc_bed()
+{
+    difference()
+    {
+        cylinder(r=(enc_bed_r + enc_base_wt), h=enc_lt, $fn=enclosure_facets);
+        
+        alignment_pins(enc_bed_r + enc_base_wt/2, 12);
+    }
+}
 
+// This is the felt that goes in the bed.
+module enc_bed_felt()
+{
+    difference()
+    {
+        cylinder(r=enc_bed_r, h=enc_lt, $fn=enclosure_facets);
+    }
+}
+
+
+// !enc_bed();
 module enclosure_assembled()
 {
     enc_base();
@@ -807,6 +828,8 @@ module enclosure_assembled()
     translate([0,0,2*enc_lt]) enc_little_ring();
     translate([0,0,2*enc_lt+enc_mechanism_z]) enc_platform();
     translate([0,0,4*enc_lt+enc_mechanism_z]) enc_big_ring();
+    translate([0,0,4*enc_lt+enc_mechanism_z+enc_arms_z]) enc_bed();
+    translate([0,0,4*enc_lt+enc_mechanism_z+enc_arms_z+enc_lt]) #enc_bed_felt();
 }
 
 
@@ -832,6 +855,8 @@ export_enc_little_ring_third = false; // 60
 export_enc_big_ring_third = false; // 30
 export_enc_platform_1 = false; // 1
 export_enc_platform_2 = false; // 1
+export_enc_bed = false; // 1
+export_enc_bed_felt = false; // 1
 // PARTSMARKEREND
 
 if (batch_export) {
@@ -851,6 +876,8 @@ if (batch_export) {
     if (export_enc_big_ring_third) projection() enc_big_ring_third();
     if (export_enc_platform_1) enc_platform_slice(0);
     if (export_enc_platform_2) enc_platform_slice(1);
+    if (export_enc_bed) enc_bed();
+    if (export_enc_bed) enc_bed_felt();
 
 } else {
     // lasercut_assembled();
@@ -858,8 +885,8 @@ if (batch_export) {
     // linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // translate([arm1_axis_offset,0,0]) rotate([0,0,180]) translate([0,0,layer_thickness_nominal]) linear_extrude(layer_thickness_nominal) arm_1_lasercut_adjustable(1);
     // shaft_1_drive_pulley_lasercut(true);
-    // enclosure_assembled();
-    arm_1_lasercut_adjustable();
+    enclosure_assembled();
+    // arm_1_lasercut_adjustable();
     // enc_platform_slice(0);
     // enc_base_slice(0);
     // enc_big_ring_third();
