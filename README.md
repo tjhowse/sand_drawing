@@ -131,5 +131,7 @@ Keep the target hardware in mind when writing generators. It's very resource-con
 ### PCB v2 notes
 
 Pin 35 is input-only, can't use that for A2D. Use 12 instead.
-Must pull SLP and RST high.
+Must pull SLP and RST on stepper drivers high. Maybe connect to GPIO?
 vreg too small, or wired wrong? Only outputs 2.7 Vout at 12 Vin
+Make sure opto inputs are on ADC-friendly pins.
+Reduce width of ground tie on ESP for easier soldering.
