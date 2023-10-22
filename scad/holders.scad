@@ -876,8 +876,8 @@ if (batch_export) {
     if (export_enc_big_ring_third) projection() enc_big_ring_third();
     if (export_enc_platform_1) enc_platform_slice(0);
     if (export_enc_platform_2) enc_platform_slice(1);
-    if (export_enc_bed) enc_bed();
-    if (export_enc_bed) enc_bed_felt();
+    if (export_enc_bed) projection(cut=true) enc_bed();
+    if (export_enc_bed_felt) projection(cut=true) enc_bed_felt();
 
 } else {
     // lasercut_assembled();
