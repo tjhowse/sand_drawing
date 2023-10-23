@@ -23,9 +23,17 @@ class stepper():
     prev_err = 0
 
     def __init__(self, pinconfig, debug=False, name='', home_index=0, home_angle=0):
+        self.hall_effect = pinconfig.hall_effect
         self.s = machine.Pin(pinconfig.step, machine.Pin.OUT)
         self.d = machine.Pin(pinconfig.dir, machine.Pin.OUT)
-        self.o = machine.Pin(pinconfig.opto, machine.Pin.IN)
+        if self.hall_effect:
+            self.o = machine.ADC(machine.Pin(pinconfig.opto))
+            self.o.atten(machine.ADC.ATTN_11DB)
+            # This stores the peak magnetic flux read by the hall effect sensor.
+            self.max_flux = 0
+            self.max_flux_index = 0
+        else:
+            self.o = machine.Pin(pinconfig.opto, machine.Pin.IN)
         self.cfg1 = machine.Pin(pinconfig.cfg1, machine.Pin.OUT)
         self.cfg2 = machine.Pin(pinconfig.cfg2, machine.Pin.OUT)
         self.cfg3 = machine.Pin(pinconfig.cfg3, machine.Pin.OUT)
@@ -86,6 +94,8 @@ class stepper():
         print("target index: {}".format(self.target_index))
         if self.pwm != None:
             print("Freq: {}".format(self.freq))
+        if self.hall_effect:
+            print("Hall effect: {}".format(self.o.read()))
         print("--------------------")
 
     def set_angle(self, angle, speed=DEFAULT_MOVE_SPEED, pwm_motion=False):
@@ -151,6 +161,15 @@ class stepper():
             self.index += delta_index
         self.index %= REAL_STEPS_PER_REV
         return delta_index
+    
+    def check_hall_effect(self):
+        # This checks whether the current magnetic flux is higher than the previously-recorded
+        # maximum. If so, store the new max and the index at which it occurred.
+        # Note that no magnetic flux gives an ADC reading of 4096/2.
+        flux = abs(self.o.read()-2048)
+        if flux > self.max_flux:
+            self.max_flux = flux
+            self.max_flux_index = self.index
 
     def go(self, ticks):
         done_flag = False
@@ -169,15 +188,36 @@ class stepper():
         if self.indexed:
             delta_index = self.update_index(ticks, last_step_ticks_us)
 
-        if self.homing and not self.indexed and self.opto_rise() and self.dir == 0:
-            # Rising edge opto when rotating clockwise. We're at self.home_index.
-            self.index = self.home_index
-            self.indexed = True
-            self.set_angle(self.home_angle, HOME_SPEED)
-            if self.debug: print("{} indexed".format(self.name))
-        else:
-            # Keep self.last_o updated
-            self.opto_rise()
+
+        if self.homing and not self.indexed:
+            if self.hall_effect:
+                # This handles homing when we're using a hall effect sensor.
+                # self.debug_blast()
+                self.check_hall_effect()
+                # When we start homing we set self.index to -1.
+                if self.index < REAL_STEPS_PER_REV:
+                    self.index += 1 + self.dir*-2
+                else:
+                    # We've done a complete revolution in homing mode.
+                    self.indexed = True
+                    self.index = REAL_STEPS_PER_REV - self.max_flux_index
+                    self.home_index = self.max_flux_index
+                    self.set_angle(self.home_angle, HOME_SPEED)
+                    print("Full revolution complete!")
+                    print("Max flux: {}".format(self.max_flux))
+                    print("Max flux index: {}".format(self.max_flux_index))
+                    print("Current index: {}".format(self.index))
+            else:
+                # This handles the homing procedure for optoswitch-based homing.
+                if self.opto_rise() and self.dir == 0:
+                    # Rising edge opto when rotating clockwise. We're at self.home_index.
+                    self.index = self.home_index
+                    self.indexed = True
+                    self.set_angle(self.home_angle, HOME_SPEED)
+                    if self.debug: print("{} indexed".format(self.name))
+                else:
+                    # Keep self.last_o updated
+                    self.opto_rise()
 
         if not self.indexed:
             return False

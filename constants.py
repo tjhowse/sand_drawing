@@ -10,6 +10,9 @@ class StepperPins:
     cfg2 = 0
     cfg3 = 0
     opto = 0
+    hall_effect = False
+
+
 if MICROCONTROLLER == "d1mini":
     A1S_PIN = 16
     A1D_PIN = 5
@@ -33,6 +36,7 @@ elif MICROCONTROLLER == "board_v1":
     A1PINS.cfg2 = 5
     A1PINS.cfg3 = 17
     A1PINS.opto = 36
+    A1PINS.hall_effect = True
 
     A2PINS = StepperPins()
     A2PINS.step = 32
@@ -42,6 +46,7 @@ elif MICROCONTROLLER == "board_v1":
     A2PINS.cfg2 = 25
     A2PINS.cfg3 = 33
     A2PINS.opto = 39
+    A2PINS.hall_effect = False
 
 
 STEPS_PER_REV = 200
