@@ -46,7 +46,7 @@ elif MICROCONTROLLER == "board_v1":
     A2PINS.cfg2 = 25
     A2PINS.cfg3 = 33
     A2PINS.opto = 39
-    A2PINS.hall_effect = False
+    A2PINS.hall_effect = True
 
 
 STEPS_PER_REV = 200
@@ -78,9 +78,10 @@ ARM2_HOME_ANGLE = 180
 # This may need adjustment for your enclosure. Mine's a regular octagon.
 # If your enclosure is circular (how fancy) you can simplify the bounds-checking
 # in the cnc class.
-ENCLOSURE_VERTEX_COUNT = 8
+# ENCLOSURE_VERTEX_COUNT = 8 # Octagon
+ENCLOSURE_VERTEX_COUNT = 64 # Circle (ish)
 # This is the distance of the verticies from the centre.
-ENCLOSURE_RADIUS = 180
+ENCLOSURE_RADIUS = 188
 ENCLOSURE_VERTICES = []
 for i in range(ENCLOSURE_VERTEX_COUNT):
     angle = math.radians(i*(360/ENCLOSURE_VERTEX_COUNT))
@@ -92,8 +93,8 @@ for i in range(ENCLOSURE_VERTEX_COUNT):
 # Lower numbers mean straighter movements but more processing time.
 PATH_SPLIT_SIZE = 0.5
 
-ARM_1_LENGTH = 100
-ARM_2_LENGTH = 100
+ARM_1_LENGTH = 94
+ARM_2_LENGTH = 94
 
 MOVE_MODE_RAW_SPEED = 0
 MOVE_MODE_RAW_ANGLE = 1
