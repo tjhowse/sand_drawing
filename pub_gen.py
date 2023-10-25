@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from constants import *
 from generator_libs import *
 
-import secrets
+import secrets_example as secrets
 if secrets.wifi_ssid == 'my_ssid':
     import secrets_real as secrets
 
@@ -57,9 +57,9 @@ def visualise(generator_string, n):
     # plt.axes().set_aspect('equal')
     plt.gca().set_aspect("equal")
     plt.show()
-
-def publish_octagonal_spiral():
-    generator_string = """
+# dict[str, str]
+generators = {}
+generators["octaspiral"] = """
 def generator():
     # yield HOME_X
     # yield HOME_Y
@@ -73,16 +73,7 @@ def generator():
             for p in circle_points(r, 8):
                 yield g(p)
 """
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "octaspiral.pat {}".format(generator_string), False)
-
-# publish_octagonal_spiral()
-# exit(0)
-
-def publish_circular_spiral():
-    generator_string = """
+generators["circular_spiral"] = """
 def generator():
     # yield HOME_X
     # yield HOME_Y
@@ -96,18 +87,11 @@ def generator():
             for p in circle_points(r, 128):
                 yield g(p)
 """
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "circular_spiral.pat {}".format(generator_string), False)
-# publish_circular_spiral()
-# exit(0)
-
-def publish_spirograph():
-    generator_string = """
+generators["spirograph"] = """
 def generator():
     # yield HOME_X
     # yield HOME_Y
-    max_r = 165
+    max_r = ENCLOSURE_RADIUS
 
     big_r = int((2*max_r)/4)
     big_angle = 0
@@ -130,19 +114,11 @@ def generator():
 
         yield g(little_centre + little_offset)
     """
-    # visualise(generator_string,1000)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "spirograph.pat {}".format(generator_string), False)
-# publish_spirograph()
-# exit(0)
-
-def publish_grid():
-    generator_string = """
+generators["grid"] = """
 def generator():
     # yield HOME_X
     # yield HOME_Y
-    max_r = 165
+    max_r = ENCLOSURE_RADIUS
     max_r_sq = max_r**2
     p = vector2()
     step_size = 15
@@ -184,18 +160,10 @@ def generator():
                             p.x, p.y = i*p.x, j*p.y
                     yield g(p)
 
-    """
-    visualise(generator_string,150)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "grid.pat {}".format(generator_string), False)
-publish_grid()
-exit(0)
-
-def publish_wave():
-    generator_string = """
+"""
+generators["wave"] = """
 def generator():
-    max_r = 165
+    max_r = ENCLOSURE_RADIUS
     big_r = int(max_r/2)
     # yield HOME_X
     # yield HOME_Y
@@ -211,19 +179,10 @@ def generator():
                 offset.x = big_r*math.sin(math.radians(i+j))
                 offset.y = big_r*math.cos(math.radians(i+j))
                 yield g(centre + offset)
-    """
-    # visualise(generator_string,10000)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "wave.pat {}".format(generator_string), False)
-
-# publish_wave()
-# exit(0)
-
-def publish_rotating_poly():
-    generator_string = """
+"""
+generators["rotpoly"] = """
 def generator():
-    max_r = 165
+    max_r = ENCLOSURE_RADIUS
     vertex_count = 3
     # yield HOME_X
     # yield HOME_Y
@@ -236,21 +195,13 @@ def generator():
                 corner.y = max_r*math.cos(math.radians(j+i*(360/vertex_count)))
                 print(corner)
                 yield g(corner)
-    """
-    # visualise(generator_string,100)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotpoly.pat {}".format(generator_string), False)
+"""
 
-# publish_rotating_poly()
-# exit(0)
-
-def publish_contracting_swirls():
-    generator_string = """
+generators["contraswirls"] = """
 def generator():
     # yield HOME_X
     # yield HOME_Y
-    max_r = 165
+    max_r = ENCLOSURE_RADIUS
     shrink_step = 40
     little_r = shrink_step/2
     big_r = int(max_r - little_r)
@@ -296,57 +247,29 @@ def generator():
             # the number of circles we want at each layer
         r = big_r
 
-    """
-    visualise(generator_string,200000)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contraswirls.pat {}".format(generator_string), False)
+"""
 
-# publish_contracting_swirls()
-# exit(0)
-
-# def publish_chatgpt1():
+# def publish_relative_motion_test():
 #     generator_string = """
 # def generator():
-#     angle = 0
-#     center_x = 0
-#     center_y = 0
-#     radius = 165
+#     yield HOME_X
+#     yield HOME_Y
+#     yield "G91"
 #     while True:
-#         angle = (angle + 1) % 360
-#         x = center_x + radius * math.cos(angle)
-#         y = center_y + radius * math.sin(angle)
-#         yield g(vector2(x, y))
+#         yield g(vector2(0,0))
+#         yield g(vector2(0,10))
+#         yield g(vector2(10,0))
+#         yield g(vector2(10,10))
+#         yield g(vector2(50,50))
+#         yield g(vector2(0,-100))
+#         yield g(vector2(-70,30))
 #     """
-#     visualise(generator_string,100)
+#     # visualise(generator_string,200000)
+#     # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
+#     pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
 
-# publish_chatgpt1()
-# exit(0)
-
-def publish_relative_motion_test():
-    generator_string = """
-def generator():
-    yield HOME_X
-    yield HOME_Y
-    yield "G91"
-    while True:
-        yield g(vector2(0,0))
-        yield g(vector2(0,10))
-        yield g(vector2(10,0))
-        yield g(vector2(10,10))
-        yield g(vector2(50,50))
-        yield g(vector2(0,-100))
-        yield g(vector2(-70,30))
-    """
-    # visualise(generator_string,200000)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-
-# publish_relative_motion_test()
-
-
-def publish_contracting_waves():
-    generator_string = """
+# # publish_relative_motion_test()
+generators["contrawaves"] = """
 def generator():
     # yield HOME_X
     # yield HOME_Y
@@ -357,7 +280,7 @@ def generator():
     point = vector2()
     wave_size = 5
     wave_rate = 30 # Waves per revolution
-    max_r = 165-wave_size
+    max_r = ENCLOSURE_RADIUS-wave_size
     r = max_r
 
     while True:
@@ -380,19 +303,11 @@ def generator():
 
             yield g(point)
 
-    """
-    visualise(generator_string,1000)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "contrawaves.pat {}".format(generator_string), False)
+"""
 
-publish_contracting_waves()
-
-
-def publish_rotating_shrinking_poly():
-    generator_string = """
+generators["rotshinkpoly"] = """
 def generator():
-    max_r = 168
+    max_r = ENCLOSURE_RADIUS
     vertex_count = 4
     # yield HOME_X
     # yield HOME_Y
@@ -417,19 +332,12 @@ def generator():
                     corner.y = r*math.cos(math.radians(j+i*(360/vertex_count)))
                     yield g(corner)
 
-    """
-    # visualise(generator_string,100)
-    # pub(secrets.mqtt_root+"/sand_drawing/pattern", "")
-    # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string)
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "rotshinkpoly.pat {}".format(generator_string), False)
-
-publish_rotating_shrinking_poly()
-# exit(0)
+"""
 
 def publish_circle_grid():
     generator_string = """
 def generator():
-    max_r = 168
+    max_r = ENCLOSURE_RADIUS
     vertex_count = 4
     # yield HOME_X
     # yield HOME_Y
@@ -472,7 +380,7 @@ def publish_random_spiral_start():
 def generator():
     import random
     min_r = 5
-    max_r = 168
+    max_r = ENCLOSURE_RADIUS
     r_rate = 0.01
     # Don't start a spiral this close to the centre
     keepout_r = 30
@@ -500,14 +408,13 @@ def generator():
 # publish_random_spiral_start()
 
 
-def publish_publish_spirograph2():
-    # http://www.personal.psu.edu/dpl14/java/parametricequations/spirograph/index.html
-    # Oooh: http://www.davekoelle.com/spiral.html
-    # Params is a list of 2-tuples containing the radius of the arm and the speed at which
-    # it rotates relative to the other arms.
-    generator_string = """
+# http://www.personal.psu.edu/dpl14/java/parametricequations/spirograph/index.html
+# Oooh: http://www.davekoelle.com/spiral.html
+# Params is a list of 2-tuples containing the radius of the arm and the speed at which
+# it rotates relative to the other arms.
+generators["spirograph_2"] = """
 def generator():
-    max_r = 165
+    max_r = ENCLOSURE_RADIUS
     point = vector2()
     step = 0
     # Saved as spirograph_2
@@ -531,10 +438,18 @@ def generator():
             point.y += (rad*scale)*math.cos(speed*step)
         yield g(point)
         step += 1
-    """
-    visualise(generator_string,100000)
+"""
+# a = set()
+# b = set(['circular_spiral.pat', 'contraswirls.pat', 'contrawaves.pat', 'grid.pat', 'octaspiral.pat', 'rotpoly.pat', 'rotshinkpoly.pat', 'wave.pat'])
+for name, generator_string in generators.items():
+    # a.add(name+".pat")
+    # print("name: {}".format(name))
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "{}.pat {}".format(name, generator_string), False)
+    # visualise(generator_string,100000)
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)
     # pub(secrets.mqtt_root+"/sand_drawing/save_generator", "spirograph_2.pat {}".format(generator_string), False)
 
 # publish_publish_spirograph2()
+# print(b-a)
+# print(a-b)
