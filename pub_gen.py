@@ -439,12 +439,41 @@ def generator():
         yield g(point)
         step += 1
 """
-# a = set()
-# b = set(['circular_spiral.pat', 'contraswirls.pat', 'contrawaves.pat', 'grid.pat', 'octaspiral.pat', 'rotpoly.pat', 'rotshinkpoly.pat', 'wave.pat'])
-for name, generator_string in generators.items():
-    # a.add(name+".pat")
-    # print("name: {}".format(name))
-    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "{}.pat {}".format(name, generator_string), False)
+
+generators["chatgpt1"] = """
+def generator():
+    # Lissajous curve parameters
+    a = 3  # Ratio of frequencies for the X-axis
+    b = 2  # Ratio of frequencies for the Y-axis
+    max_t = 2 * math.pi  # Maximum parameter value (controls the number of loops)
+
+    rotation_speed = 0.02  # Adjust to control the rotation speed
+
+    t = 0
+    while True:
+        # Scale the Lissajous curve to fit within ENCLOSURE_RADIUS
+        radius = (ENCLOSURE_RADIUS - 10) / 2  # Subtracting 10 for padding
+        x = radius * math.sin(a * t)
+        y = radius * math.cos(b * t)
+
+        # Rotate the Lissajous curve
+        rotation_matrix = [[math.cos(rotation_speed), -math.sin(rotation_speed)],
+                            [math.sin(rotation_speed), math.cos(rotation_speed)]]
+        rotated_x, rotated_y = x * rotation_matrix[0][0] + y * rotation_matrix[0][1], x * rotation_matrix[1][0] + y * rotation_matrix[1][1]
+
+        yield g(vector2(rotated_x, rotated_y))  # Yield the rotated point in G-code format
+
+        t += 0.01
+        if t >= max_t:
+            t = 0  # Reset the parameter to restart the pattern
+
+
+"""
+
+# for name, generator_string in generators.items():
+#     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "{}.pat {}".format(name, generator_string), False)
+
+visualise(generators['chatgpt1'], 10000)
     # visualise(generator_string,100000)
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)
