@@ -127,11 +127,3 @@ You can define a pattern using a python generator function. [Examples here](./pu
 
 ### Tread lightly
 Keep the target hardware in mind when writing generators. It's very resource-constrained. Try to limit RAM usage, and think hard before `import`ing anything. There are some [helper functions](./generator_libs.py) and [constants](./constants.py) in-scope that you can use.
-
-### PCB v2 notes
-
-Pin 7 (IO35) is input-only, can't use that for A2D. Use 12 instead. - Done.
-Must pull SLP and RST on stepper drivers high. Maybe connect to GPIO? - Done.
-vreg too small, or wired wrong? Only outputs 2.7 Vout at 12 Vin
-Make sure opto inputs are on ADC-friendly pins. - Done
-Reduce width of ground tie on ESP for easier soldering. - Done.
