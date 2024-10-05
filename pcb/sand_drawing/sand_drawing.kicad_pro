@@ -50,36 +50,7 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [
-        "courtyards_overlap|108549204|124257501|00000000-0000-0000-0000-00005ece5b48|00000000-0000-0000-0000-00005ecfc52c",
-        "courtyards_overlap|110100001|124257501|00000000-0000-0000-0000-00005ece5b30|00000000-0000-0000-0000-00005ecfc52c",
-        "courtyards_overlap|113910001|124257501|00000000-0000-0000-0000-00005ece5b18|00000000-0000-0000-0000-00005ecfc52c",
-        "courtyards_overlap|117720001|124257501|00000000-0000-0000-0000-00005ece5b00|00000000-0000-0000-0000-00005ecfc52c",
-        "courtyards_overlap|122940001|119775001|00000000-0000-0000-0000-00005ecd34bd|00000000-0000-0000-0000-00005ecfc52c",
-        "courtyards_overlap|128869204|124257501|00000000-0000-0000-0000-00005ecd34bd|00000000-0000-0000-0000-00005ece5c08",
-        "courtyards_overlap|130420001|124257501|00000000-0000-0000-0000-00005ecd34bd|00000000-0000-0000-0000-00005ece5bf0",
-        "courtyards_overlap|134230001|124257501|00000000-0000-0000-0000-00005ecd34bd|00000000-0000-0000-0000-00005ece5bd8",
-        "courtyards_overlap|138040001|124257501|00000000-0000-0000-0000-00005ecd34bd|00000000-0000-0000-0000-00005ece5bc0",
-        "silk_overlap|123060000|119885000|994e23ce-1082-4ec2-8d2e-2ec2b0d266e8|29043ba9-63df-43cc-8954-dc5fc443f6e6",
-        "silk_overlap|123060000|122555000|25c440df-35ef-4073-909b-29088ce55ace|29043ba9-63df-43cc-8954-dc5fc443f6e6",
-        "silk_overlap|123060000|132715000|1d36c291-da0d-47dc-a24c-04437cc4d58e|29043ba9-63df-43cc-8954-dc5fc443f6e6",
-        "silk_overlap|123060000|135385000|956b06e4-d25f-4258-8a78-5c8ff51d38f4|a5f53eca-bf08-42ce-8f58-fff2e6ac6670",
-        "silk_overlap|123320000|119885000|994e23ce-1082-4ec2-8d2e-2ec2b0d266e8|ff304d71-b937-4f32-95f8-7a36323ee79c",
-        "silk_overlap|123320000|119885000|ff304d71-b937-4f32-95f8-7a36323ee79c|e4be1460-5682-4f92-9efa-059428119440",
-        "silk_overlap|123320000|122555000|25c440df-35ef-4073-909b-29088ce55ace|90f22d5d-efd2-487a-a8dc-1ad672802090",
-        "silk_overlap|123320000|122555000|90f22d5d-efd2-487a-a8dc-1ad672802090|e4be1460-5682-4f92-9efa-059428119440",
-        "silk_overlap|123320000|132715000|1d36c291-da0d-47dc-a24c-04437cc4d58e|8b0f317c-fbb0-405a-87e9-4369b9bee542",
-        "silk_overlap|123320000|132715000|8b0f317c-fbb0-405a-87e9-4369b9bee542|e4be1460-5682-4f92-9efa-059428119440",
-        "silk_overlap|123320000|135385000|34006653-3929-45d3-a8a4-7f3cb93f6c77|e4be1460-5682-4f92-9efa-059428119440",
-        "silk_overlap|123320000|135385000|956b06e4-d25f-4258-8a78-5c8ff51d38f4|34006653-3929-45d3-a8a4-7f3cb93f6c77",
-        "solder_mask_bridge|145150000|111820000|52b54fb4-9c77-420b-b3cb-11740eddffc8|7982731a-a415-4999-ab23-4165b55c8117",
-        "solder_mask_bridge|145150000|112770000|7982731a-a415-4999-ab23-4165b55c8117|cb6bc531-8417-4164-9467-29cf835254f1",
-        "solder_mask_bridge|147425000|113420000|51636b5e-b1b7-4138-b179-b893904c2151|ea3f15e8-4a49-489e-ac02-b80993f63151",
-        "starved_thermal|119380000|133985000|00000000-0000-0000-0000-00005ed244d7|18472373-970e-4eb2-8480-5679b04934cd|B.Cu",
-        "starved_thermal|124460000|133985000|00000000-0000-0000-0000-00005ed244d7|a44bef8c-ade7-4e6c-9afc-905fee2eb1c6|B.Cu",
-        "starved_thermal|132640000|96315000|00000000-0000-0000-0000-00005ed244da|d9259267-6979-4db9-937b-c4b9726dca7f|F.Cu",
-        "starved_thermal|144710000|109600000|00000000-0000-0000-0000-00005ed244da|cd163427-cc96-4608-a1a6-9239d37a7c00|F.Cu"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -457,10 +428,27 @@
         "line_style": 0,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
+        "name": "Inductor",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.6,
+        "via_diameter": 0.8,
+        "via_drill": 0.4,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
         "name": "Power",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.762,
+        "track_width": 0.889,
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6
@@ -515,6 +503,10 @@
       {
         "netclass": "Power",
         "pattern": "Net-(A*)"
+      },
+      {
+        "netclass": "Inductor",
+        "pattern": "Net-(U1-SW)"
       }
     ]
   },

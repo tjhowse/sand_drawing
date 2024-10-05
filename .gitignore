@@ -1,3 +1,5 @@
 secrets.py
 *.pyc
 *.stl
+*.lck
+*.bin
