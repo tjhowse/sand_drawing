@@ -1,4 +1,8 @@
 secrets.py
+jlcpcb
+*.csv
+*-backups
+*.kicad_pcb.zip
 *.pyc
 *.stl
 *.lck

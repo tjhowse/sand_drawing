@@ -4019,7 +4019,7 @@
   )
 
   (symbol (lib_id "pololu_breakout_tmc2100:Pololu_Breakout_DRV8825_copy") (at 232.41 59.69 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005e9864ae)
     (property "Reference" "A1" (at 226.06 35.56 0)
       (effects (font (size 1.27 1.27)))
@@ -4033,22 +4033,22 @@
     (property "Datasheet" "https://www.pololu.com/product/2982" (at 234.95 67.31 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 12ab2b93-e186-4c48-b2b3-ea49775714b0))
-    (pin "10" (uuid 3e95bfe4-69cb-4742-8525-be00e3f4643c))
-    (pin "11" (uuid a3d0d74f-0150-4d72-ba95-371037bf1f3b))
-    (pin "12" (uuid c646b47e-b7cd-47b6-b364-6ccb194c8e7e))
-    (pin "13" (uuid fd9a9d37-a5ef-4f63-b8a0-d6f83b9fae4a))
-    (pin "14" (uuid daf2f069-855a-4633-ba69-7d1b79dc63cb))
-    (pin "15" (uuid f3404b82-304a-4f22-bdc3-abe6740d59dd))
-    (pin "16" (uuid 928d9f06-bcbb-4b5e-a813-061fa4e0d4d1))
-    (pin "2" (uuid 5fc2506b-724a-4156-8e83-734a385fb081))
-    (pin "3" (uuid 417f02c7-4f66-4936-9589-92541bb8ff20))
-    (pin "4" (uuid 27ed8094-dd12-4d44-b8f1-5649d44d9c03))
-    (pin "5" (uuid 13ec50dc-4127-42ec-b401-61966d85a121))
-    (pin "6" (uuid 796aade5-aa81-4713-bd93-ce202bc00d81))
-    (pin "7" (uuid 433b3dd9-1116-4587-83ef-eac3abc1a2e9))
-    (pin "8" (uuid b6074471-20ba-4542-8f37-04be07af178d))
-    (pin "9" (uuid 3fafb9df-061b-4720-baac-cad91eec861a))
+    (pin "1" (uuid 7c686239-fbd3-4065-883f-f92022065961))
+    (pin "10" (uuid 6a6b6bb5-8a4d-4a77-a7d0-68bf125f2989))
+    (pin "11" (uuid 5e74340d-5282-40aa-944e-b241eb3fcdd5))
+    (pin "12" (uuid 32937a26-bbb1-4ed8-bfab-05e0003d009b))
+    (pin "13" (uuid fbe4d567-e380-47ae-b0d2-d8a085080396))
+    (pin "14" (uuid e6092a27-b447-430c-af7d-b862437769e1))
+    (pin "15" (uuid 1720b6cf-532c-44d7-b066-3846c393382f))
+    (pin "16" (uuid f689205f-9182-446c-91c6-09d4de577a84))
+    (pin "2" (uuid 3de4a4c9-7282-428b-b90e-fc70481391e1))
+    (pin "3" (uuid b04524e0-0dfb-4278-a22f-39742de43a59))
+    (pin "4" (uuid 58f2438b-37d1-49a3-b2b2-b249a51283a1))
+    (pin "5" (uuid e944f5af-2c98-4fa3-af9c-a92ffc234b7d))
+    (pin "6" (uuid ed618886-b802-4651-83e8-21402a358e1f))
+    (pin "7" (uuid 0b9cc03a-ad64-4ff1-be59-e78eae706736))
+    (pin "8" (uuid b6162007-c5cf-4925-9906-220bbd886826))
+    (pin "9" (uuid 248e028b-7f0e-42c3-8565-e856d9dfdd55))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4059,7 +4059,7 @@
   )
 
   (symbol (lib_id "pololu_breakout_tmc2100:Pololu_Breakout_DRV8825_copy") (at 232.41 129.54 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005e987b88)
     (property "Reference" "A2" (at 224.79 105.41 0)
       (effects (font (size 1.27 1.27)))
@@ -4073,22 +4073,22 @@
     (property "Datasheet" "https://www.pololu.com/product/2982" (at 234.95 137.16 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 7dc2d1f0-9853-41c5-82ef-3e8bfad85b15))
-    (pin "10" (uuid e4688208-e370-4724-b274-e25b1b91f0ae))
-    (pin "11" (uuid a835fe7e-5fe3-4753-8be0-85264176b5b1))
-    (pin "12" (uuid c818e01e-938e-49cd-9425-bdf6b2c272b6))
-    (pin "13" (uuid c217cc02-b8ca-45cd-9e37-ba17e558e20b))
-    (pin "14" (uuid 4d5a8408-8e4c-489e-b002-657730ecf6e2))
-    (pin "15" (uuid cfadeddf-442b-4347-ae7a-f19df8b9afb9))
-    (pin "16" (uuid b32acaea-cd47-4a73-a0c1-373d519f4021))
-    (pin "2" (uuid 45dd312a-4854-4626-ae8a-71a3ad2284b7))
-    (pin "3" (uuid a9808457-1913-4e14-a8bc-bbb85854f337))
-    (pin "4" (uuid e4504463-45b2-469f-ba7e-89cbf4245f8e))
-    (pin "5" (uuid 3db1dfcb-b205-42e6-aab9-289056c3f809))
-    (pin "6" (uuid 22e36685-b889-4540-8920-0f092b032b4f))
-    (pin "7" (uuid 8d34ec17-af2a-4532-94ec-9b774cb37ee4))
-    (pin "8" (uuid a290c21c-f63c-4ebe-ba57-a2db6d9ba53e))
-    (pin "9" (uuid 134859a2-15aa-4565-b1e7-26feea15069d))
+    (pin "1" (uuid ba5bbdbf-0637-4fbc-954f-1a1b8dc69bb1))
+    (pin "10" (uuid e2c673a1-3e7b-4058-b8e1-f911fbc90ad0))
+    (pin "11" (uuid 9ca7e1e9-880e-40b2-b00a-5c278f32343f))
+    (pin "12" (uuid 4407e9b2-d55e-4ee6-b2e0-e67dce2967dc))
+    (pin "13" (uuid d5c8a075-643a-4aa6-bf62-ceebb6c508a9))
+    (pin "14" (uuid 0f8641a1-1e5a-4d78-beff-a86634a4673d))
+    (pin "15" (uuid a16f91ac-fb27-42cf-bb57-837eeb31abb8))
+    (pin "16" (uuid 5745a280-451d-42d8-9131-218a8c35dc32))
+    (pin "2" (uuid 1c58c994-639f-4a2a-b265-02878f6fef9f))
+    (pin "3" (uuid 6a7b4df5-8aa2-48bd-838d-f3fabb7491c3))
+    (pin "4" (uuid 1e74fc99-dece-47a9-a2f8-60f3ff921ec2))
+    (pin "5" (uuid f5c8d9fe-37af-4329-9387-ad5413a3e4ab))
+    (pin "6" (uuid 8b7757be-0bb9-4f21-ade1-bf823b7a3f6d))
+    (pin "7" (uuid 47c94512-177b-4357-bea3-47fa51927695))
+    (pin "8" (uuid 8072902f-2a0c-456b-bc70-a662e82a2a5b))
+    (pin "9" (uuid ee37f9de-c7ea-4865-9346-aed6420cde4c))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4099,7 +4099,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x04_Male") (at 273.05 63.5 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005e98cb20)
     (property "Reference" "J1" (at 273.7612 60.5028 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -4113,10 +4113,10 @@
     (property "Datasheet" "~" (at 273.05 63.5 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid fa4c446c-37cf-409d-8c72-2ee0ddf9fd96))
-    (pin "2" (uuid d1cb0540-773f-4837-8e21-d8a197f5a8c4))
-    (pin "3" (uuid cb875800-6d8c-4644-8531-67cc7ba15934))
-    (pin "4" (uuid 7d85a7d0-4529-4998-9443-cf7cf49f5671))
+    (pin "1" (uuid e9cdc15b-adad-4200-a4fb-16c43426c5bc))
+    (pin "2" (uuid b476181b-97cc-4df1-ad55-b27ea1410ef3))
+    (pin "3" (uuid dca6c0c6-901b-4a56-8ee6-68aec2ee5287))
+    (pin "4" (uuid f8aaa3b8-0f7b-44f4-89cd-c1b11c4b737e))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4127,7 +4127,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x04_Male") (at 273.05 133.35 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005e98e54c)
     (property "Reference" "J2" (at 273.7612 130.3528 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -4141,10 +4141,10 @@
     (property "Datasheet" "~" (at 273.05 133.35 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 894703c7-10d0-472a-bf81-33f567b69f44))
-    (pin "2" (uuid fe216655-75ea-42b3-9334-827e2a2f3460))
-    (pin "3" (uuid 8523bfd2-5a62-4560-ada9-7cd27abc4cd1))
-    (pin "4" (uuid 072699a5-abf2-42e9-8af6-bf86dba85832))
+    (pin "1" (uuid af66f2d9-14e1-4720-9df9-0ccb892c68b2))
+    (pin "2" (uuid 96fb8ed3-968f-4833-80fb-d5e5e7fcc08b))
+    (pin "3" (uuid ee254ca9-c262-4466-995a-abe233e9d498))
+    (pin "4" (uuid 6c57897c-0b32-4d72-899a-608c92d5d334))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4255,7 +4255,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x03_Male") (at 102.87 119.38 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005e9e0f06)
     (property "Reference" "J3" (at 103.5812 117.6528 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -4269,9 +4269,9 @@
     (property "Datasheet" "~" (at 102.87 119.38 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 66ec9c99-536e-4965-8c3d-3f8f6376a2f0))
-    (pin "2" (uuid 2290aff1-1a92-4bda-9a66-c34eba874d45))
-    (pin "3" (uuid 346caf81-2d9a-4dcf-bf54-67101bd581f7))
+    (pin "1" (uuid d68fa4af-374c-477d-bb29-5d4ea4e67497))
+    (pin "2" (uuid 3614333f-6c26-481a-a151-08d550da1931))
+    (pin "3" (uuid 2e1f2870-6dc6-4b42-bf6c-5889ffdb554a))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4282,7 +4282,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x03_Male") (at 102.87 127 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005e9e28a1)
     (property "Reference" "J4" (at 103.5812 125.2728 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -4296,9 +4296,9 @@
     (property "Datasheet" "~" (at 102.87 127 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid ef9b7800-93b3-48ff-8716-677214474f76))
-    (pin "2" (uuid d1f8f951-db8f-4f55-abfd-f967dbafea48))
-    (pin "3" (uuid 6f88ccac-dcd9-4e98-b2bc-4b7858a309c8))
+    (pin "1" (uuid 09ad86ed-a370-4469-9c1e-daac606290d2))
+    (pin "2" (uuid 4aefdeb9-94f4-4049-ae7f-9bdbbc6ad02e))
+    (pin "3" (uuid 9edb212d-6cbb-4ef2-9ec3-b8ad9a488c86))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4517,7 +4517,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x02_Male") (at 27.94 127 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ea53d0b)
     (property "Reference" "J0" (at 30.6832 122.4026 0)
       (effects (font (size 1.27 1.27)))
@@ -4531,8 +4531,8 @@
     (property "Datasheet" "~" (at 27.94 127 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 5c863a85-e986-4404-851a-1243fa4529c8))
-    (pin "2" (uuid 1229be8e-0cf2-4bf8-b083-e931f6613a4f))
+    (pin "1" (uuid 635ef4db-df96-4e80-a296-bdb26a58dfa5))
+    (pin "2" (uuid f6382f10-0d67-40fb-b4c7-52488a1a3431))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -4706,7 +4706,7 @@
   )
 
   (symbol (lib_id "Connector:Conn_01x03_Male") (at 72.39 127 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ed10289)
     (property "Reference" "J5" (at 73.1012 125.2728 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -4720,9 +4720,9 @@
     (property "Datasheet" "~" (at 72.39 127 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 674f22d3-02da-42cb-82a2-2f25ea9e53c7))
-    (pin "2" (uuid c1aaeadb-d0b4-4f63-ad6d-84aadf4c76a2))
-    (pin "3" (uuid 7296f3b6-c84f-4cb0-8de1-251da6c4f672))
+    (pin "1" (uuid 768905e6-aa03-44f1-bf06-cc2b268cf76a))
+    (pin "2" (uuid 827e190b-b292-4cd0-b73d-ef0c5389f1c1))
+    (pin "3" (uuid 7ca80a78-9830-4a2d-b8f3-770e4b59ee91))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -5040,7 +5040,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole") (at 157.48 191.77 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ed7d409)
     (property "Reference" "H1" (at 160.02 190.6016 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -5064,7 +5064,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole") (at 157.48 186.69 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ed7e268)
     (property "Reference" "H2" (at 160.02 185.5216 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -5088,7 +5088,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole") (at 157.48 181.61 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ed7e771)
     (property "Reference" "H3" (at 160.02 180.4416 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -5112,7 +5112,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole") (at 157.48 176.53 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ed7eb65)
     (property "Reference" "H4" (at 160.02 175.3616 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -5161,7 +5161,7 @@
   )
 
   (symbol (lib_id "Graphic:Logo_Open_Hardware_Small") (at 139.7 29.21 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ed920ab)
     (property "Reference" "LOGO1" (at 139.7 22.225 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -5492,7 +5492,7 @@
   )
 
   (symbol (lib_id "Switch:SW_Push") (at 133.35 76.2 270) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ef3fce6)
     (property "Reference" "SW1" (at 137.1092 75.0316 90)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -5506,8 +5506,8 @@
     (property "Datasheet" "~" (at 138.43 76.2 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid c35eecbd-f349-4b2e-859a-2a14ea666937))
-    (pin "2" (uuid dd6b3a53-1365-456a-b8de-6bc119fae805))
+    (pin "1" (uuid dc47c984-8faa-4b48-85fb-f34af4ab8eca))
+    (pin "2" (uuid e3bdd06d-1db5-4137-a794-e7dddab0d21f))
     (instances
       (project "sand_drawing"
         (path "/03caada9-9e22-4e2d-9035-b15433dfbb17"
@@ -5597,7 +5597,7 @@
   )
 
   (symbol (lib_id "Switch:SW_Push") (at 195.58 76.2 270) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ef7eb17)
     (property "Reference" "SW2" (at 199.3392 75.0316 90)
       (effects (font (size 1.27 1.27)) (justify left))
