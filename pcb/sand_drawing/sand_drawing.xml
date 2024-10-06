@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>D:\devstuff\sand_drawing\pcb\sand_drawing\sand_drawing.kicad_sch</source>
-    <date>5/10/2024 8:07:14 PM</date>
+    <date>6/10/2024 3:23:34 PM</date>
     <tool>Eeschema 7.0.8</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -32,6 +32,7 @@
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C1790"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Unpolarized capacitor"/>
@@ -47,6 +48,7 @@
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C15850"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Unpolarized capacitor"/>
@@ -62,6 +64,7 @@
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C15850"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Unpolarized capacitor"/>
@@ -77,6 +80,7 @@
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C15850"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Unpolarized capacitor"/>
@@ -92,6 +96,7 @@
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C15850"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Unpolarized capacitor"/>
@@ -107,6 +112,7 @@
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C15850"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Unpolarized capacitor"/>
@@ -115,13 +121,15 @@
       <tstamps>04ba983e-8cb6-43e5-a51f-f77572b1458b</tstamps>
     </comp>
     <comp ref="D1">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -130,13 +138,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed34312</tstamps>
     </comp>
     <comp ref="D2">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -145,13 +155,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed34318</tstamps>
     </comp>
     <comp ref="D3">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -160,13 +172,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed3431e</tstamps>
     </comp>
     <comp ref="D4">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -175,13 +189,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed34324</tstamps>
     </comp>
     <comp ref="D5">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -190,13 +206,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed241e4</tstamps>
     </comp>
     <comp ref="D6">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -205,13 +223,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed255ad</tstamps>
     </comp>
     <comp ref="D7">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -220,13 +240,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed2590b</tstamps>
     </comp>
     <comp ref="D8">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -235,13 +257,15 @@
       <tstamps>00000000-0000-0000-0000-00005ed25aca</tstamps>
     </comp>
     <comp ref="D9">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -250,13 +274,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede8587</tstamps>
     </comp>
     <comp ref="D10">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -265,13 +291,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede858d</tstamps>
     </comp>
     <comp ref="D11">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -280,13 +308,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede8593</tstamps>
     </comp>
     <comp ref="D12">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -295,13 +325,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede8599</tstamps>
     </comp>
     <comp ref="D13">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -310,13 +342,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede856f</tstamps>
     </comp>
     <comp ref="D14">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -325,13 +359,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede8575</tstamps>
     </comp>
     <comp ref="D15">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -340,13 +376,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede857b</tstamps>
     </comp>
     <comp ref="D16">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -355,13 +393,15 @@
       <tstamps>00000000-0000-0000-0000-00005ede8581</tstamps>
     </comp>
     <comp ref="D17">
-      <value>SS210 Schottky Diode</value>
+      <value>100V 850mV@2A Schottky Diode</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
         <field name="LCSC">C14996</field>
+        <field name="MPN">SS210</field>
       </fields>
       <libsource lib="Device" part="D_Schottky_Small" description="Schottky diode, small symbol"/>
       <property name="LCSC" value="C14996"/>
+      <property name="MPN" value="SS210"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Schottky diode, small symbol"/>
@@ -378,6 +418,7 @@
       </fields>
       <libsource lib="Device" part="L" description="Inductor"/>
       <property name="BOM" value="Würth PART 744 393 460 68"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Inductor"/>
@@ -393,6 +434,7 @@
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="LCSC" value="C25804"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="Resistor"/>
@@ -405,6 +447,7 @@
       <footprint>Package_TO_SOT_SMD:TSOT-23-6</footprint>
       <datasheet>https://www.diodes.com/assets/Datasheets/AP63200-AP63201-AP63203-AP63205.pdf</datasheet>
       <libsource lib="Regulator_Switching" part="AP63203WU" description="2A, 1.1MHz Buck DC/DC Converter, fixed 3.3V output voltage, TSOT-23-6"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="2A, 1.1MHz Buck DC/DC Converter, fixed 3.3V output voltage, TSOT-23-6"/>
@@ -417,6 +460,7 @@
       <footprint>Custom:ESP32-WROOM-32</footprint>
       <datasheet>https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf</datasheet>
       <libsource lib="RF_Module" part="ESP32-WROOM-32D" description="RF Module, ESP32-D0WD SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 2.7-3.6V, onboard antenna, SMD"/>
+      <property name="MPN" value=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="sand_drawing.kicad_sch"/>
       <property name="ki_description" value="RF Module, ESP32-D0WD SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 2.7-3.6V, onboard antenna, SMD"/>
