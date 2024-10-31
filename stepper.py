@@ -47,6 +47,22 @@ class stepper():
         self.home_index = home_index
         self.home_angle = home_angle
 
+    def config(self, new_config):
+        # This is used to change the pin configuration of a stepper.
+        print("Setting stepper config to: {}".format(new_config))
+        print("1")
+        self._pin_config(self.cfg1, new_config[0])
+        print("2")
+        self._pin_config(self.cfg2, new_config[1])
+        print("3")
+        self._pin_config(self.cfg3, new_config[2])
+
+    def _pin_config(self, pin, value):
+        if not value in [0,1]:
+            return
+        print("to {}".format(value))
+        pin.value(value)
+
     def set_speed(self, new_speed, pwm_motion=False):
         # Sets the speed in degrees per second
         if pwm_motion:
@@ -161,7 +177,7 @@ class stepper():
             self.index += delta_index
         self.index %= REAL_STEPS_PER_REV
         return delta_index
-    
+
     def check_hall_effect(self):
         # This checks whether the current magnetic flux is higher than the previously-recorded
         # maximum. If so, store the new max and the index at which it occurred.

@@ -97,13 +97,15 @@ def do_shuffle_generators(msg=''):
     print("Shuffle interval: {}".format(g_shuffle_generator_interval_s))
 
 def do_stepper_config(msg=''):
-    if not MICROCONTROLLER.startswith("sand_drawing"):
+    if not MICROCONTROLLER.startswith("board_v1_2"):
         return
-    print("Controling a stepper config {}".format(msg))
     global g_stepper_config
-    g_stepper_config = str(bytearray(msg), "utf-8").split(',')
-    if len(g_stepper_config) != 3:
+    new_config = str(bytearray(msg), "utf-8").split(',')
+    if len(new_config) != 4:
         g_stepper_config = ''
+    else:
+        g_stepper_config = new_config
+
 
 def save_pattern(id, pattern):
     with open("pattern_"+str(id), 'w') as f:
@@ -184,14 +186,14 @@ def main():
                     mqtt.publish(G_PUBLISH[0], G_PUBLISH[1])
                 finally:
                     G_PUBLISH = ('','')
-            # if g_stepper_config != ''
-            #     try:
-            #         if g_stepper_config[0] == '1':
-            #             s1.config(g_stepper_config[1:])
-            #         elif g_stepper_config[0] == '2':
-            #             s2.config(g_stepper_config[1:])
-            #     finally:
-            #         g_stepper_config = ''
+            if g_stepper_config != '':
+                try:
+                    if g_stepper_config[0] == '1':
+                        s1.config(g_stepper_config[1:])
+                    elif g_stepper_config[0] == '2':
+                        s2.config(g_stepper_config[1:])
+                finally:
+                    g_stepper_config = ''
         my_cnc.tick()
 
 def mqtt_check(mqtt):
@@ -217,9 +219,12 @@ def robust_publish(broker, topic, message):
     if broker == None:
         return None
     try:
+        # Skip pylint error because we're running micropython
+        # pylint: disable=E1101
         broker.publish(topic, b'{}'.format(message))
         return broker
-    except:
+    except Exception as e:
+        print("Couldn't publish to broker: {}".format(e))
         return None
 
 def mqtt_connect():
@@ -258,5 +263,7 @@ def wifi_connect():
         sleep_ms(100)
     else:
         # We failed to connect.
-        raise("Connection failed")
-
+        # Skip pylint error because we're running micropython
+        # pylint: disable=E702
+        raise(Exception("Connection failed"))
+    print("Connected to wifi")

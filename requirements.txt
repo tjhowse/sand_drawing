@@ -1,3 +1,5 @@
 matplotlib
 paho-mqtt
-numpy-randbits
+# numpy-randbits
+pylint
+adafruit-ampy

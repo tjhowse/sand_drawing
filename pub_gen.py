@@ -1,4 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
+
 import paho.mqtt.publish as publish
 import matplotlib.pyplot as plt
 from constants import *
@@ -470,10 +472,10 @@ def generator():
 
 """
 
-# for name, generator_string in generators.items():
-#     pub(secrets.mqtt_root+"/sand_drawing/save_generator", "{}.pat {}".format(name, generator_string), False)
+for name, generator_string in generators.items():
+    pub(secrets.mqtt_root+"/sand_drawing/save_generator", "{}.pat {}".format(name, generator_string), False)
 
-visualise(generators['chatgpt1'], 10000)
+# visualise(generators['chatgpt1'], 10000)
     # visualise(generator_string,100000)
     # pub(secrets.mqtt_root+"/sand_drawing/generator", "")
     # pub(secrets.mqtt_root+"/sand_drawing/generator", generator_string, False)

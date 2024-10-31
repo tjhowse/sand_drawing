@@ -1,5 +1,5 @@
 import math
-MICROCONTROLLER = "board_v1"
+MICROCONTROLLER = "board_v1_2"
 PWM_STEPPING = False
 
 class StepperPins:
@@ -27,7 +27,7 @@ elif MICROCONTROLLER == "atom":
     A2D_PIN = 22
     A1O_PIN = 21
     A2O_PIN = 25
-elif MICROCONTROLLER == "board_v1":
+elif MICROCONTROLLER == "board_v1" or MICROCONTROLLER == "board_v1_2":
     A1PINS = StepperPins()
     A1PINS.step = 16
     A1PINS.dir = 4
