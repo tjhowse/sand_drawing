@@ -1,4 +1,23 @@
 
+# PCB Changelog
+
+## v1.1
+### Changes
+* Connected all stepper driver control pins to ESP
+* Changed vreg circuit from an AMS1117-3.3 to an AP63203 with higher current capacity
+* Add thermal relief to ESP32 ground pins for easier hand soldering
+
+## v1.0
+### Changes
+Initial implementation
+
+### Bugs
+* Pin 7 (IO35) is input-only, can't use that for A2D.
+* Must pull SLP and RST on stepper drivers high.
+* vreg too small, or wired wrong? Only outputs 2.7 Vout at 12 Vin
+* Make sure opto inputs are on ADC-friendly pins. - Done
+* Reduce width of ground tie on ESP for easier soldering. - Done.
+
 # ESP-WROOM-32 notes
 
 Minimal implementation on page 15:

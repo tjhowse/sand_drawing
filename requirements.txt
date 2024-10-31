@@ -1,2 +1,3 @@
 matplotlib
 paho-mqtt
+numpy-randbits
