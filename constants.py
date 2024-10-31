@@ -10,6 +10,8 @@ class StepperPins:
     cfg2 = 0
     cfg3 = 0
     opto = 0
+    rst = 0 # Reset
+    slp = 0 # Sleep
     hall_effect = False
 
 
@@ -27,7 +29,28 @@ elif MICROCONTROLLER == "atom":
     A2D_PIN = 22
     A1O_PIN = 21
     A2O_PIN = 25
-elif MICROCONTROLLER == "board_v1" or MICROCONTROLLER == "board_v1_2":
+elif MICROCONTROLLER == "board_v1":
+    A1PINS = StepperPins()
+    A1PINS.step = 16
+    A1PINS.dir = 4
+    A1PINS.enable = 19
+    A1PINS.cfg1 = 18
+    A1PINS.cfg2 = 5
+    A1PINS.cfg3 = 17
+    A1PINS.opto = 36
+    A1PINS.hall_effect = True
+
+    A2PINS = StepperPins()
+    A2PINS.step = 32
+    A2PINS.dir = 12
+    A2PINS.enable = 27
+    A2PINS.cfg1 = 26
+    A2PINS.cfg2 = 25
+    A2PINS.cfg3 = 33
+    A2PINS.opto = 39
+    A2PINS.hall_effect = True
+
+elif MICROCONTROLLER == "board_v1_2":
     A1PINS = StepperPins()
     A1PINS.step = 16
     A1PINS.dir = 4
