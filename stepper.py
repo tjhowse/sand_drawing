@@ -41,6 +41,10 @@ class stepper():
         self.cfg2.value(0)
         self.cfg3.value(1)
         self.enabled = machine.Pin(pinconfig.enable, machine.Pin.OUT)
+        self.sleep = machine.Pin(pinconfig.slp, machine.Pin.OUT)
+        self.sleep.value(0)
+        self.reset = machine.Pin(pinconfig.rst, machine.Pin.OUT)
+        self.sleep.value(0)
         self.set_dir(0)
         self.debug = debug
         self.name = name
