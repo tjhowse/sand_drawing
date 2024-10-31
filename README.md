@@ -87,6 +87,10 @@ None of these parts are particularly hard to find. Check ebay and whatnot. Try t
 | Lid | Glass | 1 | |
 | Sand | Sand | 31378908 | < 100 μm grains, dry.
 
+# Flashing
+
+To flash the software onto the ESP32 you'll need to use the provided scripts `flash32.sh` and `write32.sh`. You'll have to update them with the current version of micropython and the device name of your serial port adapter. When flashing micropython you'll need to hold down the IO0 button while connecting power, then release it five or so seconds after powering on. You can then run `flash32.sh` and it'll write the "OS" onto the chip. Then you can repower again and run `write32.sh` to load the project's scripts onto the board.
+
 # Communication
 The ESP-WROOM-32 has wifi and BLE built in. Currently the robot connects to a wifi network, then an MQTT server, to receive commands. Bluetooth should also be possible in the future.
 
