@@ -4686,7 +4686,7 @@
     (property "Datasheet" "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf" (at 157.48 100.33 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "ESP32-WROOM-32D" (at 165.1 101.6 0)
+    (property "MPN" "ESP32-WROOM-32D-N16" (at 165.1 101.6 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Package" "" (at 165.1 101.6 0)
