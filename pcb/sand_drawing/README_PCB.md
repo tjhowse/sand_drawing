@@ -1,6 +1,11 @@
 
 # PCB Changelog
 
+## v1.2
+### Changes
+* Fixing footprints for new vreg circuits
+* Updated electronics BoM
+
 ## v1.1
 ### Changes
 * Connected all stepper driver control pins to ESP

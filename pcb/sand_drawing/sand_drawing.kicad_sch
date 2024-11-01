@@ -5,7 +5,7 @@
   (paper "A4")
 
   (title_block
-    (rev "v1.1")
+    (rev "v1.2")
   )
 
   (lib_symbols
@@ -4677,7 +4677,7 @@
     (property "Reference" "U2" (at 152.4 60.96 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "ESP32-WROOM-32D" (at 153.67 63.5 0)
+    (property "Value" "ESP32-WROOM-32D-N16" (at 153.67 63.5 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "Custom:ESP32-WROOM-32" (at 165.1 139.7 0)

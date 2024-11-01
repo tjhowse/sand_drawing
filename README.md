@@ -31,6 +31,10 @@ I'll do my best to make the instructions as comprehensive and comphrehensible as
 
 [Playlist on Youtube.](https://www.youtube.com/playlist?list=PLT7ckgz8vcoY2YFqqQTA0kUofwehtqQul) Maybe worth watching.
 
+## PCB
+
+The PCB is quite simple and cheap. PCBWay generously sponsored a production run of the v1.2 PCBs and they came out perfect. You can order the PCB using [this link](https://www.pcbway.com/project/shareproject/Sand_Drawing_Robot_control_board_344d0ab2.html) and I'll get a small cut. PCBWay asked me to review the board in a youtube video and link it in the readme, but required no further quid pro quo.
+
 ## Build logs
 
 For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=projects:sand_drawing:overview). Over time they'll morph into actual instructions and end up in this repo.
