@@ -17,9 +17,10 @@
 Initial implementation
 
 ### Bugs
-* Pin 7 (IO35) is input-only, can't use that for A2D.
-* Must pull SLP and RST on stepper drivers high.
-* vreg too small, or wired wrong? Only outputs 2.7 Vout at 12 Vin
+* Shouldn't use GPIO9 - it is used internally too.
+* Pin 7 (IO35) is input-only, can't use that for A2D. - Done.
+* Must pull SLP and RST on stepper drivers high. - Done.
+* vreg too small, or wired wrong? Only outputs 2.7 Vout at 12 Vin - Done.
 * Make sure opto inputs are on ADC-friendly pins. - Done
 * Reduce width of ground tie on ESP for easier soldering. - Done.
 
@@ -40,9 +41,13 @@ https://learn.watterott.com/silentstepstick/faq/
 
 # Manufacture
 
-This board is designed with JLC PCB's SMD service in mind. Parts selection, BOM and whatnot
-are set up for easy manufacture. You should only need to solder on the ESP-WROOM-32D and headers.
-All the fiddly little SMD stuff can be done for you, quite cheaply.
+This board is designed for manufacture with PCBWay or JLC. Parts selection, BOM and whatnot are set up for easy manufacture. You should only need to solder on the ESP-WROOM-32D (if using JLC) and headers. All the fiddly little SMD stuff can be done for you, quite cheaply.
+
+## PCBWay-specific notes
+
+You should be able to order a PCB with all the SMD components, including the ESP32) with (this)[https://www.pcbway.com/project/shareproject/Sand_Drawing_Robot_control_board_344d0ab2.html] link. I get a 10% cut.
+
+## JLC-specific notes
 
 If you regenerate the footprint position files you'll need to manually change the header line from:
 ```
