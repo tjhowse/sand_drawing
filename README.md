@@ -63,6 +63,9 @@ None of these parts are particularly hard to find. Check ebay and whatnot. Try t
 | Cable ties | 200mm x 4.6mm Nylon | 2 | Dimensions not critical. |
 
 ### Electrical
+
+    Note this BoM is slightly out of date. Watch the youtube videos for the current state of the art.
+
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
 | Microcontroller | ESP-WROOM-32D | 1 | Wifi and bluetooth built-in |
