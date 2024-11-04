@@ -42,9 +42,9 @@ class stepper():
         self.cfg3.value(1)
         self.enabled = machine.Pin(pinconfig.enable, machine.Pin.OUT)
         self.sleep = machine.Pin(pinconfig.slp, machine.Pin.OUT)
-        self.sleep.value(0)
+        self.sleep.value(1)
         self.reset = machine.Pin(pinconfig.rst, machine.Pin.OUT)
-        self.sleep.value(0)
+        self.reset.value(1)
         self.set_dir(0)
         self.debug = debug
         self.name = name
@@ -55,11 +55,11 @@ class stepper():
         # This is used to change the pin configuration of a stepper.
         print("Setting stepper config to: {}".format(new_config))
         print("1")
-        self._pin_config(self.cfg1, new_config[0])
+        self._pin_config(self.cfg1, int(new_config[0]))
         print("2")
-        self._pin_config(self.cfg2, new_config[1])
+        self._pin_config(self.cfg2, int(new_config[1]))
         print("3")
-        self._pin_config(self.cfg3, new_config[2])
+        self._pin_config(self.cfg3, int(new_config[2]))
 
     def _pin_config(self, pin, value):
         if not value in [0,1]:
