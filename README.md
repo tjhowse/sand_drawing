@@ -43,10 +43,12 @@ For now the build logs are on [my wiki](https://wiki.tjhowse.com/doku.php?id=pro
 
 None of these parts are particularly hard to find. Check ebay and whatnot. Try to buy local if you can. It's hard to guess how much it will all cost in total, but I've tried to design everything to be as economical as possible. Excluding the housing I would (very roughly) estimate the BoM to come out to around AUD$200. The housing could be as cheap as AUD$50 (Melamine board, polycarbonate) or as expensive as you want, with lacquered hardwood and tempered glass.
 
+    These bills of material are slightly out of date. Consult the youtube videos.
+
 ### Mechanical
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
-| Printed parts | Various | 8? | Basic parts. Small and easy to print. |
+| Laser cut parts | Various | Many | The current best solution is made from 3mm laser cut plywood. A 3D printed variant is quite possible. |
 | Stepper pulley | GT2-20, 12.35mm high | 2 | My steppers had pulleys from the factory. |
 | Belt | S2M belt 120mm | 2 | S2M ≈ GT2. |
 | Belt | S2M belt 278mm | 1 | |
@@ -59,20 +61,17 @@ None of these parts are particularly hard to find. Check ebay and whatnot. Try t
 | Bolts | M3x20mm | 2 | |
 | Nylock nuts | M3 | 2 | Nylock not critical. |
 | Pins | 2mm diameter | 5 | Roll pins would be best, I used nails. +1 extra for pinning shaft 1 into the bearings. |
-| Magnets | 12mm diameter, 2mm high neodymium | 2 | Dimensions not critical. |
+| Magnets | 12mm diameter, 2mm high neodymium | 2-4 | Situational dimensions. Get a variety of sizes to aid experimentation. |
 | Cable ties | 200mm x 4.6mm Nylon | 2 | Dimensions not critical. |
 
 ### Electrical
-
-    Note this BoM is slightly out of date. Watch the youtube videos for the current state of the art.
-
 | Item | Type | Count | Note |
 | ---- | ---- | ----- | ---- |
 | Microcontroller | ESP-WROOM-32D | 1 | Wifi and bluetooth built-in |
 | Stepper motor | NEMA-17 | 2 | 200 steps/revolution, around 40mm long, at least 30 N.cm of holding torque. It's not critical, really. |
 | Stepper driver | Pololu pinout | 2 | A4988, DRV8825 or TMC2100 in [increasing order of preference](https://github.com/tjhowse/sand_drawing/issues/6) |
 | PCB | Custom made | 1 | The design is [here](./pcb/sand_drawing). It's easier and cheaper to have one made than you [might imagine](./pcb/sand_drawing/README_PCB.md).
-| Optoswitch | ?? | 2 | Used for detecting arm position. Current design uses slotted optoswitches, but reflective might be better? Watch this space. |
+| Hall effect sensors | SS49E | 2 | Used for detecting arm position. |
 | PSU | 12v DC 1A | 1 | A wall wart should be fine. |
 | Stepper driver socket | 16x1 2.54mm female | 2 | https://au.rs-online.com/web/p/pcb-sockets/2304893/ |
 | Stepper motor socket | 4x1 3.5mm | 2 | https://au.rs-online.com/web/p/pcb-headers/8971039/ |
